@@ -7,10 +7,15 @@
 //
 
 @import Foundation;
+#import "CDZCLIPrint.h"
 
-@protocol CDZCLIApplication <NSObject>
+@interface CDZCLIApplication : NSObject
 
+/// Will be called to start your CLI application. This method is abstract and must be implemented by your subclass.
 - (void)start;
+
+/// Call this from somethere in your app to exit.
+- (void)exitWithCode:(int)exitCode;
 
 - (BOOL)isFinished;
 - (int)exitCode;

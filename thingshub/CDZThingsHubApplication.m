@@ -8,22 +8,23 @@
 
 #import "CDZThingsHubApplication.h"
 
+@interface CDZThingsHubApplication ()
+
+@property (nonatomic, strong) NSTimer *timer;
+
+@end
+
 @implementation CDZThingsHubApplication
 
-#pragma mark - CDZCLIApplication Protocol
-
 - (void)start {
-    CDZCLIPrint(@"Running forever from %s", __PRETTY_FUNCTION__);
-}
-
-- (BOOL)isFinished {
-    return NO;
-}
-
-- (int)exitCode {
-    NSAssert([self isFinished], @"%s must not be called when app is not finished.", __PRETTY_FUNCTION__);
+    CDZCLIPrint(@"Running for 5 seconds from %s", __PRETTY_FUNCTION__);
     
-    return 0;
+    self.timer = [NSTimer scheduledTimerWithTimeInterval:5.0 target:self selector:@selector(timerFired:) userInfo:nil repeats:NO];
+}
+
+- (void)timerFired:(id)sender {
+    CDZCLIPrint(@"Exiting with exit code 1 from %s", __PRETTY_FUNCTION__);
+    [self exitWithCode:1];
 }
 
 @end

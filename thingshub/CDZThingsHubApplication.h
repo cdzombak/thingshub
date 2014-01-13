@@ -8,6 +8,6 @@
 
 #import "CDZCLIApplication.h"
 
-@interface CDZThingsHubApplication : NSObject <CDZCLIApplication>
+@interface CDZThingsHubApplication : CDZCLIApplication
 
 @end
