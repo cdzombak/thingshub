@@ -6,4 +6,5 @@
 
 #ifdef __OBJC__
     @import Foundation;
+    #import "CDZCLIPrint.h"
 #endif

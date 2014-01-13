@@ -6,15 +6,24 @@
 //  Copyright (c) 2014 Chris Dzombak. All rights reserved.
 //
 
-int main(int argc, const char * argv[])
-{
+#import "CDZCLIApplication.h"
+#import "CDZThingsHubApplication.h"
 
+static const NSTimeInterval CDZThingsHubRunLoopInterval = 1.0;
+
+int main(int argc, const char * argv[]) {
+    NSRunLoop *runLoop;
+    id<CDZCLIApplication> main;
+    
     @autoreleasepool {
+        runLoop = [NSRunLoop currentRunLoop];
+        main = [[CDZThingsHubApplication alloc] init];
         
-        // insert code here...
-        NSLog(@"Hello, World!");
+        [main start];
         
-    }
-    return 0;
+        while(!(main.isFinished) && [runLoop runMode:NSDefaultRunLoopMode beforeDate:[NSDate dateWithTimeIntervalSinceNow:CDZThingsHubRunLoopInterval]]);
+        
+    };
+    
+    return(main.exitCode);
 }
-
