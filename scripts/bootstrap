@@ -1,0 +1,9 @@
+#!/bin/sh
+# Usage: script/bootstrap
+# Initializes your local environment for development
+
+SCRIPT_DIR=$(dirname "$0")
+cd "$SCRIPT_DIR/.."
+
+bundle install --binstubs --path Vendor/bundle
+bundle exec pod install

@@ -17,3 +17,14 @@ profile
 *.moved-aside
 DerivedData
 *.hmap
+
+# CocoaPods
+Pods
+
+# bootstrap script
+Vendor/bundle/
+.bundle/
+bin/
+
+# etc
+tmp
