@@ -6,8 +6,6 @@
 //  Copyright (c) 2014 Chris Dzombak. All rights reserved.
 //
 
-#import <Foundation/Foundation.h>
-
 int main(int argc, const char * argv[])
 {
 
