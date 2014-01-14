@@ -62,5 +62,6 @@ Synchronize issues assigned to you, one-way, from a Github repo into Things.
 
 * allow mapping github tag -> local tag (ie. in progress)
 * man page/interactive help
+* allow logging out without manually changning keychain
 * Use contacts/delegation for issues assigned to others.
 * OmniFocus should allow similar implementation
