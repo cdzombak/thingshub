@@ -11,16 +11,25 @@
 
 #import "CDZGithubAuthManager.h"
 #import "CDZIssueSyncEngine.h"
+#import "CDZThingsHubConfiguration.h"
 
 @interface CDZThingsHubApplication ()
 
 @property (nonatomic, strong) CDZIssueSyncEngine *syncEngine;
+@property (nonatomic, strong) CDZThingsHubConfiguration *currentConfiguration;
 
 @end
 
 @implementation CDZThingsHubApplication
 
 - (void)start {
+    NSError *validationError;
+    self.currentConfiguration = [CDZThingsHubConfiguration currentConfigurationWithError:&validationError];
+    if (!self.currentConfiguration || validationError) {
+        CDZCLIPrint(@"Configuration error: %@", [validationError localizedDescription]);
+        [self exitWithCode:CDZThingsHubApplicationReturnCodeConfigError];
+    }
+    
     [CDZGithubAuthManager authenticatedClient:^(OCTClient *authenticatedClient, NSError *error) {
         if (authenticatedClient) {
             self.syncEngine = [[CDZIssueSyncEngine alloc] initWithAuthenticatedClient:authenticatedClient];

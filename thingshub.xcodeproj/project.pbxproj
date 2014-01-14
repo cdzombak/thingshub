@@ -18,6 +18,8 @@
 		A2E94DDB1884D75700079CD3 /* CDZGithubAuthManager.m in Sources */ = {isa = PBXBuildFile; fileRef = A2E94DDA1884D75700079CD3 /* CDZGithubAuthManager.m */; };
 		A2E94DE11884DB3B00079CD3 /* SystemConfiguration.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A2E94DE01884DB3B00079CD3 /* SystemConfiguration.framework */; };
 		A2E94DE41884EE8A00079CD3 /* CDZIssueSyncEngine.m in Sources */ = {isa = PBXBuildFile; fileRef = A2E94DE31884EE8A00079CD3 /* CDZIssueSyncEngine.m */; };
+		A2E94DEA1884F41800079CD3 /* CDZThingsHubConfiguration.m in Sources */ = {isa = PBXBuildFile; fileRef = A2E94DE91884F41800079CD3 /* CDZThingsHubConfiguration.m */; };
+		A2E94DED1885051E00079CD3 /* CDZThingsHubErrorDomain.m in Sources */ = {isa = PBXBuildFile; fileRef = A2E94DEC1885051E00079CD3 /* CDZThingsHubErrorDomain.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -53,6 +55,10 @@
 		A2E94DE01884DB3B00079CD3 /* SystemConfiguration.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SystemConfiguration.framework; path = System/Library/Frameworks/SystemConfiguration.framework; sourceTree = SDKROOT; };
 		A2E94DE21884EE8A00079CD3 /* CDZIssueSyncEngine.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CDZIssueSyncEngine.h; sourceTree = "<group>"; };
 		A2E94DE31884EE8A00079CD3 /* CDZIssueSyncEngine.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CDZIssueSyncEngine.m; sourceTree = "<group>"; };
+		A2E94DE81884F41800079CD3 /* CDZThingsHubConfiguration.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CDZThingsHubConfiguration.h; sourceTree = "<group>"; };
+		A2E94DE91884F41800079CD3 /* CDZThingsHubConfiguration.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CDZThingsHubConfiguration.m; sourceTree = "<group>"; };
+		A2E94DEB1885051E00079CD3 /* CDZThingsHubErrorDomain.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CDZThingsHubErrorDomain.h; sourceTree = "<group>"; };
+		A2E94DEC1885051E00079CD3 /* CDZThingsHubErrorDomain.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CDZThingsHubErrorDomain.m; sourceTree = "<group>"; };
 		FB9DF1999D354CBC87C8A6D5 /* Pods.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = Pods.xcconfig; path = Pods/Pods.xcconfig; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -108,6 +114,10 @@
 				A2E94DDA1884D75700079CD3 /* CDZGithubAuthManager.m */,
 				A2E94DE21884EE8A00079CD3 /* CDZIssueSyncEngine.h */,
 				A2E94DE31884EE8A00079CD3 /* CDZIssueSyncEngine.m */,
+				A2E94DE81884F41800079CD3 /* CDZThingsHubConfiguration.h */,
+				A2E94DE91884F41800079CD3 /* CDZThingsHubConfiguration.m */,
+				A2E94DEB1885051E00079CD3 /* CDZThingsHubErrorDomain.h */,
+				A2E94DEC1885051E00079CD3 /* CDZThingsHubErrorDomain.m */,
 				A21C4ED918848BB30063467F /* thingshub.1 */,
 				A21C4ED718848BB30063467F /* Supporting Files */,
 			);
@@ -233,10 +243,12 @@
 				A2E94DE41884EE8A00079CD3 /* CDZIssueSyncEngine.m in Sources */,
 				A2E94DD81884D02900079CD3 /* NSFileHandle+CDZCLIStringReading.m in Sources */,
 				A21C4ED618848BB30063467F /* main.m in Sources */,
+				A2E94DEA1884F41800079CD3 /* CDZThingsHubConfiguration.m in Sources */,
 				A2E94DDB1884D75700079CD3 /* CDZGithubAuthManager.m in Sources */,
 				A2E94DD51884B23800079CD3 /* CDZCLIApplication.m in Sources */,
 				A21C4EE818848FED0063467F /* CDZCLIPrint.m in Sources */,
 				A21C4EE218848D840063467F /* CDZThingsHubApplication.m in Sources */,
+				A2E94DED1885051E00079CD3 /* CDZThingsHubErrorDomain.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
