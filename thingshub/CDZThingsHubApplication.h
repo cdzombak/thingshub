@@ -8,6 +8,11 @@
 
 #import "CDZCLIApplication.h"
 
+NS_ENUM(int, CDZThingsHubApplicationReturnCode) {
+    CDZThingsHubApplicationReturnCodeNormal = 0,
+    CDZThingsHubApplicationReturnCodeAuthError
+};
+
 @interface CDZThingsHubApplication : CDZCLIApplication
 
 @end
