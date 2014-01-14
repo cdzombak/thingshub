@@ -10,6 +10,7 @@
 
 @interface CDZIssueSyncEngine : NSObject
 
+/// Designated initializer
 - (instancetype)initWithAuthenticatedClient:(OCTClient *)client;
 
 @end
