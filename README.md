@@ -65,3 +65,14 @@ Synchronize issues assigned to you, one-way, from a Github repo into Things.
 * allow logging out without manually changning keychain
 * Use contacts/delegation for issues assigned to others.
 * OmniFocus should allow similar implementation
+
+## Allowed configuration keys
+
+```objc
+    @"tagNamespace": NSStringFromSelector(@selector(tagNamespace)),
+    @"reviewTag": NSStringFromSelector(@selector(reviewTagName)),
+    @"githubLogin": NSStringFromSelector(@selector(githubLogin)),
+    @"githubOrg": NSStringFromSelector(@selector(githubOrgName)),
+    @"githubRepo": NSStringFromSelector(@selector(githubRepoName)),
+    @"thingsArea": NSStringFromSelector(@selector(thingsAreaName)),
+```
