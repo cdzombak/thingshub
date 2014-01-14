@@ -56,6 +56,9 @@ static NSString * const CDZThingsHubConfigDefaultReviewTagName = @"review";
                 [currentConfig mergeInPriorityConfiguration:config];
             }
         }
+        
+        // Finally, allow command-line args to override this:
+        [currentConfig mergeInPriorityConfiguration:[self configurationFromDefaults]];
     });
     
     NSError *validationError = [currentConfig validationError];
@@ -100,6 +103,20 @@ static NSString * const CDZThingsHubConfigDefaultReviewTagName = @"review";
         NSString *value = [lineComponents[1] stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceCharacterSet]];
         [config setValue:value forKey:propertyKey];
     }
+    
+    return config;
+}
+
+/// Builds a configuration object from [NSUserDefaults standardUserDefaults]
++ (instancetype)configurationFromDefaults {
+    CDZThingsHubConfiguration *config = [[CDZThingsHubConfiguration alloc] init];
+    
+    [[self propertyKeysByConfigKey] enumerateKeysAndObjectsUsingBlock:^(NSString *configKey, NSString *propertyKey, BOOL *stop) {
+        NSString *configValue = [[NSUserDefaults standardUserDefaults] stringForKey:configKey];
+        if (configValue) {
+            [config setValue:configValue forKeyPath:propertyKey];
+        }
+    }];
     
     return config;
 }
