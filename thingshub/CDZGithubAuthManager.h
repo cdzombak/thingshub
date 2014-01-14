@@ -16,6 +16,6 @@
  
  Persists the OAuth token in the Keychain and uses it when possible.
  */
-+ (void)authenticatedClient:(void(^)(OCTClient *authenticatedClient, NSError *error))completionBlock;
++ (void)authenticatedClient:(void(^)(OCTClient *authenticatedClient, NSError *error))completionBlock forUsername:(NSString *)githubLogin;
 
 @end
