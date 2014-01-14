@@ -1,0 +1,29 @@
+# ThingsHub config example
+# .thingshubconfig
+
+# Config files are parsed recursively, beginning at ~ and walking down to the current directory.
+#
+# This means you can put defaults (ie. githubLogin, tagNamespace, reviewTag) in ~/.thingshubconfig,
+# leaving project-specific config (githubOrg, githubRepo, thingsArea) in your-project-dir/.thingshubconfig.
+#
+# Config parameters can also be set or overridden on the commandline, by passing -param value, ie. "-githubLogin cdzombak"
+
+# Blank lines are ignored; lines beginning with '#' are ignored.
+
+# githubLogin: your Github username. Required.
+githubLogin = cdzombak
+
+# tagNamespace: namespace to use as a prefix for tags imported from Github. Optional, default is "github".
+tagNamespace = github
+
+# reviewTag: tag to apply to items touched by this sync tool, so you can review/file as desired. Optional, default is "review".
+reviewTag = review
+
+# githubOrg: the owner of the Github repo to sync. Required.
+githubOrg = cdzombak
+
+# githubRepo: the Github repo to sync. Required.
+githubRepo = thingshub
+
+# thingsArea: the area in Things to use for this project. Optional; default is None.
+thingsArea = Personal Software Projects
