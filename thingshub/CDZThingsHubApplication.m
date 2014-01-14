@@ -10,8 +10,12 @@
 #import "CDZThingsHubApplication.h"
 
 #import "CDZGithubAuthManager.h"
+#import "CDZIssueSyncEngine.h"
 
 @interface CDZThingsHubApplication ()
+
+@property (nonatomic, strong) CDZIssueSyncEngine *syncEngine;
+
 @end
 
 @implementation CDZThingsHubApplication
@@ -19,8 +23,8 @@
 - (void)start {
     [CDZGithubAuthManager authenticatedClient:^(OCTClient *authenticatedClient, NSError *error) {
         if (authenticatedClient) {
-            // TODO
-            [self exitWithCode:CDZThingsHubApplicationReturnCodeNormal];
+            self.syncEngine = [[CDZIssueSyncEngine alloc] initWithAuthenticatedClient:authenticatedClient];
+            // TODO: trigger sync; completion block should exit app
         } else {
             CDZCLILog(@"Authentication error: %@", error);
             [self exitWithCode:CDZThingsHubApplicationReturnCodeAuthError];

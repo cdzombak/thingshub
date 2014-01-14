@@ -22,9 +22,9 @@ Synchronize issues assigned to you, one-way, from a Github repo into Things.
 
 * Sync milestones as projects, creating them within the area or within Next; apply name, description, due date, tags as necessary. Mark closed milestones as complete, missing ones as cancelled, open ones as todo.
 * Find all local tasks for this project; in toSync list
-* For each remote task, update/create. Set name, state (todo, complete), tags. Move to proper area/project. Remove extant ones from toSync list.
+* For each open remote task assigned to me, update/create/mark for review. Set name, state (todo, complete), tags. Move to proper area/project. Remove extant ones from toSync list.
+* For each todo left in toSync, fetch it from the API. If it was unassigned to me, or otherwise is gone, cancel. If it was closed, complete. Mark for review.
 * Descriptions are set to the URL on creation, but never modified.
-* Cancel anything left in toSync; mark for review.
 
 ### PR Handling:
 
