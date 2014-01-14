@@ -32,10 +32,13 @@
     
     [CDZGithubAuthManager authenticatedClient:^(OCTClient *authenticatedClient, NSError *error) {
         if (authenticatedClient) {
+            CDZCLIPrint(@"Authenticated with username %@", authenticatedClient.user.login);
             self.syncEngine = [[CDZIssueSyncEngine alloc] initWithAuthenticatedClient:authenticatedClient];
+            
             // TODO: trigger sync; completion block should exit app
+            [self exitWithCode:CDZThingsHubApplicationReturnCodeNormal];
         } else {
-            CDZCLILog(@"Authentication error: %@", error);
+            CDZCLIPrint(@"Authentication error: %@", error);
             [self exitWithCode:CDZThingsHubApplicationReturnCodeAuthError];
         }
     }];
