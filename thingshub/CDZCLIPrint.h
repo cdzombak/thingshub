@@ -8,4 +8,6 @@
 
 @import Foundation;
 
+#define CDZCLILog(fmt, ...) CDZCLIPrint((@"%s [line %d]: " fmt), __PRETTY_FUNCTION__, __LINE__, ##__VA_ARGS__)
+
 extern void CDZCLIPrint(NSString *format, ...);

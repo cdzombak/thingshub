@@ -24,7 +24,7 @@ static const OCTClientAuthorizationScopes CDZThingsHubGithubScopes = (OCTClientA
             NSError *keychainError;
             BOOL success = [SSKeychain setPassword:client.token forService:CDZThingsHubKeychainServiceName account:client.user.login error:&keychainError];
             if (!success) {
-                NSLog(@"Failed saving token into keychain: %@", keychainError);
+                CDZCLILog(@"Failed saving token into keychain: %@", keychainError);
             }
         }
         

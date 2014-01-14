@@ -19,10 +19,10 @@
 - (void)start {
     [CDZGithubAuthManager authenticatedClient:^(OCTClient *authenticatedClient, NSError *error) {
         if (authenticatedClient) {
-            NSLog(@"Authenticated! %@", authenticatedClient);
+            // TODO
             [self exitWithCode:CDZThingsHubApplicationReturnCodeNormal];
         } else {
-            NSLog(@"Authentication error: %@", error);
+            CDZCLILog(@"Authentication error: %@", error);
             [self exitWithCode:CDZThingsHubApplicationReturnCodeAuthError];
         }
     }];

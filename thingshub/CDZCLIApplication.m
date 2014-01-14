@@ -23,7 +23,7 @@
 }
 
 - (void)start {
-    NSLog(@"%s is abstract and must be overridden", __PRETTY_FUNCTION__);
+    CDZCLILog(@"%s is abstract and must be overridden", __PRETTY_FUNCTION__);
     [self doesNotRecognizeSelector:_cmd];
 }
 
