@@ -15,9 +15,11 @@ PODS:
   - ReactiveCocoa/Core (2.1.8):
     - ReactiveCocoa/no-arc
   - ReactiveCocoa/no-arc (2.1.8)
+  - SSKeychain (1.2.1)
 
 DEPENDENCIES:
   - OctoKit (~> 0.4)
+  - SSKeychain (~> 1.2)
 
 SPEC CHECKSUMS:
   AFNetworking: 61fdd49e2ffe6380378df37b3b6e70630bb9dd66
@@ -25,5 +27,6 @@ SPEC CHECKSUMS:
   Mantle: abc3b0c81bc66eb624cf9cebb8640e377d5a44ae
   OctoKit: bbd2c864e5ab1c2e47eac1f9a21e16c86cc86dc4
   ReactiveCocoa: 0db710a0afa1c627a64470e5c912a3870d4854ae
+  SSKeychain: d18926838c2e7cd342e2a49e9f869858e49f035a
 
 COCOAPODS: 0.29.0
