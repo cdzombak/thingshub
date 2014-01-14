@@ -32,6 +32,8 @@
         _exitCode = exitCode;
         _isFinished = YES;
     }
+    
+    exit(exitCode);
 }
 
 - (BOOL)isFinished {
