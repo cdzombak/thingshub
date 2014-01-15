@@ -9,13 +9,16 @@
 #import <OctoKit/OctoKit.h>
 #import "NSFileHandle+CDZCLIStringReading.h"
 
+@class RACSignal;
+
 @interface CDZGithubAuthManager : NSObject
 
 /**
- Asynchronously gets an authenticated client, prompting the user for input via the CLI as needed.
- 
+ Asynchronously returns an authenticated `OCTClient` as the next value in the
+ signal, prompting the user for input via the CLI as needed.
+
  Persists the OAuth token in the Keychain and uses it when possible.
  */
-+ (void)authenticatedClient:(void(^)(OCTClient *authenticatedClient, NSError *error))completionBlock forUsername:(NSString *)githubLogin;
++ (RACSignal *)authenticatedClientForUsername:(NSString *)githubLogin;
 
 @end
