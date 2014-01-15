@@ -46,6 +46,7 @@
 		A21C4EE118848D840063467F /* CDZThingsHubApplication.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CDZThingsHubApplication.m; sourceTree = "<group>"; };
 		A21C4EE618848FED0063467F /* CDZCLIPrint.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CDZCLIPrint.h; sourceTree = "<group>"; };
 		A21C4EE718848FED0063467F /* CDZCLIPrint.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CDZCLIPrint.m; sourceTree = "<group>"; };
+		A236CCDD188619870073F287 /* Things.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Things.h; sourceTree = "<group>"; };
 		A2E94DD31884B23800079CD3 /* CDZCLIApplication.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CDZCLIApplication.h; sourceTree = "<group>"; };
 		A2E94DD41884B23800079CD3 /* CDZCLIApplication.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CDZCLIApplication.m; sourceTree = "<group>"; };
 		A2E94DD61884D02900079CD3 /* NSFileHandle+CDZCLIStringReading.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSFileHandle+CDZCLIStringReading.h"; sourceTree = "<group>"; };
@@ -118,6 +119,7 @@
 				A2E94DE91884F41800079CD3 /* CDZThingsHubConfiguration.m */,
 				A2E94DEB1885051E00079CD3 /* CDZThingsHubErrorDomain.h */,
 				A2E94DEC1885051E00079CD3 /* CDZThingsHubErrorDomain.m */,
+				A236CCDD188619870073F287 /* Things.h */,
 				A21C4ED918848BB30063467F /* thingshub.1 */,
 				A21C4ED718848BB30063467F /* Supporting Files */,
 			);
