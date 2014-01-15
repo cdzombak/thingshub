@@ -39,9 +39,10 @@ Synchronize issues assigned to you, one-way, from a Github repo into Things.
 * on running, get current dir and walk up until I find a .thingshub file. error if I don't find one.
 * merge with config from ~/.thingshubconfig ; local takes priority
 
-### Identifying synced tasks:
+### Identifying synced items:
 
-* //thingshub/ORG/REPO/###//
+* //thingshub/ORG/REPO/issue/###//
+* //thingshub/ORG/REPO/milestone/###//
 
 ## Workflow notes:
 
