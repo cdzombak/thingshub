@@ -12,8 +12,8 @@
 
 - (NSString *)cdz_availableString {
     NSData *availableData = [self availableData];
-    NSString *stringWithTrailingNewline = [[NSString alloc] initWithData:availableData encoding:NSUTF8StringEncoding];
-    return [stringWithTrailingNewline substringToIndex:(stringWithTrailingNewline.length - 1)];
+    NSString *string = [[NSString alloc] initWithData:availableData encoding:NSUTF8StringEncoding];
+    return string.length && [string characterAtIndex:string.length-1] == '\n' ? [string substringToIndex:(string.length - 1)] : string;
 }
 
 @end

@@ -10,7 +10,7 @@
 
 @interface NSFileHandle (CDZCLIStringReading)
 
-/// Read user input from stdin, ie. via [[NSFileHandle fileHandleWithStandardInput] cdz_availableString]
+/// Read this handle's `-availableData` as a string, stripping any trailing newline.
 - (NSString *)cdz_availableString;
 
 @end
