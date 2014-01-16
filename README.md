@@ -61,6 +61,7 @@ Synchronize issues assigned to you, one-way, from a Github repo into Things.
 
 ## Future features:
 
+* config: look at ~ specifically first, then search current path; don't require current path to be in ~
 * allow mapping github tag -> local tag (ie. in progress)
 * man page/interactive help
 * allow logging out without manually changning keychain
