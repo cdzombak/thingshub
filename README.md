@@ -58,6 +58,7 @@ Synchronize issues assigned to you, one-way, from a Github repo into Things.
 * Issues are usually closed as side effects of other operations (merges, commits) anyway
 * Descriptions are often used in Things for personal notes
 * You don't want your local tags DB to reflect 1:1 Github - too noisy
+* With one-way sync, the entire operation is idempotent, so simply re-running the sync after a partial failure is fine
 
 ## Future features:
 
