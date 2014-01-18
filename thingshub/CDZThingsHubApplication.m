@@ -55,17 +55,23 @@
     }];
     
     /* Exit with appropriate error code */
+    
+    RACSignal *returnCodeSignal = [RACSignal merge:
+   @[
+     [configurationSignal catch:^RACSignal *(NSError *error) {
+        return [RACSignal return:@(CDZThingsHubApplicationReturnCodeConfigError)];
+    }],
+     [authClientSignal catch:^RACSignal *(NSError *error) {
+        return [RACSignal return:@(CDZThingsHubApplicationReturnCodeAuthError)];
+    }],
+     [[syncEngineSignal then:^RACSignal *{
+        return [RACSignal return:@(CDZThingsHubApplicationReturnCodeNormal)];
+    }] catch:^RACSignal *(NSError *error) {
+        return [RACSignal return:@(CDZThingsHubApplicationReturnCodeSyncFailed)];
+    }],
+     ]];
 
-    [self rac_liftSelector:@selector(exitWithCode:)
-      withSignalsFromArray:@[
-                             [authClientSignal catch:^RACSignal *(NSError *error) {
-                                                        return [RACSignal return:@(CDZThingsHubApplicationReturnCodeAuthError)];
-                             }],
-                             [[syncEngineSignal mapReplace:@(CDZThingsHubApplicationReturnCodeNormal)]
-                                                    catch:^RACSignal *(NSError *error) {
-                                                        return [RACSignal return:@(CDZThingsHubApplicationReturnCodeSyncFailed)];
-                                                    }],
-                             ]];
+    [self rac_liftSelector:@selector(exitWithCode:) withSignalsFromArray:@[ returnCodeSignal ]];
 }
 
 @end
