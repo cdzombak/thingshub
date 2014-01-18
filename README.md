@@ -1,8 +1,37 @@
 # ThingsHub
 
-Synchronize issues assigned to you, one-way, from a Github repo into Things.
+Synchronize issues assigned to you, one-way, from a Github repo into Things. (Or, soon, to Omnifocus.)
 
 *A more complete README, featuring complete sentences, is forthcoming.*
+
+## Dev
+
+Run `scripts/bootstrap` to set up a local, self-contained environment for CocoaPods. Its only external dependency is Bundler.
+
+## Usage
+
+### Installation
+
+*TBD* to `/usr/local/bin`, hopefully via Homebrew
+
+### Configuration
+
+See `thingshubconfig.example` in this repo for docs on the config system.
+
+### Workflow notes
+
+* This never updates Github from Things; GH is the canonical source of truth.
+* This will always create issues in Next, except for issues that have no area *or* project. You can move to Today/Someday as desired.
+* This *will* move issues to areas/projects to reflect milestone changes. This doesn't touch Today/Next/Someday.
+
+#### Why GitHub as the source of truth?
+
+* Issues may be modified by many people, vastly increasing the chance of conflicts
+* Conflict management is easy this way, and we probably won't lose much data
+* Issues are usually closed as side effects of other operations (merges, commits) anyway
+* Descriptions are often used in Things for personal notes
+* You don't want your local tags DB to reflect 1:1 Github - too noisy
+* With one-way sync, the entire operation is idempotent, so simply re-running the sync after a partial failure is fine
 
 ## Implementation Notes
 
@@ -44,21 +73,6 @@ Synchronize issues assigned to you, one-way, from a Github repo into Things.
 * //thingshub/ORG/REPO/issue/###//
 * //thingshub/ORG/REPO/milestone/###//
 
-## Workflow notes:
-
-* brew this shit; goes in /usr/local/bin
-* This never updates Github from Things; GH is the canonical source of truth.
-* This will always create issues in Next, except for issues that have no area *or* project. You can move to Today/Someday as desired.
-* This *will* move issues to areas/projects to reflect milestone changes. This doesn't touch Today/Next/Someday.
-
-### Why GitHub as the source of truth?
-
-* Issues may be modified by many people, vastly increasing the chance of conflicts
-* Conflict management is easy this way, and we probably won't lose much data
-* Issues are usually closed as side effects of other operations (merges, commits) anyway
-* Descriptions are often used in Things for personal notes
-* You don't want your local tags DB to reflect 1:1 Github - too noisy
-
 ## Future features:
 
 * config: look at ~ specifically first, then search current path; don't require current path to be in ~
@@ -68,8 +82,8 @@ Synchronize issues assigned to you, one-way, from a Github repo into Things.
 * Use contacts/delegation for issues assigned to others.
 * OmniFocus should allow similar implementation
 
-## Usage
+## Contributors
 
-### Configuration
+Thanks to:
 
-See `thingshubconfig.example` in this repo for docs on the config system.
+* [Andrew Sardone](https://github.com/andrewsardone/) - [@andrewa2](https://twitter.com/andrewa2)
