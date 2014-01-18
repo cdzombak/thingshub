@@ -6,7 +6,6 @@
 //  Copyright (c) 2014 Chris Dzombak. All rights reserved.
 //
 
-#import <ReactiveCocoa/ReactiveCocoa.h>
 #import <OctoKit/OctoKit.h>
 
 #import "CDZIssueSyncEngine.h"
