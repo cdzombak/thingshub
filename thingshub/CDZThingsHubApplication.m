@@ -6,7 +6,9 @@
 //  Copyright (c) 2014 Chris Dzombak. All rights reserved.
 //
 
+#import <ReactiveCocoa/ReactiveCocoa.h>
 #import <OctoKit/OctoKit.h>
+
 #import "CDZThingsHubApplication.h"
 
 #import "CDZGithubAuthManager.h"
