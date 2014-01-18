@@ -6,6 +6,7 @@
 //  Copyright (c) 2014 Chris Dzombak. All rights reserved.
 //
 
+#import <ReactiveCocoa/ReactiveCocoa.h>
 #import "CDZThingsHubConfiguration.h"
 #import "CDZThingsHubErrorDomain.h"
 
@@ -27,17 +28,15 @@ static NSString * const CDZThingsHubConfigDefaultReviewTagName = @"review";
 
 @implementation CDZThingsHubConfiguration
 
-+ (instancetype)currentConfigurationWithError:(NSError **)error {
-    static CDZThingsHubConfiguration *currentConfig;
-    
-    static dispatch_once_t onceToken;
-    dispatch_once(&onceToken, ^{
-        currentConfig = [[CDZThingsHubConfiguration alloc] init];
++ (RACSignal *)currentConfiguration {
+    RACSignal *configSignal = [RACSignal createSignal:^RACDisposable *(id<RACSubscriber> subscriber) {
+        CDZThingsHubConfiguration *currentConfig = [[CDZThingsHubConfiguration alloc] init];
         
         NSString *homePath = NSHomeDirectory();
         NSArray *homePathComponents = [homePath pathComponents];
         NSArray *workingPathComponents = [[[NSFileManager defaultManager] currentDirectoryPath] pathComponents];
         
+        // I plan to make this less homedir-centric once the rest of the app works. --CDZ Jan 17, 2014
         if (workingPathComponents.count < [homePath pathComponents].count
             || !([[workingPathComponents subarrayWithRange:NSMakeRange(0, homePathComponents.count)] isEqualToArray:homePathComponents])) {
             CDZCLIPrint(@"This tool must be run from within your home directory: %@", homePath);
@@ -57,19 +56,23 @@ static NSString * const CDZThingsHubConfigDefaultReviewTagName = @"review";
             }
         }
         
-        // Finally, allow command-line args to override this:
+        // Finally, allow command-line args to override current config:
         [currentConfig mergeInPriorityConfiguration:[self configurationFromDefaults]];
-    });
-    
-    NSError *validationError = [currentConfig validationError];
-    if (validationError) {
-        if (error) {
-            *error = validationError;
+        
+        NSError *validationError = [currentConfig validationError];
+        if (validationError) {
+            [subscriber sendError:validationError];
+        } else {
+            [subscriber sendNext:currentConfig];
+            [subscriber sendCompleted];
         }
-        return nil;
-    }
-    
-    return currentConfig;
+        
+        return nil; // no cleanup necessary here.
+    }];
+
+    return [[RACSignal defer:^RACSignal *{
+        return configSignal;
+    }] replayLazily];
 }
 
 /**

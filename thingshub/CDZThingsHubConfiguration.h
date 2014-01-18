@@ -9,15 +9,14 @@
 @interface CDZThingsHubConfiguration : NSObject
 
 /**
- The configuration for the current working directory.
+ Asynchronously returns the app's current `CZDThingsHubConfiguration` as the next value in the signal.
  
- Walks up from the current directory until it finds a ".thingshubconfig" file.
- Merges that with "~/.thingshubconfig"; values in the local config override those in the global.
+ Walks from ~ down to the current directory, merging in .thingshubconfig files as they are found.
+ Command-line parameters override any parameters set in the merged config file.
  
- If there's a validation error, the returned value will be null, and your error
- variable will be populated.
+ If there's a validation error, the signal will complete with an error.
  */
-+ (instancetype)currentConfigurationWithError:(NSError **)error;
++ (RACSignal *)currentConfiguration;
 
 /// Global (typically); configured by "tagNamespace = ". Default is "github".
 @property (nonatomic, copy, readonly) NSString *tagNamespace;
