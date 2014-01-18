@@ -22,69 +22,61 @@ static const OCTClientAuthorizationScopes CDZThingsHubGithubScopes = (OCTClientA
 
 @implementation CDZGithubAuthManager
 
-+ (void)authenticatedClient:(void(^)(OCTClient *authenticatedClient, NSError *error))completionBlock forUsername:(NSString *)githubLogin {
++ (RACSignal *)authenticatedClientForUsername:(NSString *)githubLogin {
     NSParameterAssert(githubLogin);
-    
-    completionBlock = ^(OCTClient *client, NSError *error) {
-        if (client && !error) {
+
+    [OCTClient setClientID:CDZThingsHubGithubClientID clientSecret:CDZThingsHubGithubClientSecret];
+    OCTUser *user = [OCTUser userWithLogin:githubLogin server:OCTServer.dotComServer];
+    NSString *storedToken = [SSKeychain passwordForService:CDZThingsHubKeychainServiceName account:githubLogin];
+
+    return [[[[RACSignal
+        defer:^RACSignal *{
+            if (storedToken) {
+                return [RACSignal return:[OCTClient authenticatedClientWithUser:user token:storedToken]];
+            }
+            return [self authenticatedClientForUser:user];
+        }]
+        doNext:^(OCTClient *client) {
             NSError *keychainError;
-            BOOL success = [SSKeychain setPassword:client.token forService:CDZThingsHubKeychainServiceName account:client.user.login error:&keychainError];
+            BOOL success = [SSKeychain setPassword:client.token
+                                        forService:CDZThingsHubKeychainServiceName
+                                           account:client.user.login
+                                             error:&keychainError];
             if (!success) {
                 CDZCLILog(@"Failed saving token into keychain: %@", keychainError);
             }
-        }
-        
-        if (completionBlock) completionBlock(client, error);
-    };
-    
-    [OCTClient setClientID:CDZThingsHubGithubClientID clientSecret:CDZThingsHubGithubClientSecret];
-    OCTUser *user = [OCTUser userWithLogin:githubLogin server:OCTServer.dotComServer];
-    
-    NSString *storedToken = [SSKeychain passwordForService:CDZThingsHubKeychainServiceName account:githubLogin];
-    
-    if (storedToken) {
-        OCTClient *client = [OCTClient authenticatedClientWithUser:user token:storedToken];
-        completionBlock(client, nil);
-    } else {
-        [self attemptAuthFlowWithUser:user completion:completionBlock];
-    }
+        }]
+   		replayLazily]
+        setNameWithFormat:@"+authenticatedClientForUsername: %@", githubLogin];
 }
 
-+ (void)attemptAuthFlowWithUser:(OCTUser *)user completion:(void(^)(OCTClient *authenticatedClient, NSError *error))completionBlock {
++ (RACSignal *)authenticatedClientForUser:(OCTUser *)user {
     NSParameterAssert(user);
-    NSParameterAssert(completionBlock);
-    
+
     NSFileHandle *stdinput = [NSFileHandle fileHandleWithStandardInput];
     CDZCLIPrint(@"Github password for user %@:", user.login);
     NSString *password = [stdinput cdz_availableString];
-    
-    [[[OCTClient signInAsUser:user password:password oneTimePassword:nil scopes:CDZThingsHubGithubScopes] deliverOn:RACScheduler.mainThreadScheduler]
-     subscribeNext:^(OCTClient *authenticatedClient) {
-         completionBlock(authenticatedClient, nil);
-     } error:^(NSError *error) {
-         if ([error cdz_isGithubTwoFactorAuthRequiredError]) {
-             [self attemptTwoFactorAuthWithUser:user password:password completion:completionBlock];
-         } else {
-             completionBlock(nil, error);
-         }
-     }];
+
+    return [[OCTClient signInAsUser:user password:password oneTimePassword:nil scopes:CDZThingsHubGithubScopes]
+        catch:^RACSignal *(NSError *error) {
+            if ([error cdz_isGithubTwoFactorAuthRequiredError]) {
+                return [self authenticatedClientForUserWithTwoFactorAuth:user password:password];
+            }
+            else {
+                return [RACSignal error:error];
+            }
+        }];
 }
 
-+ (void)attemptTwoFactorAuthWithUser:(OCTUser *)user password:(NSString *)password completion:(void(^)(OCTClient *authenticatedClient, NSError *error))completionBlock {
++ (RACSignal *)authenticatedClientForUserWithTwoFactorAuth:(OCTUser *)user password:(NSString *)password {
     NSParameterAssert(user);
     NSParameterAssert(password);
-    NSParameterAssert(completionBlock);
-    
+
     NSFileHandle *stdinput = [NSFileHandle fileHandleWithStandardInput];
     CDZCLIPrint(@"Two-factor auth code:");
     NSString *twoFactorCode = [stdinput cdz_availableString];
-    
-    [[[OCTClient signInAsUser:user password:password oneTimePassword:twoFactorCode scopes:CDZThingsHubGithubScopes] deliverOn:RACScheduler.mainThreadScheduler]
-     subscribeNext:^(OCTClient *authenticatedClient) {
-         completionBlock(authenticatedClient, nil);
-     } error:^(NSError *error) {
-         completionBlock(nil, error);
-     }];
+
+    return [OCTClient signInAsUser:user password:password oneTimePassword:twoFactorCode scopes:CDZThingsHubGithubScopes];
 }
 
 @end

@@ -29,19 +29,30 @@
         CDZCLIPrint(@"Configuration error: %@", [validationError localizedDescription]);
         [self exitWithCode:CDZThingsHubApplicationReturnCodeConfigError];
     }
-    
-    [CDZGithubAuthManager authenticatedClient:^(OCTClient *authenticatedClient, NSError *error) {
-        if (authenticatedClient) {
-            CDZCLIPrint(@"Authenticated %@ with Github", authenticatedClient.user.login);
-            self.syncEngine = [[CDZIssueSyncEngine alloc] initWithAuthenticatedClient:authenticatedClient];
-            
-            // TODO: trigger sync; completion block should exit app
-            [self exitWithCode:CDZThingsHubApplicationReturnCodeNormal];
-        } else {
-            CDZCLIPrint(@"Github authentication error: %@", error);
-            [self exitWithCode:CDZThingsHubApplicationReturnCodeAuthError];
-        }
-    } forUsername:self.currentConfiguration.githubLogin];
+
+    RACSignal *authClientSignal = [CDZGithubAuthManager authenticatedClientForUsername:self.currentConfiguration.githubLogin];
+
+    RAC(self, syncEngine) = [[authClientSignal
+        map:^id(id client) {
+            return [[CDZIssueSyncEngine alloc] initWithAuthenticatedClient:client];
+        }]
+        catch:^RACSignal *(NSError *error) {
+            return [RACSignal return:NSNull.null];
+        }];
+
+    [RACObserve(self, syncEngine) subscribeNext:^(id x) {
+        // TODO: trigger sync whenever the syncEngine changes
+    }];
+
+    RACSignal *authenticated = [[authClientSignal mapReplace:@YES] catch:^RACSignal *(NSError *error) {
+        return [RACSignal return:@NO];
+    }];
+
+    [self rac_liftSelector:@selector(exitWithCode:) withSignalsFromArray:@[
+        [RACSignal if:authenticated
+                   then:[RACSignal return:@(CDZThingsHubApplicationReturnCodeNormal)]
+                   else:[RACSignal return:@(CDZThingsHubApplicationReturnCodeAuthError)]]
+    ]];
 }
 
 @end
