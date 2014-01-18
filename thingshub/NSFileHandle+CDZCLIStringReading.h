@@ -1,6 +1,6 @@
 //
 //  NSFileHandle+CDZCLIStringReading.h
-//  thingshub
+//  CDZCLIApplication
 //
 //  Created by Chris Dzombak on 1/13/14.
 //  Copyright (c) 2014 Chris Dzombak. All rights reserved.
@@ -10,7 +10,8 @@
 
 @interface NSFileHandle (CDZCLIStringReading)
 
-/// Read this handle's `-availableData` as a string, stripping any trailing newline.
+/// Read this handle's `-availableData` as a string, stripping a single trailing newline.
+/// Useful with +[NSFileHandle fileHandleWithStandardInput].
 - (NSString *)cdz_availableString;
 
 @end
