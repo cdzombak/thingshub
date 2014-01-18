@@ -10,7 +10,8 @@
 
 @interface NSFileHandle (CDZCLIStringReading)
 
-/// Read this handle's `-availableData` as a string, stripping any trailing newline.
+/// Read this handle's `-availableData` as a string, stripping a single trailing newline.
+/// Useful with +[NSFileHandle fileHandleWithStandardInput].
 - (NSString *)cdz_availableString;
 
 @end
