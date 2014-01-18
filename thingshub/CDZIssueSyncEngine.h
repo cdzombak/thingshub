@@ -19,7 +19,8 @@
                    configuration:(CDZThingsHubConfiguration *)config
              authenticatedClient:(OCTClient *)client;
 
-/// Returns a signal which will either complete or error after the sync operation.
+/// Returns a signal which will asynchronously return strings as status updates,
+/// and either complete or error after the sync operation.
 - (RACSignal *)sync;
 
 @end
