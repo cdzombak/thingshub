@@ -6,7 +6,9 @@
 //  Copyright (c) 2014 Chris Dzombak. All rights reserved.
 //
 
+#import <ReactiveCocoa/ReactiveCocoa.h>
 #import <OctoKit/OctoKit.h>
+
 #import "CDZIssueSyncEngine.h"
 
 static NSString * const CDZThingsHubHTTPMethodGET = @"GET";
@@ -19,12 +21,19 @@ static NSString * const CDZThingsHubHTTPMethodGET = @"GET";
 
 @implementation CDZIssueSyncEngine
 
-- (instancetype)initWithAuthenticatedClient:(OCTClient *)client {
+- (instancetype)initWithDelegate:(id<CDZIssueSyncDelegate>)delegate configuration:(CDZThingsHubConfiguration *)config authenticatedClient:(OCTClient *)client {
     self = [super init];
     if (self) {
         _client = client;
+        _delegate = delegate;
+        _config = config;
     }
     return self;
+}
+
+- (RACSignal *)sync {
+}
+
 }
 
 @end

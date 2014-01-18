@@ -16,45 +16,56 @@
 #import "CDZThingsHubConfiguration.h"
 
 @interface CDZThingsHubApplication ()
-
-@property (nonatomic, strong) CDZIssueSyncEngine *syncEngine;
-@property (nonatomic, strong) CDZThingsHubConfiguration *currentConfiguration;
-
 @end
 
 @implementation CDZThingsHubApplication
 
 - (void)start {
-    NSError *validationError;
-    self.currentConfiguration = [CDZThingsHubConfiguration currentConfigurationWithError:&validationError];
-    if (!self.currentConfiguration || validationError) {
-        CDZCLIPrint(@"Configuration error: %@", [validationError localizedDescription]);
-        [self exitWithCode:CDZThingsHubApplicationReturnCodeConfigError];
-    }
-
-    RACSignal *authClientSignal = [CDZGithubAuthManager authenticatedClientForUsername:self.currentConfiguration.githubLogin];
-
-    RAC(self, syncEngine) = [[authClientSignal
-        map:^id(id client) {
-            return [[CDZIssueSyncEngine alloc] initWithAuthenticatedClient:client];
-        }]
-        catch:^RACSignal *(NSError *error) {
-            return [RACSignal return:NSNull.null];
-        }];
-
-    [RACObserve(self, syncEngine) subscribeNext:^(id x) {
-        // TODO: trigger sync whenever the syncEngine changes
+    /* Core App Flow */
+    
+    RACSignal *configurationSignal = [CDZThingsHubConfiguration currentConfiguration];
+    
+    RACSignal *authClientSignal = [configurationSignal map:^id(CDZThingsHubConfiguration *config) {
+        return [CDZGithubAuthManager authenticatedClientForUsername:config.githubLogin];
+    }];
+    
+    RACSignal *syncEngineSignal = [[RACSignal zip:@[configurationSignal, authClientSignal]] map:^id(RACTuple *configAndClient) {
+        RACTupleUnpack(CDZThingsHubConfiguration *configuration, OCTClient *client) = configAndClient;
+        // TODO: create a sync delegate & pass it in here.
+        return [[[CDZIssueSyncEngine alloc] initWithDelegate:nil
+                                              configuration:configuration
+                                        authenticatedClient:client]
+                sync];
     }];
 
-    RACSignal *authenticated = [[authClientSignal mapReplace:@YES] catch:^RACSignal *(NSError *error) {
-        return [RACSignal return:@NO];
+    /* Print errors */
+    
+    // TODO: can I use some RAC trickery to combine these error format messages, and the signals they represent, into an error signal, therefore reducing code duplication below? --CDZ Jan 17, 2014
+    
+    [configurationSignal doError:^(NSError *error) {
+        CDZCLIPrint(@"Configuration error: %@", error);
     }];
+    
+    [authClientSignal doError:^(NSError *error) {
+        CDZCLIPrint(@"Authentication error: %@", error);
+    }];
+    
+    [syncEngineSignal doError:^(NSError *error) {
+        CDZCLIPrint(@"Sync failed: %@", error);
+    }];
+    
+    /* Exit with appropriate error code */
 
-    [self rac_liftSelector:@selector(exitWithCode:) withSignalsFromArray:@[
-        [RACSignal if:authenticated
-                   then:[RACSignal return:@(CDZThingsHubApplicationReturnCodeNormal)]
-                   else:[RACSignal return:@(CDZThingsHubApplicationReturnCodeAuthError)]]
-    ]];
+    [self rac_liftSelector:@selector(exitWithCode:)
+      withSignalsFromArray:@[
+                             [authClientSignal catch:^RACSignal *(NSError *error) {
+                                                        return [RACSignal return:@(CDZThingsHubApplicationReturnCodeAuthError)];
+                             }],
+                             [[syncEngineSignal mapReplace:@(CDZThingsHubApplicationReturnCodeNormal)]
+                                                    catch:^RACSignal *(NSError *error) {
+                                                        return [RACSignal return:@(CDZThingsHubApplicationReturnCodeSyncFailed)];
+                                                    }],
+                             ]];
 }
 
 @end
