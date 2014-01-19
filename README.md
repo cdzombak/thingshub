@@ -75,12 +75,18 @@ See `thingshubconfig.example` in this repo for docs on the config system.
 
 ## Future features:
 
+### 1.0
+
 * config: look at ~ specifically first, then search current path; don't require current path to be in ~
 * allow mapping github tag -> local tag (ie. in progress)
+* allow adding prefix to project names
+* select delegate (things/OF) via command line
+
+### 1.1
+
 * man page/interactive help
 * allow logging out without manually changning keychain
 * Use contacts/delegation for issues assigned to others.
-* OmniFocus should allow similar implementation
 
 ## Contributors
 
