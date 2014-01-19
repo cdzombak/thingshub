@@ -58,13 +58,16 @@
     
     RACSignal *returnCodeSignal = [RACSignal merge:
    @[
-     [configurationSignal catch:^RACSignal *(NSError *error) {
+     [[configurationSignal ignoreValues]
+      catch:^RACSignal *(NSError *error) {
         return [RACSignal return:@(CDZThingsHubApplicationReturnCodeConfigError)];
     }],
-     [authClientSignal catch:^RACSignal *(NSError *error) {
+     [[authClientSignal ignoreValues]
+      catch:^RACSignal *(NSError *error) {
         return [RACSignal return:@(CDZThingsHubApplicationReturnCodeAuthError)];
     }],
-     [[syncEngineSignal then:^RACSignal *{
+     [[[syncEngineSignal ignoreValues]
+      then:^RACSignal *{
         return [RACSignal return:@(CDZThingsHubApplicationReturnCodeNormal)];
     }] catch:^RACSignal *(NSError *error) {
         return [RACSignal return:@(CDZThingsHubApplicationReturnCodeSyncFailed)];
