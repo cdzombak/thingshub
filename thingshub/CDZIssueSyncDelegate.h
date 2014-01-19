@@ -56,7 +56,7 @@
  Your delegate may assume (and may assert) that this method will be called only once.
  
  @see -removeMilestoneFromLocalCollection:
- @see -cancelMilestonesInLocalCollection:
+ @see -cancelMilestonesInLocalCollection
  */
 - (void)collectExtantMilestones;
 
@@ -69,7 +69,7 @@
  Your delegate may assume (and may assert) that `-collectExtantMilestones` was called before this method.
  
  @see -collectExtantMilestones
- @see -cancelMilestonesInLocalCollection:
+ @see -cancelMilestonesInLocalCollection
  */
 - (void)removeMilestoneFromLocalCollection:(NSDictionary *)milestone;
 

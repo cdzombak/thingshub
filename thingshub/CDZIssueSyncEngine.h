@@ -12,6 +12,7 @@
 @class CDZThingsHubConfiguration;
 @protocol CDZIssueSyncDelegate;
 
+/// Contains the syncing logic needed to sync issues and milestones from a Github API client to an issue sync delegate.
 @interface CDZIssueSyncEngine : NSObject
 
 /// Designated initializer

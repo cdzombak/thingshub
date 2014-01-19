@@ -8,6 +8,7 @@
 
 #import "CDZIssueSyncDelegate.h"
 
+/// Concrete implemention of CDZIssueSyncDelegate which synchronizes to Things.app via Scripting Bridge
 @interface CDZThingsSyncDelegate : NSObject <CDZIssueSyncDelegate>
 
 @end
