@@ -11,8 +11,10 @@
 #import "CDZIssueSyncEngine.h"
 
 #import "CDZThingsHubConfiguration.h"
+#import "CDZThingsHubErrorDomain.h"
 #import "CDZIssueSyncDelegate.h"
 #import "CDZThingsHubErrorDomain.h"
+#import "NSDictionary+GithubAPIAdditions.h"
 
 static NSString * const CDZHTTPMethodGET = @"GET";
 
@@ -42,7 +44,9 @@ static NSString * const CDZHTTPMethodGET = @"GET";
 }
 
 - (RACSignal *)sync {
-    RACSignal *syncStatusSignal = [[RACSignal return:@"Printing milestones (temporary)"] concat:[self syncMilestones]];
+    [self.delegate engineWillBeginSync:self];
+    
+    RACSignal *syncStatusSignal = [[RACSignal return:@"milestones"] concat:[self syncMilestones]];
     
     return [[RACSignal defer:^RACSignal *{
         return syncStatusSignal;
@@ -58,16 +62,21 @@ static NSString * const CDZGithubMilestoneStateClosed = @"closed";
 @implementation CDZIssueSyncEngine (Milestones)
 
 - (RACSignal *)syncMilestones {
-//    return [RACSignal error:[NSError errorWithDomain:kThingsHubErrorDomain code:CDZErrorCodeTestError userInfo:@{ NSLocalizedDescriptionKey: @"Test error" }]];
+    [self.delegate collectExtantMilestones];
+    
     return [RACSignal createSignal:^RACDisposable *(id<RACSubscriber> subscriber) {
-        return [[RACSignal merge:@[[self milestonesInState:CDZGithubMilestoneStateOpen],
-                            [self milestonesInState:CDZGithubMilestoneStateClosed]]]
+        return [[RACSignal merge:@[[self milestonesInState:CDZGithubMilestoneStateOpen], [self milestonesInState:CDZGithubMilestoneStateClosed]]]
         subscribeNext:^(NSDictionary *milestone) {
-            // TODO: sync here instead of printing
-            CDZCLIPrint(@" %@", milestone[@"title"]);
+            if (![self.delegate syncMilestone:milestone createIfNeeded:[milestone cdz_issueIsOpen] updateExtant:YES]) {
+                [subscriber sendError:[NSError errorWithDomain:kThingsHubErrorDomain code:CDZErrorCodeSyncFailure userInfo:@{NSLocalizedDescriptionKey: [NSString stringWithFormat:@"Sync delegate couldn't update milestone %@", milestone]}]];
+                // TODO: how can I abort the sync here? --CDZ Jan 18, 2014
+                return;
+            }
+            [self.delegate removeMilestoneFromLocalCollection:milestone];
         } error:^(NSError *error) {
             [subscriber sendError:error];
         } completed:^{
+            [self.delegate cancelMilestonesInLocalCollection];
             [subscriber sendCompleted];
         }];
     }];
