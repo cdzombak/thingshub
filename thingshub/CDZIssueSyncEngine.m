@@ -18,6 +18,10 @@
 
 static NSString * const CDZHTTPMethodGET = @"GET";
 
+static NSString * const CDZGithubStateKey = @"state";
+static NSString * const CDZGithubStateValueOpen = @"open";
+static NSString * const CDZGithubStateValueClosed = @"closed";
+
 @interface CDZIssueSyncEngine ()
 @property (nonatomic, readonly) OCTClient *client;
 @property (nonatomic, readonly) id<CDZIssueSyncDelegate> delegate;
@@ -55,17 +59,13 @@ static NSString * const CDZHTTPMethodGET = @"GET";
 
 @end
 
-static NSString * const CDZGithubMilestoneState = @"state";
-static NSString * const CDZGithubMilestoneStateOpen = @"open";
-static NSString * const CDZGithubMilestoneStateClosed = @"closed";
-
 @implementation CDZIssueSyncEngine (Milestones)
 
 - (RACSignal *)syncMilestones {
     [self.delegate collectExtantMilestones];
     
     return [RACSignal createSignal:^RACDisposable *(id<RACSubscriber> subscriber) {
-        return [[RACSignal merge:@[[self milestonesInState:CDZGithubMilestoneStateOpen], [self milestonesInState:CDZGithubMilestoneStateClosed]]]
+        return [[RACSignal merge:@[[self milestonesInState:CDZGithubStateValueOpen], [self milestonesInState:CDZGithubStateValueClosed]]]
         subscribeNext:^(NSDictionary *milestone) {
             if (![self.delegate syncMilestone:milestone createIfNeeded:[milestone cdz_gh_isOpen] updateExtant:YES]) {
                 [subscriber sendError:[NSError errorWithDomain:kThingsHubErrorDomain code:CDZErrorCodeSyncFailure userInfo:@{NSLocalizedDescriptionKey: [NSString stringWithFormat:@"Sync delegate couldn't update milestone %@", milestone]}]];
@@ -88,7 +88,7 @@ static NSString * const CDZGithubMilestoneStateClosed = @"closed";
     NSString *path = [NSString stringWithFormat:@"repos/%@/%@/milestones", self.config.githubOrgName, self.config.githubRepoName];
     NSURLRequest *milestonesRequest = [self.client requestWithMethod:CDZHTTPMethodGET
                                                                 path:path
-                                                          parameters:@{ CDZGithubMilestoneState: state } ];
+                                                          parameters:@{ CDZGithubStateKey: state } ];
     
     return [[self.client enqueueRequest:milestonesRequest resultClass:Nil] map:^id(id value) {
         return [value parsedResult];
