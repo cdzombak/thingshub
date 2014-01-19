@@ -33,6 +33,10 @@
     
     RACSignal *syncEngineSignal = [[[[RACSignal zip:@[configurationSignal, authClientSignal]] map:^id(RACTuple *configAndClient) {
         RACTupleUnpack(CDZThingsHubConfiguration *configuration, OCTClient *client) = configAndClient;
+        
+        NSAssert([configuration isKindOfClass:[CDZThingsHubConfiguration class]], @"configuration must be the correct type");
+        NSAssert([client isKindOfClass:[OCTClient class]], @"client must be the correct type");
+        
         // TODO: create a sync delegate & pass it in here.
         return [[[CDZIssueSyncEngine alloc] initWithDelegate:nil
                                               configuration:configuration
