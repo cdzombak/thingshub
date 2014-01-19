@@ -24,8 +24,8 @@
 /// A cache of extant milestones for this repo. Used to avoid repeated trips across Scripting Bridge.
 @property (nonatomic, strong) NSMutableArray *milestonesCache;
 
-/// The local milestones collection modified by the sync engine via the delegate API.
-@property (nonatomic, strong) NSMutableArray *localMilestonesCollection;
+/// The local collection modified by the sync engine via the delegate API.
+@property (nonatomic, strong) NSMutableArray *localCollection;
 
 @end
 
@@ -117,31 +117,31 @@
 }
 
 - (void)collectExtantMilestones {
-    NSAssert(self.localMilestonesCollection == nil, @"%s must be called only once", __PRETTY_FUNCTION__);
+    NSAssert(self.localCollection == nil, @"%s must be called only once", __PRETTY_FUNCTION__);
     
     dispatch_async(self.mutableStateQueue, ^{
-        self.localMilestonesCollection = [self.milestonesCache mutableCopy];
+        self.localCollection = [self.milestonesCache mutableCopy];
     });
 }
 
 - (void)removeMilestoneFromLocalCollection:(NSDictionary *)milestone {
-    NSAssert(self.localMilestonesCollection, @"-collectExtantMilestones must be called before %s", __PRETTY_FUNCTION__);
+    NSAssert(self.localCollection, @"-collectExtantMilestones must be called before %s", __PRETTY_FUNCTION__);
     
     dispatch_async(self.mutableStateQueue, ^{
-        NSArray *milestonesInCollection = [self.localMilestonesCollection filteredArrayUsingPredicate:[self predicateForMilestone:milestone]];
-        [self.localMilestonesCollection removeObjectsInArray:milestonesInCollection];
+        NSArray *milestonesInCollection = [self.localCollection filteredArrayUsingPredicate:[self predicateForMilestone:milestone]];
+        [self.localCollection removeObjectsInArray:milestonesInCollection];
     });
 }
 
 - (void)cancelMilestonesInLocalCollection {
-    NSAssert(self.localMilestonesCollection, @"-collectExtantMilestones must be called before %s", __PRETTY_FUNCTION__);
+    NSAssert(self.localCollection, @"-collectExtantMilestones must be called before %s", __PRETTY_FUNCTION__);
     
     dispatch_sync(self.mutableStateQueue, ^{
-        for (ThingsProject *project in self.localMilestonesCollection) {
+        for (ThingsProject *project in self.localCollection) {
             project.status = ThingsStatusCanceled;
         }
         
-        [self.localMilestonesCollection removeAllObjects];
+        [self.localCollection removeAllObjects];
     });
 }
 
