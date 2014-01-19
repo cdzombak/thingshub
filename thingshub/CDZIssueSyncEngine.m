@@ -10,11 +10,22 @@
 
 #import "CDZIssueSyncEngine.h"
 
-static NSString * const CDZThingsHubHTTPMethodGET = @"GET";
+#import "CDZThingsHubConfiguration.h"
+#import "CDZIssueSyncDelegate.h"
+#import "CDZThingsHubErrorDomain.h"
+
+static NSString * const CDZHTTPMethodGET = @"GET";
 
 @interface CDZIssueSyncEngine ()
+@property (nonatomic, readonly) OCTClient *client;
+@property (nonatomic, readonly) id<CDZIssueSyncDelegate> delegate;
+@property (nonatomic, readonly) CDZThingsHubConfiguration *config;
+@end
 
-@property (nonatomic, strong) OCTClient *client;
+@interface CDZIssueSyncEngine (Milestones)
+
+/// Returns a signal the completes or errors once milestone sync has finished or failed.
+- (RACSignal *)syncMilestones;
 
 @end
 
@@ -31,8 +42,34 @@ static NSString * const CDZThingsHubHTTPMethodGET = @"GET";
 }
 
 - (RACSignal *)sync {
+    RACSignal *syncStatusSignal = [RACSignal return:@"Printing milestones (temporary)"];
+    
+    return [[RACSignal defer:^RACSignal *{
+        return syncStatusSignal;
+    }] replay];
 }
 
+@end
+
+static NSString * const CDZGithubMilestoneState = @"state";
+static NSString * const CDZGithubMilestoneStateOpen = @"open";
+static NSString * const CDZGithubMilestoneStateClosed = @"closed";
+
+@implementation CDZIssueSyncEngine (Milestones)
+
+- (RACSignal *)syncMilestones {
+    return [RACSignal error:[NSError errorWithDomain:kThingsHubErrorDomain code:CDZErrorCodeTestError userInfo:@{ NSLocalizedDescriptionKey: @"Test error" }]];
+- (RACSignal *)milestonesInState:(NSString *)state {
+    NSParameterAssert(state);
+    
+    NSString *path = [NSString stringWithFormat:@"repos/%@/%@/milestones", self.config.githubOrgName, self.config.githubRepoName];
+    NSURLRequest *milestonesRequest = [self.client requestWithMethod:CDZHTTPMethodGET
+                                                                path:path
+                                                          parameters:@{ CDZGithubMilestoneState: state } ];
+    
+    return [[self.client enqueueRequest:milestonesRequest resultClass:Nil] map:^id(id value) {
+        return [value parsedResult];
+    }];
 }
 
 @end
