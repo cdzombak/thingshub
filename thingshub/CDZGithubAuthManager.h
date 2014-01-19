@@ -6,10 +6,8 @@
 //  Copyright (c) 2014 Chris Dzombak. All rights reserved.
 //
 
-#import <OctoKit/OctoKit.h>
+#import <ReactiveCocoa/ReactiveCocoa.h>
 #import "NSFileHandle+CDZCLIStringReading.h"
-
-@class RACSignal;
 
 @interface CDZGithubAuthManager : NSObject
 
