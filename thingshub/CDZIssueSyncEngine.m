@@ -46,7 +46,7 @@ static NSString * const CDZHTTPMethodGET = @"GET";
 - (RACSignal *)sync {
     [self.delegate engineWillBeginSync:self];
     
-    RACSignal *syncStatusSignal = [[RACSignal return:@"milestones"] concat:[self syncMilestones]];
+    RACSignal *syncStatusSignal = [[RACSignal return:@"Milestones"] concat:[self syncMilestones]];
     
     return [[RACSignal defer:^RACSignal *{
         return syncStatusSignal;
