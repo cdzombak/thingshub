@@ -35,6 +35,13 @@ static NSString * const CDZGithubStateValueClosed = @"closed";
 
 @end
 
+@interface CDZIssueSyncEngine (Issues)
+
+/// Returns a signal the completes or errors once issue sync has finished or failed.
+- (RACSignal *)syncIssues;
+
+@end
+
 @implementation CDZIssueSyncEngine
 
 - (instancetype)initWithDelegate:(id<CDZIssueSyncDelegate>)delegate configuration:(CDZThingsHubConfiguration *)config authenticatedClient:(OCTClient *)client {
@@ -91,6 +98,47 @@ static NSString * const CDZGithubStateValueClosed = @"closed";
                                                           parameters:@{ CDZGithubStateKey: state } ];
     
     return [[self.client enqueueRequest:milestonesRequest resultClass:Nil] map:^id(id value) {
+        return [value parsedResult];
+    }];
+}
+
+@end
+
+@implementation CDZIssueSyncEngine (Issues)
+
+- (RACSignal *)syncIssues {
+    [self.delegate collectExtantIssues];
+    
+    return [RACSignal createSignal:^RACDisposable *(id<RACSubscriber> subscriber) {
+        return [[RACSignal merge:@[[self issuesAssignedToMeInState:CDZGithubStateValueOpen], [self issuesAssignedToMeInState:CDZGithubStateValueClosed]]]
+                subscribeNext:^(NSDictionary *issue) {
+                    if (![self.delegate syncIssue:issue createIfNeeded:[issue cdz_gh_isOpen] updateExtant:YES]) {
+                        [subscriber sendError:[NSError errorWithDomain:kThingsHubErrorDomain code:CDZErrorCodeSyncFailure userInfo:@{NSLocalizedDescriptionKey: [NSString stringWithFormat:@"Sync delegate couldn't update issue %@", issue]}]];
+                        // TODO: how can I abort the sync here? --CDZ Jan 19, 2014
+                        return;
+                    }
+                    [self.delegate removeIssueFromLocalCollection:issue];
+                } error:^(NSError *error) {
+                    [subscriber sendError:error];
+                } completed:^{
+                    [self.delegate cancelIssuesInLocalCollection];
+                    [subscriber sendCompleted];
+                }];
+    }];
+}
+
+- (RACSignal *)issuesAssignedToMeInState:(NSString *)state {
+    NSParameterAssert(state);
+    
+    NSString *path = [NSString stringWithFormat:@"repos/%@/%@/issues", self.config.githubOrgName, self.config.githubRepoName];
+    NSURLRequest *issuesRequest = [self.client requestWithMethod:CDZHTTPMethodGET
+                                                                path:path
+                                                          parameters:@{ CDZGithubStateKey: state,
+                                                                        @"assignee": self.config.githubLogin
+                                                                        }
+                                       ];
+    
+    return [[self.client enqueueRequest:issuesRequest resultClass:Nil] map:^id(id value) {
         return [value parsedResult];
     }];
 }
