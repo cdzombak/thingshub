@@ -27,4 +27,5 @@ Vendor/bundle/
 bin/
 
 # etc
-tmp
+tmp/
+Documentation/
