@@ -36,7 +36,7 @@
 /**
  Sync the milestone into the local task management application.
  
- @param milestone The miletsone dictionary from Github.
+ @param milestone The milestone dictionary from Github.
  @param createIfNeeded Allow creating the milestone locally if it doesn't exist.
  @param updateExtant Allow updating the milestone locally if it already exists.
  
@@ -45,7 +45,7 @@
 - (BOOL)syncMilestone:(NSDictionary *)milestone createIfNeeded:(BOOL)createIfNeeded updateExtant:(BOOL)updateExtant;
 
 /**
- Collect extant milestones into a local mutable collection.
+ Collect extant milestones for this Github repo into a local mutable collection.
  
  Milestones will be removed from this collection as we sync them, and after we sync all extant milestones, any remaining 
  in this collection will be cancelled. This allows us to cancel milestones that were deleted from Github.
