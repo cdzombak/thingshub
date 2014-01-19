@@ -13,6 +13,8 @@
  mapping issue and milestone data structures into and out of the task management application.
  
  Delegates may not make assumptions about the thread on which their methods will be called.
+ 
+ @see NSDictionary+GithubAPIAdditions
  */
 @protocol CDZIssueSyncDelegate <NSObject>
 
