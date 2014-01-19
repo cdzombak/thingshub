@@ -11,6 +11,8 @@
 extern NSString * const kThingsHubErrorDomain;
 
 typedef NS_ENUM(NSInteger, CDZErrorCode) {
+    CDZErrorCodeTestError = 0,
+    CDZErrorCodeAuthError = CDZThingsHubApplicationReturnCodeAuthError,
     CDZErrorCodeConfigurationValidationError = CDZThingsHubApplicationReturnCodeConfigError,
-    CDZErrorCodeTestError = -1,
+    CDZErrorCodeSyncFailure = CDZThingsHubApplicationReturnCodeSyncFailed,
 };
