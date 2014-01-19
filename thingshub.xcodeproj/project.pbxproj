@@ -6,6 +6,20 @@
 	objectVersion = 46;
 	objects = {
 
+/* Begin PBXAggregateTarget section */
+		A27E08F8188B9FE80092F5CA /* Documentation */ = {
+			isa = PBXAggregateTarget;
+			buildConfigurationList = A27E08F9188B9FE80092F5CA /* Build configuration list for PBXAggregateTarget "Documentation" */;
+			buildPhases = (
+				A27E08FC188BA0060092F5CA /* Generate Documentation */,
+			);
+			dependencies = (
+			);
+			name = Documentation;
+			productName = Documentation;
+		};
+/* End PBXAggregateTarget section */
+
 /* Begin PBXBuildFile section */
 		5AAFC2F9B6D34615BD707314 /* libPods.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 7E12E346320042AAB5512B08 /* libPods.a */; };
 		A21C4ED318848BB30063467F /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A21C4ED218848BB30063467F /* Foundation.framework */; };
@@ -212,6 +226,7 @@
 			projectRoot = "";
 			targets = (
 				A21C4ECE18848BB30063467F /* thingshub */,
+				A27E08F8188B9FE80092F5CA /* Documentation */,
 			);
 		};
 /* End PBXProject section */
@@ -230,6 +245,21 @@
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "diff \"${PODS_ROOT}/../Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [[ $? != 0 ]] ; then\n    cat << EOM\nerror: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\nEOM\n    exit 1\nfi\n";
+			showEnvVarsInLog = 0;
+		};
+		A27E08FC188BA0060092F5CA /* Generate Documentation */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "Generate Documentation";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "export PATH=\"$PATH\":/usr/local/bin\n\nif [[ -x $(which appledoc) ]]; then\n    /usr/bin/env appledoc \\\n        --logformat xcode \\\n        --exit-threshold 2 \\\n        --project-name \"ThingsHub\" \\\n        --project-company \"Chris Dzombak\" \\\n        --company-id com.cdzombak \\\n        --index-desc README.md \\\n        --output Documentation \\\n    thingshub\nfi";
 			showEnvVarsInLog = 0;
 		};
 		C7485882D396477EBE93EC8C /* Copy Pods Resources */ = {
@@ -389,6 +419,20 @@
 			};
 			name = Release;
 		};
+		A27E08FA188B9FE80092F5CA /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Debug;
+		};
+		A27E08FB188B9FE80092F5CA /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Release;
+		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
@@ -409,6 +453,14 @@
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
+		};
+		A27E08F9188B9FE80092F5CA /* Build configuration list for PBXAggregateTarget "Documentation" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				A27E08FA188B9FE80092F5CA /* Debug */,
+				A27E08FB188B9FE80092F5CA /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
 		};
 /* End XCConfigurationList section */
 	};
