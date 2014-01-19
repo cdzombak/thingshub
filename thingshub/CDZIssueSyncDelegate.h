@@ -6,6 +6,7 @@
 //  Copyright (c) 2014 Chris Dzombak. All rights reserved.
 //
 
+@class CDZIssueSyncEngine;
 @class CDZThingsHubConfiguration;
 
 /**
@@ -24,6 +25,11 @@
 
 /// Designated initializer.
 - (instancetype)initWithConfiguration:(CDZThingsHubConfiguration *)configuration;
+
+#pragma mark Sync Callbacks
+
+/// Called before the sync engine begins the sync.
+- (void)engineWillBeginSync:(CDZIssueSyncEngine *)syncEngine;
 
 #pragma mark Milestones
 
