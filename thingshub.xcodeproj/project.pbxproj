@@ -65,9 +65,9 @@
 		A236CCDD188619870073F287 /* Things.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Things.h; sourceTree = "<group>"; };
 		A236CCDF188623C50073F287 /* CDZIssueSyncDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CDZIssueSyncDelegate.h; sourceTree = "<group>"; };
 		A236CCE0188624DD0073F287 /* CDZThingsSyncDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CDZThingsSyncDelegate.h; sourceTree = "<group>"; };
-		A236CCE1188624DD0073F287 /* CDZThingsSyncDelegate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CDZThingsSyncDelegate.m; sourceTree = "<group>"; };
-		A27E08F5188B720F0092F5CA /* NSDictionary+GithubAPIAdditions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSDictionary+GithubAPIAdditions.h"; sourceTree = "<group>"; };
-		A27E08F6188B720F0092F5CA /* NSDictionary+GithubAPIAdditions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSDictionary+GithubAPIAdditions.m"; sourceTree = "<group>"; };
+		A236CCE1188624DD0073F287 /* CDZThingsSyncDelegate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; lineEnding = 0; path = CDZThingsSyncDelegate.m; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objc; };
+		A27E08F5188B720F0092F5CA /* NSDictionary+GithubAPIAdditions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; path = "NSDictionary+GithubAPIAdditions.h"; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
+		A27E08F6188B720F0092F5CA /* NSDictionary+GithubAPIAdditions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; lineEnding = 0; path = "NSDictionary+GithubAPIAdditions.m"; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objc; };
 		A2E94DD31884B23800079CD3 /* CDZCLIApplication.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CDZCLIApplication.h; sourceTree = "<group>"; };
 		A2E94DD41884B23800079CD3 /* CDZCLIApplication.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CDZCLIApplication.m; sourceTree = "<group>"; };
 		A2E94DD61884D02900079CD3 /* NSFileHandle+CDZCLIStringReading.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSFileHandle+CDZCLIStringReading.h"; sourceTree = "<group>"; };
@@ -461,6 +461,7 @@
 				A27E08FB188B9FE80092F5CA /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};

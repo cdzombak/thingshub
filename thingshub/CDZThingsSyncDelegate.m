@@ -106,10 +106,10 @@
         });
     }
     
-    project.status = [milestone cdz_issueIsOpen] ? ThingsStatusOpen : ThingsStatusCompleted;
-    project.name = [milestone cdz_issueTitle];
-    project.notes = [NSString stringWithFormat:@"%@\n\n%@", [milestone cdz_issueDescription], [self identifierForMilestone:milestone]];
-    project.dueDate = [milestone cdz_issueDueDate];
+    project.status = [milestone cdz_milestoneIsOpen] ? ThingsStatusOpen : ThingsStatusCompleted;
+    project.name = [milestone cdz_milestoneTitle];
+    project.notes = [NSString stringWithFormat:@"%@\n\n%@", [milestone cdz_milestoneDescription], [self identifierForMilestone:milestone]];
+    project.dueDate = [milestone cdz_milestoneDueDate];
     project.tagNames = [NSString stringWithFormat:@"%@,via:%@,%@", project.tagNames, self.configuration.tagNamespace, self.configuration.reviewTagName];
     project.area = self.thingsArea;
     
@@ -151,7 +151,7 @@
     return [NSString stringWithFormat:@"//thingshub/%@/%@/milestone/%ld//",
             self.configuration.githubOrgName,
             self.configuration.githubRepoName,
-            (long)[milestone cdz_issueNumber]
+            (long)[milestone cdz_milestoneNumber]
             ];
 }
 

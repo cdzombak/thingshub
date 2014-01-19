@@ -9,16 +9,19 @@
 /// Convenience methods for accessing values in Github API dictionaries.
 @interface NSDictionary (GithubAPIAdditions)
 
-/// Return the "number" key for an issue or milestone, or NSNotFound if the "number" key doesn't exist.
-- (NSInteger)cdz_issueNumber;
+/// Return the milestone's number, or NSNotFound if the "number" key doesn't exist.
+- (NSInteger)cdz_milestoneNumber;
 
-/// Return whether the issue or milestone is open.
-- (BOOL)cdz_issueIsOpen;
+/// Return whether the milestone is open.
+- (BOOL)cdz_milestoneIsOpen;
 
-- (NSString *)cdz_issueTitle;
+/// Return the milestone's title, or `@""` if it isn't set.
+- (NSString *)cdz_milestoneTitle;
 
-- (NSString *)cdz_issueDescription;
+/// Return the milestone's description, or `@""` if it isn't set.
+- (NSString *)cdz_milestoneDescription;
 
-- (NSDate *)cdz_issueDueDate;
+/// Return the milestone's due date, or `nil` if it isn't set.
+- (NSDate *)cdz_milestoneDueDate;
 
 @end

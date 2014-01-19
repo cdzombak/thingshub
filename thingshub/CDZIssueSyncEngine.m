@@ -67,7 +67,7 @@ static NSString * const CDZGithubMilestoneStateClosed = @"closed";
     return [RACSignal createSignal:^RACDisposable *(id<RACSubscriber> subscriber) {
         return [[RACSignal merge:@[[self milestonesInState:CDZGithubMilestoneStateOpen], [self milestonesInState:CDZGithubMilestoneStateClosed]]]
         subscribeNext:^(NSDictionary *milestone) {
-            if (![self.delegate syncMilestone:milestone createIfNeeded:[milestone cdz_issueIsOpen] updateExtant:YES]) {
+            if (![self.delegate syncMilestone:milestone createIfNeeded:[milestone cdz_milestoneIsOpen] updateExtant:YES]) {
                 [subscriber sendError:[NSError errorWithDomain:kThingsHubErrorDomain code:CDZErrorCodeSyncFailure userInfo:@{NSLocalizedDescriptionKey: [NSString stringWithFormat:@"Sync delegate couldn't update milestone %@", milestone]}]];
                 // TODO: how can I abort the sync here? --CDZ Jan 18, 2014
                 return;
