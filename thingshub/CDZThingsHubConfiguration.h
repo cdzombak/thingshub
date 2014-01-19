@@ -6,6 +6,8 @@
 //  Copyright (c) 2014 Chris Dzombak. All rights reserved.
 //
 
+@class RACSignal;
+
 @interface CDZThingsHubConfiguration : NSObject
 
 /**
