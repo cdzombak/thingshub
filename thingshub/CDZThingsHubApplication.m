@@ -31,7 +31,7 @@
         CDZCLIPrint(@"Authentication failed: %@", [error localizedDescription]);
     }];
     
-    RACSignal *syncEngineSignal = [[[[RACSignal zip:@[configurationSignal, authClientSignal]] map:^id(RACTuple *configAndClient) {
+    RACSignal *syncEngineSignal = [[[[RACSignal zip:@[configurationSignal, authClientSignal]] flattenMap:^id(RACTuple *configAndClient) {
         RACTupleUnpack(CDZThingsHubConfiguration *configuration, OCTClient *client) = configAndClient;
         // TODO: create a sync delegate & pass it in here.
         return [[[CDZIssueSyncEngine alloc] initWithDelegate:nil
