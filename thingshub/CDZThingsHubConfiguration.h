@@ -9,7 +9,7 @@
 @interface CDZThingsHubConfiguration : NSObject
 
 /**
- Asynchronously returns the app's current `CZDThingsHubConfiguration` as the next value in the signal.
+ Asynchronously returns the app's current `CZDThingsHubConfiguration` as the next value in the signal, then completes.
  
  Walks from ~ down to the current directory, merging in .thingshubconfig files as they are found.
  Command-line parameters override any parameters set in the merged config file.

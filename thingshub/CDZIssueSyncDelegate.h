@@ -11,6 +11,8 @@
  
  Through this interface, it is expected to obtain data and update it as necessary, and have domain-specific knowledge on
  mapping issue and milestone data structures into and out of the task management application.
+ 
+ Delegates may not make assumptions about the thread on which their methods will be called.
  */
 @protocol CDZIssueSyncDelegate <NSObject>
 

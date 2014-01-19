@@ -10,4 +10,5 @@
 
 #define CDZCLILog(fmt, ...) CDZCLIPrint((@"%s [line %d]: " fmt), __PRETTY_FUNCTION__, __LINE__, ##__VA_ARGS__)
 
+/// Convenience method for printing a formatted string to standard output.
 extern void CDZCLIPrint(NSString *format, ...);
