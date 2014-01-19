@@ -5,9 +5,8 @@
 SCRIPT_DIR=$(dirname "$0")
 cd "$SCRIPT_DIR/.."
 
-if [[ ! -x $(which appledoc) ]]; then
+command -v appledoc >/dev/null 2>&1 ||
     echo "To build the Documentation target, you'll need to install appledoc: brew install appledoc"
-fi
 
 bundle install --binstubs --path Vendor/bundle
 bundle exec pod install
