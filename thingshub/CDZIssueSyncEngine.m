@@ -42,7 +42,7 @@ static NSString * const CDZHTTPMethodGET = @"GET";
 }
 
 - (RACSignal *)sync {
-    RACSignal *syncStatusSignal = [RACSignal return:@"Printing milestones (temporary)"];
+    RACSignal *syncStatusSignal = [[RACSignal return:@"Printing milestones (temporary)"] concat:[self syncMilestones]];
     
     return [[RACSignal defer:^RACSignal *{
         return syncStatusSignal;
@@ -58,7 +58,21 @@ static NSString * const CDZGithubMilestoneStateClosed = @"closed";
 @implementation CDZIssueSyncEngine (Milestones)
 
 - (RACSignal *)syncMilestones {
-    return [RACSignal error:[NSError errorWithDomain:kThingsHubErrorDomain code:CDZErrorCodeTestError userInfo:@{ NSLocalizedDescriptionKey: @"Test error" }]];
+//    return [RACSignal error:[NSError errorWithDomain:kThingsHubErrorDomain code:CDZErrorCodeTestError userInfo:@{ NSLocalizedDescriptionKey: @"Test error" }]];
+    return [RACSignal createSignal:^RACDisposable *(id<RACSubscriber> subscriber) {
+        return [[RACSignal merge:@[[self milestonesInState:CDZGithubMilestoneStateOpen],
+                            [self milestonesInState:CDZGithubMilestoneStateClosed]]]
+        subscribeNext:^(NSDictionary *milestone) {
+            // TODO: sync here instead of printing
+            CDZCLIPrint(@" %@", milestone[@"title"]);
+        } error:^(NSError *error) {
+            [subscriber sendError:error];
+        } completed:^{
+            [subscriber sendCompleted];
+        }];
+    }];
+}
+
 - (RACSignal *)milestonesInState:(NSString *)state {
     NSParameterAssert(state);
     
