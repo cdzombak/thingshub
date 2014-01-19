@@ -6,7 +6,9 @@
 //  Copyright (c) 2014 Chris Dzombak. All rights reserved.
 //
 
+#import <OctoKit/OctoKit.h>
 #import <SSKeychain/SSKeychain.h>
+
 #import "CDZGithubAuthManager.h"
 
 static NSString * const CDZThingsHubGithubClientID = @"4522e1cb93f836bc988e";

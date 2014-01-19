@@ -7,24 +7,83 @@
 //
 
 #import <OctoKit/OctoKit.h>
+
 #import "CDZIssueSyncEngine.h"
 
-static NSString * const CDZThingsHubHTTPMethodGET = @"GET";
+#import "CDZThingsHubConfiguration.h"
+#import "CDZIssueSyncDelegate.h"
+#import "CDZThingsHubErrorDomain.h"
+
+static NSString * const CDZHTTPMethodGET = @"GET";
 
 @interface CDZIssueSyncEngine ()
+@property (nonatomic, readonly) OCTClient *client;
+@property (nonatomic, readonly) id<CDZIssueSyncDelegate> delegate;
+@property (nonatomic, readonly) CDZThingsHubConfiguration *config;
+@end
 
-@property (nonatomic, strong) OCTClient *client;
+@interface CDZIssueSyncEngine (Milestones)
+
+/// Returns a signal the completes or errors once milestone sync has finished or failed.
+- (RACSignal *)syncMilestones;
 
 @end
 
 @implementation CDZIssueSyncEngine
 
-- (instancetype)initWithAuthenticatedClient:(OCTClient *)client {
+- (instancetype)initWithDelegate:(id<CDZIssueSyncDelegate>)delegate configuration:(CDZThingsHubConfiguration *)config authenticatedClient:(OCTClient *)client {
     self = [super init];
     if (self) {
         _client = client;
+        _delegate = delegate;
+        _config = config;
     }
     return self;
+}
+
+- (RACSignal *)sync {
+    RACSignal *syncStatusSignal = [[RACSignal return:@"Printing milestones (temporary)"] concat:[self syncMilestones]];
+    
+    return [[RACSignal defer:^RACSignal *{
+        return syncStatusSignal;
+    }] replay];
+}
+
+@end
+
+static NSString * const CDZGithubMilestoneState = @"state";
+static NSString * const CDZGithubMilestoneStateOpen = @"open";
+static NSString * const CDZGithubMilestoneStateClosed = @"closed";
+
+@implementation CDZIssueSyncEngine (Milestones)
+
+- (RACSignal *)syncMilestones {
+//    return [RACSignal error:[NSError errorWithDomain:kThingsHubErrorDomain code:CDZErrorCodeTestError userInfo:@{ NSLocalizedDescriptionKey: @"Test error" }]];
+    return [RACSignal createSignal:^RACDisposable *(id<RACSubscriber> subscriber) {
+        return [[RACSignal merge:@[[self milestonesInState:CDZGithubMilestoneStateOpen],
+                            [self milestonesInState:CDZGithubMilestoneStateClosed]]]
+        subscribeNext:^(NSDictionary *milestone) {
+            // TODO: sync here instead of printing
+            CDZCLIPrint(@" %@", milestone[@"title"]);
+        } error:^(NSError *error) {
+            [subscriber sendError:error];
+        } completed:^{
+            [subscriber sendCompleted];
+        }];
+    }];
+}
+
+- (RACSignal *)milestonesInState:(NSString *)state {
+    NSParameterAssert(state);
+    
+    NSString *path = [NSString stringWithFormat:@"repos/%@/%@/milestones", self.config.githubOrgName, self.config.githubRepoName];
+    NSURLRequest *milestonesRequest = [self.client requestWithMethod:CDZHTTPMethodGET
+                                                                path:path
+                                                          parameters:@{ CDZGithubMilestoneState: state } ];
+    
+    return [[self.client enqueueRequest:milestonesRequest resultClass:Nil] map:^id(id value) {
+        return [value parsedResult];
+    }];
 }
 
 @end

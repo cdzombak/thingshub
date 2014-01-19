@@ -11,7 +11,8 @@
 NS_ENUM(int, CDZThingsHubApplicationReturnCode) {
     CDZThingsHubApplicationReturnCodeNormal = 0,
     CDZThingsHubApplicationReturnCodeAuthError,
-    CDZThingsHubApplicationReturnCodeConfigError
+    CDZThingsHubApplicationReturnCodeConfigError,
+    CDZThingsHubApplicationReturnCodeSyncFailed,
 };
 
 @interface CDZThingsHubApplication : CDZCLIApplication
