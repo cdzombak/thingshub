@@ -25,7 +25,7 @@
         CDZCLIPrint(@"Configuration error: %@", [error localizedDescription]);
     }];
     
-    RACSignal *authClientSignal = [[configurationSignal map:^id(CDZThingsHubConfiguration *config) {
+    RACSignal *authClientSignal = [[configurationSignal flattenMap:^id(CDZThingsHubConfiguration *config) {
         return [CDZGithubAuthManager authenticatedClientForUsername:config.githubLogin];
     }] doError:^(NSError *error) {
         CDZCLIPrint(@"Authentication failed: %@", [error localizedDescription]);
@@ -33,10 +33,6 @@
     
     RACSignal *syncEngineSignal = [[[[RACSignal zip:@[configurationSignal, authClientSignal]] map:^id(RACTuple *configAndClient) {
         RACTupleUnpack(CDZThingsHubConfiguration *configuration, OCTClient *client) = configAndClient;
-        
-        NSAssert([configuration isKindOfClass:[CDZThingsHubConfiguration class]], @"configuration must be the correct type");
-        NSAssert([client isKindOfClass:[OCTClient class]], @"client must be the correct type");
-        
         // TODO: create a sync delegate & pass it in here.
         return [[[CDZIssueSyncEngine alloc] initWithDelegate:nil
                                               configuration:configuration
