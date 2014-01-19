@@ -21,40 +21,28 @@
 @implementation CDZThingsHubApplication
 
 - (void)start {
-    /* Core App Flow */
-    
-    RACSignal *configurationSignal = [CDZThingsHubConfiguration currentConfiguration];
-    
-    RACSignal *authClientSignal = [configurationSignal map:^id(CDZThingsHubConfiguration *config) {
-        return [CDZGithubAuthManager authenticatedClientForUsername:config.githubLogin];
+    RACSignal *configurationSignal = [[CDZThingsHubConfiguration currentConfiguration] doError:^(NSError *error) {
+        CDZCLIPrint(@"Configuration error: %@", [error localizedDescription]);
     }];
     
-    RACSignal *syncEngineSignal = [[RACSignal zip:@[configurationSignal, authClientSignal]] map:^id(RACTuple *configAndClient) {
+    RACSignal *authClientSignal = [[configurationSignal map:^id(CDZThingsHubConfiguration *config) {
+        return [CDZGithubAuthManager authenticatedClientForUsername:config.githubLogin];
+    }] doError:^(NSError *error) {
+        CDZCLIPrint(@"Authentication failed: %@", [error localizedDescription]);
+    }];
+    
+    RACSignal *syncEngineSignal = [[[[RACSignal zip:@[configurationSignal, authClientSignal]] map:^id(RACTuple *configAndClient) {
         RACTupleUnpack(CDZThingsHubConfiguration *configuration, OCTClient *client) = configAndClient;
         // TODO: create a sync delegate & pass it in here.
         return [[[CDZIssueSyncEngine alloc] initWithDelegate:nil
                                               configuration:configuration
                                         authenticatedClient:client]
                 sync];
+    }] doNext:^(NSString *statusUpdate) {
+        CDZCLIPrint(@"Syncing: %@", statusUpdate);
+    }] doError:^(NSError *error) {
+        CDZCLIPrint(@"Sync failed: %@", [error localizedDescription]);
     }];
-
-    /* Print errors */
-    
-    // TODO: can I use some RAC trickery to combine these error format messages, and the signals they represent, into an error signal, therefore reducing code duplication below? --CDZ Jan 17, 2014
-    
-    [configurationSignal doError:^(NSError *error) {
-        CDZCLIPrint(@"Configuration error: %@", error);
-    }];
-    
-    [authClientSignal doError:^(NSError *error) {
-        CDZCLIPrint(@"Authentication error: %@", error);
-    }];
-    
-    [syncEngineSignal doError:^(NSError *error) {
-        CDZCLIPrint(@"Sync failed: %@", error);
-    }];
-    
-    /* Exit with appropriate error code */
     
     RACSignal *returnCodeSignal = [RACSignal merge:
    @[
