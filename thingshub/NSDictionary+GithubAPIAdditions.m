@@ -11,25 +11,25 @@
 
 @implementation NSDictionary (GithubAPIAdditions)
 
-- (NSInteger)cdz_milestoneNumber {
+- (NSInteger)cdz_gh_number {
     NSNumber *number = self[@"number"];
     return [number integerValue];
 }
 
-- (BOOL)cdz_milestoneIsOpen {
+- (BOOL)cdz_gh_isOpen {
     NSString *state = self[@"state"];
     return [state isEqualToString:@"open"];
 }
 
-- (NSString *)cdz_milestoneTitle {
+- (NSString *)cdz_gh_title {
     return self[@"title"] ?: @"";
 }
 
-- (NSString *)cdz_milestoneDescription {
+- (NSString *)cdz_gh_milestoneDescription {
     return self[@"description"] ?: @"";
 }
 
-- (NSDate *)cdz_milestoneDueDate {
+- (NSDate *)cdz_gh_milestoneDueDate {
     NSString *dateString = self[@"due_on"];
     NSValueTransformer *dateTransformer = [NSValueTransformer valueTransformerForName:OCTDateValueTransformerName];
     return [dateTransformer transformedValue:dateString];
