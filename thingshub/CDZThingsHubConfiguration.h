@@ -26,6 +26,9 @@
 /// Global (typically); configured by "githubLogin = "
 @property (nonatomic, copy, readonly) NSString *githubLogin;
 
+/// Global (typically); configured by "delegate = "
+@property (nonatomic, copy, readonly) NSString *delegateApp;
+
 /// Per-project (typically); configured by "repoOwner = "
 @property (nonatomic, copy, readonly) NSString *repoOwner;
 

@@ -23,6 +23,7 @@ static NSString * const CDZThingsHubConfigDefaultTagNamespace = @"github";
 @property (nonatomic, copy, readwrite) NSString *repoName;
 @property (nonatomic, copy, readwrite) NSString *areaName;
 @property (nonatomic, copy, readwrite) NSString *projectPrefix;
+@property (nonatomic, copy, readwrite) NSString *delegateApp;
 
 @end
 
@@ -129,6 +130,7 @@ static NSString * const CDZThingsHubConfigDefaultTagNamespace = @"github";
     self = [super init];
     if (self) {
         _tagNamespace = CDZThingsHubConfigDefaultTagNamespace;
+        _delegateApp = @"Things";
     }
     return self;
 }
@@ -164,6 +166,11 @@ static NSString * const CDZThingsHubConfigDefaultTagNamespace = @"github";
                                    code:CDZErrorCodeConfigurationValidationError
                                userInfo:@{ NSLocalizedDescriptionKey: @"Github repo name must be set." }];
     }
+    else if (!self.delegateApp) {
+        return [NSError errorWithDomain:kThingsHubErrorDomain
+                                   code:CDZErrorCodeConfigurationValidationError
+                               userInfo:@{ NSLocalizedDescriptionKey: @"Delegate must be set." }];
+    }
     
     return nil;
 }
@@ -171,7 +178,7 @@ static NSString * const CDZThingsHubConfigDefaultTagNamespace = @"github";
 #pragma mark - NSObject Protocol
 
 - (NSString *)description {
-    return [NSString stringWithFormat:@"<%@ %p>: {\n\ttagNamespace: %@\n\tgithubLogin: %@\n\trepoOwner:%@\n\trepoName: %@\n\tareaName: %@\t\tprojectPrefix: %@\n}",
+    return [NSString stringWithFormat:@"<%@ %p>: {\n\ttagNamespace: %@\n\tgithubLogin: %@\n\trepoOwner:%@\n\trepoName: %@\n\tareaName: %@\t\tprojectPrefix: %@\n\tdelegateApp: %@\n}",
             NSStringFromClass([self class]),
             self,
             self.tagNamespace,
@@ -179,7 +186,8 @@ static NSString * const CDZThingsHubConfigDefaultTagNamespace = @"github";
             self.repoOwner,
             self.repoName,
             self.areaName,
-            self.projectPrefix
+            self.projectPrefix,
+            self.delegateApp
             ];
 }
 
@@ -197,6 +205,7 @@ static NSString * const CDZThingsHubConfigDefaultTagNamespace = @"github";
                                     @"repoName": NSStringFromSelector(@selector(repoName)),
                                     @"areaName": NSStringFromSelector(@selector(areaName)),
                                     @"projectPrefix": NSStringFromSelector(@selector(projectPrefix)),
+                                    @"delegate": NSStringFromSelector(@selector(delegateApp)),
                                     };
     });
     return propertyKeysByConfigKey;

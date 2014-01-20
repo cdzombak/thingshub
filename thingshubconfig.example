@@ -27,3 +27,6 @@ areaName = Personal Software Projects
 
 # projectPrefix: prefix which will be applied to project names. Optional; default is none.
 projectPrefix = THub
+
+# delegate: the sync delegate used to communicate with the local task maager app. Optional; default is Things.
+delegate = Things

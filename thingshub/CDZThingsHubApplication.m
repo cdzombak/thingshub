@@ -12,9 +12,9 @@
 #import "CDZThingsHubApplication.h"
 
 #import "CDZGithubAuthManager.h"
+#import "CDZIssueSyncDelegate.h"
 #import "CDZIssueSyncEngine.h"
 #import "CDZThingsHubConfiguration.h"
-#import "CDZThingsSyncDelegate.h"
 
 @interface CDZThingsHubApplication ()
 @end
@@ -34,7 +34,12 @@
     
     RACSignal *syncEngineSignal = [[[[RACSignal zip:@[configurationSignal, authClientSignal]] flattenMap:^id(RACTuple *configAndClient) {
         RACTupleUnpack(CDZThingsHubConfiguration *configuration, OCTClient *client) = configAndClient;
-        return [[[[CDZIssueSyncEngine alloc] initWithDelegate:[[CDZThingsSyncDelegate alloc] initWithConfiguration:configuration]
+        
+        Class delegateClass = NSClassFromString([NSString stringWithFormat:@"CDZ%@SyncDelegate", configuration.delegateApp]);
+        NSCParameterAssert(delegateClass);
+        id<CDZIssueSyncDelegate> delegate = [[delegateClass alloc] initWithConfiguration:configuration];
+        
+        return [[[[CDZIssueSyncEngine alloc] initWithDelegate:delegate
                                               configuration:configuration
                                         authenticatedClient:client]
                 sync] logAll];
