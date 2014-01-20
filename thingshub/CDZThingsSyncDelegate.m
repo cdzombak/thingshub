@@ -125,7 +125,7 @@
     project.name = [milestone cdz_gh_title];
     project.notes = [NSString stringWithFormat:@"%@\n\n%@", [milestone cdz_gh_milestoneDescription], [self identifierForMilestone:milestone]];
     project.dueDate = [milestone cdz_gh_milestoneDueDate];
-    project.tagNames = [NSString stringWithFormat:@"%@,via:%@,%@", project.tagNames, self.configuration.tagNamespace, self.configuration.reviewTagName];
+    project.tagNames = [NSString stringWithFormat:@"%@,via:%@", project.tagNames, self.configuration.tagNamespace];
 
     ThingsStatus newStatus = [milestone cdz_gh_isOpen] ? ThingsStatusOpen : ThingsStatusCompleted;
     if (project.status != newStatus) project.status = newStatus;
@@ -244,7 +244,6 @@
     }
     
     [tags addObject:[NSString stringWithFormat:@"via:%@", self.configuration.tagNamespace]];
-    [tags addObject:self.configuration.reviewTagName];
     
     todo.tagNames = [tags componentsJoinedByString:@","];
 

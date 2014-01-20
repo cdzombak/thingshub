@@ -14,12 +14,10 @@
 static NSString * const CDZThingsHubConfigFileName = @".thingshubconfig";
 
 static NSString * const CDZThingsHubConfigDefaultTagNamespace = @"github";
-static NSString * const CDZThingsHubConfigDefaultReviewTagName = @"review";
 
 @interface CDZThingsHubConfiguration ()
 
 @property (nonatomic, copy, readwrite) NSString *tagNamespace;
-@property (nonatomic, copy, readwrite) NSString *reviewTagName;
 @property (nonatomic, copy, readwrite) NSString *githubLogin;
 @property (nonatomic, copy, readwrite) NSString *githubOrgName;
 @property (nonatomic, copy, readwrite) NSString *githubRepoName;
@@ -130,7 +128,6 @@ static NSString * const CDZThingsHubConfigDefaultReviewTagName = @"review";
     self = [super init];
     if (self) {
         _tagNamespace = CDZThingsHubConfigDefaultTagNamespace;
-        _reviewTagName = CDZThingsHubConfigDefaultReviewTagName;
     }
     return self;
 }
@@ -173,11 +170,10 @@ static NSString * const CDZThingsHubConfigDefaultReviewTagName = @"review";
 #pragma mark - NSObject Protocol
 
 - (NSString *)description {
-    return [NSString stringWithFormat:@"<%@ %p>: {\n\ttagNamespace: %@\n\treviewTagName: %@\n\tgithubLogin: %@\n\tgithubOrgName:%@\n\tgithubRepoName: %@\n\tthingsAreaName: %@\n}",
+    return [NSString stringWithFormat:@"<%@ %p>: {\n\ttagNamespace: %@\n\tgithubLogin: %@\n\tgithubOrgName:%@\n\tgithubRepoName: %@\n\tthingsAreaName: %@\n}",
             NSStringFromClass([self class]),
             self,
             self.tagNamespace,
-            self.reviewTagName,
             self.githubLogin,
             self.githubOrgName,
             self.githubRepoName,
@@ -194,7 +190,6 @@ static NSString * const CDZThingsHubConfigDefaultReviewTagName = @"review";
     dispatch_once(&onceToken, ^{
         propertyKeysByConfigKey = @{
                                     @"tagNamespace": NSStringFromSelector(@selector(tagNamespace)),
-                                    @"reviewTag": NSStringFromSelector(@selector(reviewTagName)),
                                     @"githubLogin": NSStringFromSelector(@selector(githubLogin)),
                                     @"githubOrg": NSStringFromSelector(@selector(githubOrgName)),
                                     @"githubRepo": NSStringFromSelector(@selector(githubRepoName)),

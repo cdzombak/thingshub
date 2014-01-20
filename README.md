@@ -42,7 +42,6 @@ See `thingshubconfig.example` in this repo for docs on the config system.
 
 ### Tag usage:
 
-* When a project or issue task is created or modified in any way, apply the tag "review". Allow configuring this tag.
 * When an issue task is created/updated, remove any extant "github:" tags, and apply "github:" tags that are currently on the issue.
 * When creating/updating an issue task, add a "via:github" tag.
 * Due dates for milestones are changed. We don't touch due dates or handle scheduling for tasks.
@@ -51,8 +50,8 @@ See `thingshubconfig.example` in this repo for docs on the config system.
 
 * Sync milestones as projects, creating them within the area or within Next; apply name, description, due date, tags as necessary. Mark closed milestones as complete, missing ones as cancelled, open ones as todo.
 * Find all local tasks for this project; in toSync list
-* For each open remote task assigned to me, update/create/mark for review. Set name, state (todo, complete), tags. Move to proper area/project. Remove extant ones from toSync list.
-* For each todo left in toSync, fetch it from the API. If it was unassigned to me, or otherwise is gone, cancel. If it was closed, complete. Mark for review.
+* For each open remote task assigned to me, update/create. Set name, state (todo, complete), tags. Move to proper area/project. Remove extant ones from toSync list.
+* For each todo left in toSync, fetch it from the API. If it was unassigned to me, or otherwise is gone, cancel. If it was closed, complete.
 * Descriptions are set to the URL on creation, but never modified.
 
 ### PR Handling:
@@ -62,7 +61,7 @@ See `thingshubconfig.example` in this repo for docs on the config system.
 
 ### Configuration:
 
-* global: tag namespace (default "github"), review tag (default "review"), github username
+* global: tag namespace (default "github"), github username
 * per-project: github org/repo, things area
 * on running, get current dir and walk up until I find a .thingshub file. error if I don't find one.
 * merge with config from ~/.thingshubconfig ; local takes priority

@@ -23,9 +23,6 @@
 /// Global (typically); configured by "tagNamespace = ". Default is "github".
 @property (nonatomic, copy, readonly) NSString *tagNamespace;
 
-/// Global (typically); configured by "reviewTag = ". Default is "review".
-@property (nonatomic, copy, readonly) NSString *reviewTagName;
-
 /// Global (typically); configured by "githubLogin = "
 @property (nonatomic, copy, readonly) NSString *githubLogin;
 
