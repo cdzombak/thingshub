@@ -19,7 +19,7 @@ static NSString * const CDZThingsHubConfigDefaultTagNamespace = @"github";
 
 @property (nonatomic, copy, readwrite) NSString *tagNamespace;
 @property (nonatomic, copy, readwrite) NSString *githubLogin;
-@property (nonatomic, copy, readwrite) NSString *githubOrgName;
+@property (nonatomic, copy, readwrite) NSString *repoOwner;
 @property (nonatomic, copy, readwrite) NSString *githubRepoName;
 @property (nonatomic, copy, readwrite) NSString *areaName;
 @property (nonatomic, copy, readwrite) NSString *projectPrefix;
@@ -154,10 +154,10 @@ static NSString * const CDZThingsHubConfigDefaultTagNamespace = @"github";
                                    code:CDZErrorCodeConfigurationValidationError
                                userInfo:@{ NSLocalizedDescriptionKey: @"Github username must be set." }];
     }
-    else if (!self.githubOrgName) {
+    else if (!self.repoOwner) {
         return [NSError errorWithDomain:kThingsHubErrorDomain
                                    code:CDZErrorCodeConfigurationValidationError
-                               userInfo:@{ NSLocalizedDescriptionKey: @"Github organization must be set." }];
+                               userInfo:@{ NSLocalizedDescriptionKey: @"Github repo owner must be set." }];
     }
     else if (!self.githubRepoName) {
         return [NSError errorWithDomain:kThingsHubErrorDomain
@@ -171,12 +171,12 @@ static NSString * const CDZThingsHubConfigDefaultTagNamespace = @"github";
 #pragma mark - NSObject Protocol
 
 - (NSString *)description {
-    return [NSString stringWithFormat:@"<%@ %p>: {\n\ttagNamespace: %@\n\tgithubLogin: %@\n\tgithubOrgName:%@\n\tgithubRepoName: %@\n\tareaName: %@\t\tprojectPrefix: %@\n}",
+    return [NSString stringWithFormat:@"<%@ %p>: {\n\ttagNamespace: %@\n\tgithubLogin: %@\n\trepoOwner:%@\n\tgithubRepoName: %@\n\tareaName: %@\t\tprojectPrefix: %@\n}",
             NSStringFromClass([self class]),
             self,
             self.tagNamespace,
             self.githubLogin,
-            self.githubOrgName,
+            self.repoOwner,
             self.githubRepoName,
             self.areaName,
             self.projectPrefix
@@ -193,7 +193,7 @@ static NSString * const CDZThingsHubConfigDefaultTagNamespace = @"github";
         propertyKeysByConfigKey = @{
                                     @"tagNamespace": NSStringFromSelector(@selector(tagNamespace)),
                                     @"githubLogin": NSStringFromSelector(@selector(githubLogin)),
-                                    @"githubOrg": NSStringFromSelector(@selector(githubOrgName)),
+                                    @"repoOwner": NSStringFromSelector(@selector(repoOwner)),
                                     @"githubRepo": NSStringFromSelector(@selector(githubRepoName)),
                                     @"areaName": NSStringFromSelector(@selector(areaName)),
                                     @"projectPrefix": NSStringFromSelector(@selector(projectPrefix)),

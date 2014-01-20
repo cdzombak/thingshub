@@ -69,7 +69,7 @@
     // Cache extant milestones:
     NSString *milestonesCacheQuery = [NSString stringWithFormat:@"%@ LIKE \"*//thingshub/%@/%@/milestone/*//*\"",
                                       NSStringFromSelector(@selector(notes)),
-                                      _configuration.githubOrgName,
+                                      _configuration.repoOwner,
                                       _configuration.githubRepoName
                                       ];
     NSPredicate *milestonesPredicate = [NSPredicate predicateWithFormat:milestonesCacheQuery];
@@ -82,7 +82,7 @@
     // Cache extant issues:
     NSString *issuesCacheQuery = [NSString stringWithFormat:@"%@ LIKE \"*//thingshub/%@/%@/issue/*//*\"",
                                   NSStringFromSelector(@selector(notes)),
-                                  _configuration.githubOrgName,
+                                  _configuration.repoOwner,
                                   _configuration.githubRepoName
                                   ];
     NSPredicate *issuesPredicate = [NSPredicate predicateWithFormat:issuesCacheQuery];
@@ -174,7 +174,7 @@
 
 - (NSString *)identifierForMilestone:(NSDictionary *)milestone {
     return [NSString stringWithFormat:@"//thingshub/%@/%@/milestone/%ld//",
-            self.configuration.githubOrgName,
+            self.configuration.repoOwner,
             self.configuration.githubRepoName,
             (long)[milestone cdz_gh_number]
             ];
@@ -295,7 +295,7 @@
 
 - (NSString *)identifierForIssue:(NSDictionary *)issue {
     return [NSString stringWithFormat:@"//thingshub/%@/%@/issue/%ld//",
-            self.configuration.githubOrgName,
+            self.configuration.repoOwner,
             self.configuration.githubRepoName,
             (long)[issue cdz_gh_number]
             ];

@@ -26,8 +26,8 @@
 /// Global (typically); configured by "githubLogin = "
 @property (nonatomic, copy, readonly) NSString *githubLogin;
 
-/// Per-project (typically); configured by "githubOrg = "
-@property (nonatomic, copy, readonly) NSString *githubOrgName;
+/// Per-project (typically); configured by "repoOwner = "
+@property (nonatomic, copy, readonly) NSString *repoOwner;
 
 /// Per-project; configured by "githubRepo = "
 @property (nonatomic, copy, readonly) NSString *githubRepoName;
