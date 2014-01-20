@@ -21,8 +21,11 @@
 /// The selected Things area for milestones & issues during this sync.
 @property (nonatomic, strong) ThingsArea *thingsArea;
 
-/// A cache of extant milestones for this repo. Used to avoid repeated trips across Scripting Bridge.
+/// A cache of extant projects for this repo's milestones in Things. Used to avoid repeated trips across Scripting Bridge.
 @property (nonatomic, strong) NSMutableArray *milestonesCache;
+
+/// A cache of extant todos for this repo's issues in Things. Used to avoid repeated trips across Scripting Bridge.
+@property (nonatomic, strong) NSMutableArray *issuesCache;
 
 /// The local collection modified by the sync engine via the delegate API.
 @property (nonatomic, strong) NSMutableArray *localCollection;
@@ -74,6 +77,19 @@
     
     dispatch_async(self.mutableStateQueue, ^{
         self.milestonesCache = [extantMilestones mutableCopy];
+    });
+    
+    // Cache extant issues:
+    NSString *issuesCacheQuery = [NSString stringWithFormat:@"%@ LIKE \"*//thingshub/%@/%@/issue/*//*\"",
+                                  NSStringFromSelector(@selector(notes)),
+                                  _configuration.githubOrgName,
+                                  _configuration.githubRepoName
+                                  ];
+    NSPredicate *issuesPredicate = [NSPredicate predicateWithFormat:issuesCacheQuery];
+    NSArray *extantIssues = [[[[self thingsApplication] toDos] get] filteredArrayUsingPredicate:issuesPredicate];
+    
+    dispatch_async(self.mutableStateQueue, ^{
+        self.issuesCache = [extantIssues mutableCopy];
     });
 }
 
@@ -159,6 +175,119 @@
     NSString *format = [NSString stringWithFormat:@"%@ LIKE \"*%@*\"",
                         NSStringFromSelector(@selector(notes)),
                         [self identifierForMilestone:milestone]
+                        ];
+    return [NSPredicate predicateWithFormat:format];
+}
+
+#pragma mark - Issue Sync
+
+- (BOOL)syncIssue:(NSDictionary *)issue createIfNeeded:(BOOL)createIfNeeded updateExtant:(BOOL)updateExtant {
+    __block ThingsToDo *todo;
+    
+    dispatch_sync(self.mutableStateQueue, ^{
+        todo = [[self.issuesCache filteredArrayUsingPredicate:[self predicateForIssue:issue]] firstObject];
+    });
+    
+    BOOL didCreateTask = NO;
+    
+    if (todo && !updateExtant) {
+        return YES;
+    }
+    else if (!todo && !createIfNeeded) {
+        return YES;
+    }
+    else if (!todo && createIfNeeded) {
+        todo = [[[[self thingsApplication] classForScriptingClass:@"to do"] alloc] init];
+        [[[self thingsApplication] toDos] addObject:todo];
+        didCreateTask = YES;
+        dispatch_async(self.mutableStateQueue, ^{
+            [self.issuesCache addObject:todo];
+        });
+    }
+
+    NSDictionary *issueMilestone = [issue cdz_gh_issueMilestone];
+    if (issueMilestone) {
+        ThingsProject *project = [[self.milestonesCache filteredArrayUsingPredicate:[self predicateForMilestone:issueMilestone]] firstObject];
+        todo.project = project;
+    }
+    else {
+        todo.project = nil;
+        todo.area = self.thingsArea;
+    }
+
+    NSString *currentTagNames = todo.tagNames ?: @"";
+    NSMutableArray *tags = [[currentTagNames componentsSeparatedByString:@","] mutableCopy];
+
+    NSString *githubPrefix = [NSString stringWithFormat:@"%@:", self.configuration.tagNamespace];
+    NSIndexSet *githubTagIndexes = [tags indexesOfObjectsPassingTest:^BOOL(NSString *tagName, NSUInteger idx, BOOL *stop) {
+        return [tagName hasPrefix:githubPrefix];
+    }];
+    [tags removeObjectsAtIndexes:githubTagIndexes];
+    
+    for (NSDictionary *label in [issue cdz_gh_issueLabels]) {
+        [tags addObject:[NSString stringWithFormat:@"%@:%@", self.configuration.tagNamespace, [label cdz_gh_labelName]]];
+    }
+    
+    [tags addObject:[NSString stringWithFormat:@"via:%@", self.configuration.tagNamespace]];
+    [tags addObject:self.configuration.reviewTagName];
+    
+    todo.tagNames = [tags componentsJoinedByString:@","];
+
+    if (didCreateTask) {
+        todo.notes = [NSString stringWithFormat:@"%@\n\n%@", [issue cdz_gh_htmlUrlString], [self identifierForIssue:issue]];
+    }
+
+    NSString *pullReqPrefix = [issue cdz_gh_issueIsPullRequest] ? @"PR " : @"";
+    todo.name = [NSString stringWithFormat:@"(%@#%ld) %@", pullReqPrefix, (long)[issue cdz_gh_number], [issue cdz_gh_title]];
+    
+    todo.status = [issue cdz_gh_isOpen] ? ThingsStatusOpen : ThingsStatusCompleted;
+    
+    return YES;
+}
+
+- (void)collectExtantIssues {
+    dispatch_async(self.mutableStateQueue, ^{
+        NSAssert(self.localCollection == nil || self.localCollection.count == 0, @"%s must be called only once, and after milestone sync is complete.", __PRETTY_FUNCTION__);
+        
+        self.localCollection = [self.issuesCache mutableCopy];
+    });
+}
+
+- (void)removeIssueFromLocalCollection:(NSDictionary *)issue {
+    dispatch_async(self.mutableStateQueue, ^{
+        NSAssert(self.localCollection, @"-collectExtantIssues must be called before %s", __PRETTY_FUNCTION__);
+        
+        NSArray *issuesInCollection = [self.localCollection filteredArrayUsingPredicate:[self predicateForIssue:issue]];
+        [self.localCollection removeObjectsInArray:issuesInCollection];
+    });
+}
+
+- (void)cancelIssuesInLocalCollection {
+    dispatch_sync(self.mutableStateQueue, ^{
+        NSAssert(self.localCollection, @"-collectExtantIssues must be called before %s", __PRETTY_FUNCTION__);
+        
+        for (ThingsToDo *todo in self.localCollection) {
+            todo.status = ThingsStatusCanceled;
+        }
+        
+        [self.localCollection removeAllObjects];
+    });
+}
+
+#pragma mark Identifier Helpers
+
+- (NSString *)identifierForIssue:(NSDictionary *)issue {
+    return [NSString stringWithFormat:@"//thingshub/%@/%@/issue/%ld//",
+            self.configuration.githubOrgName,
+            self.configuration.githubRepoName,
+            (long)[issue cdz_gh_number]
+            ];
+}
+
+- (NSPredicate *)predicateForIssue:(NSDictionary *)issue {
+    NSString *format = [NSString stringWithFormat:@"%@ LIKE \"*%@*\"",
+                        NSStringFromSelector(@selector(notes)),
+                        [self identifierForIssue:issue]
                         ];
     return [NSPredicate predicateWithFormat:format];
 }
