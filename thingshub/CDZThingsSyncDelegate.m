@@ -122,12 +122,19 @@
         });
     }
     
-    project.status = [milestone cdz_gh_isOpen] ? ThingsStatusOpen : ThingsStatusCompleted;
     project.name = [milestone cdz_gh_title];
     project.notes = [NSString stringWithFormat:@"%@\n\n%@", [milestone cdz_gh_milestoneDescription], [self identifierForMilestone:milestone]];
     project.dueDate = [milestone cdz_gh_milestoneDueDate];
     project.tagNames = [NSString stringWithFormat:@"%@,via:%@,%@", project.tagNames, self.configuration.tagNamespace, self.configuration.reviewTagName];
-    project.area = self.thingsArea;
+
+    ThingsStatus newStatus = [milestone cdz_gh_isOpen] ? ThingsStatusOpen : ThingsStatusCompleted;
+    if (project.status != newStatus) project.status = newStatus;
+    
+    if (project.area && !self.thingsArea) {
+        project.area = nil;
+    } else if ((!project.area && self.thingsArea) || ![project.area.id isEqual:self.thingsArea.id]) {
+        project.area = self.thingsArea;
+    }
     
     return YES;
 }
@@ -208,11 +215,19 @@
     NSDictionary *issueMilestone = [issue cdz_gh_issueMilestone];
     if (issueMilestone) {
         ThingsProject *project = [[self.milestonesCache filteredArrayUsingPredicate:[self predicateForMilestone:issueMilestone]] firstObject];
-        todo.project = project;
+        
+        if (![todo.project.id isEqual:project.id]) {
+            todo.project = project;
+        }
     }
     else {
-        todo.project = nil;
-        todo.area = self.thingsArea;
+        if (todo.project) todo.project = nil;
+        
+        if (todo.area && !self.thingsArea) {
+            todo.area = nil;
+        } else if ((!todo.area && self.thingsArea) || ![todo.area.id isEqual:self.thingsArea.id]) {
+            todo.area = self.thingsArea;
+        }
     }
 
     NSString *currentTagNames = todo.tagNames ?: @"";
@@ -240,7 +255,8 @@
     NSString *pullReqPrefix = [issue cdz_gh_issueIsPullRequest] ? @"PR " : @"";
     todo.name = [NSString stringWithFormat:@"(%@#%ld) %@", pullReqPrefix, (long)[issue cdz_gh_number], [issue cdz_gh_title]];
     
-    todo.status = [issue cdz_gh_isOpen] ? ThingsStatusOpen : ThingsStatusCompleted;
+    ThingsStatus newStatus = [issue cdz_gh_isOpen] ? ThingsStatusOpen : ThingsStatusCompleted;
+    if (todo.status != newStatus) todo.status = newStatus;
     
     return YES;
 }
