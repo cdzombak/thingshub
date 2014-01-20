@@ -117,26 +117,26 @@
 }
 
 - (void)collectExtantMilestones {
-    NSAssert(self.localCollection == nil, @"%s must be called only once", __PRETTY_FUNCTION__);
-    
     dispatch_async(self.mutableStateQueue, ^{
+        NSAssert(self.localCollection == nil, @"%s must be called only once", __PRETTY_FUNCTION__);
+        
         self.localCollection = [self.milestonesCache mutableCopy];
     });
 }
 
 - (void)removeMilestoneFromLocalCollection:(NSDictionary *)milestone {
-    NSAssert(self.localCollection, @"-collectExtantMilestones must be called before %s", __PRETTY_FUNCTION__);
-    
     dispatch_async(self.mutableStateQueue, ^{
+        NSAssert(self.localCollection, @"-collectExtantMilestones must be called before %s", __PRETTY_FUNCTION__);
+        
         NSArray *milestonesInCollection = [self.localCollection filteredArrayUsingPredicate:[self predicateForMilestone:milestone]];
         [self.localCollection removeObjectsInArray:milestonesInCollection];
     });
 }
 
 - (void)cancelMilestonesInLocalCollection {
-    NSAssert(self.localCollection, @"-collectExtantMilestones must be called before %s", __PRETTY_FUNCTION__);
-    
     dispatch_sync(self.mutableStateQueue, ^{
+        NSAssert(self.localCollection, @"-collectExtantMilestones must be called before %s", __PRETTY_FUNCTION__);
+        
         for (ThingsProject *project in self.localCollection) {
             project.status = ThingsStatusCanceled;
         }
