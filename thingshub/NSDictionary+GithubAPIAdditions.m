@@ -31,8 +31,35 @@
 
 - (NSDate *)cdz_gh_milestoneDueDate {
     NSString *dateString = self[@"due_on"];
+    
+    if (!dateString || [dateString isEqual:[NSNull null]]) return nil;
+    
     NSValueTransformer *dateTransformer = [NSValueTransformer valueTransformerForName:OCTDateValueTransformerName];
     return [dateTransformer transformedValue:dateString];
+}
+
+- (NSDictionary *)cdz_gh_issueMilestone {
+    NSDictionary *milestone = self[@"milestone"];
+    if (!milestone || [milestone isEqual:[NSNull null]]) return nil;
+    return milestone;
+}
+
+- (NSArray *)cdz_gh_issueLabels {
+    NSArray *labels = self[@"labels"];
+    return labels ?: @[];
+}
+
+- (NSString *)cdz_gh_labelName {
+    return self[@"name"] ?: @"";
+}
+
+- (NSString *)cdz_gh_htmlUrlString {
+    return self[@"html_url"] ?: @"";
+}
+
+- (BOOL)cdz_gh_issueIsPullRequest {
+    id pr = self[@"pull_request"];
+    return !pr || ([pr isEqual:[NSNull null]]);
 }
 
 @end

@@ -24,4 +24,19 @@
 /// Return the milestone's due date, or `nil` if it isn't set.
 - (NSDate *)cdz_gh_milestoneDueDate;
 
+/// Return the issue's milestone, or `nil` if it isn't set.
+- (NSDictionary *)cdz_gh_issueMilestone;
+
+/// Return the issue's label dictionaries, or an empty array if none exist.
+- (NSArray *)cdz_gh_issueLabels;
+
+/// Return the label's "name" or `@""` if it isn't set.
+- (NSString *)cdz_gh_labelName;
+
+/// Return the object's "html_url" string, or `@""` if it isn't set.
+- (NSString *)cdz_gh_htmlUrlString;
+
+/// Return YES if this object contains a "pull_request".
+- (BOOL)cdz_gh_issueIsPullRequest;
+
 @end
