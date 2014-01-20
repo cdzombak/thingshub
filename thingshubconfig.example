@@ -4,7 +4,7 @@
 # Config files are parsed recursively, beginning at ~ and walking down to the current directory.
 #
 # This means you can put defaults (ie. githubLogin, tagNamespace) in ~/.thingshubconfig,
-# leaving project-specific config (repoOwner, githubRepo, areaName, projectPrefix) in your-project-dir/.thingshubconfig.
+# leaving project-specific config (repoOwner, repoName, areaName, projectPrefix) in your-project-dir/.thingshubconfig.
 #
 # Config parameters can also be set or overridden on the commandline, by passing -param value, ie. "-githubLogin cdzombak"
 
@@ -19,8 +19,8 @@ tagNamespace = github
 # repoOwner: the owner of the Github repo to sync. Required.
 repoOwner = cdzombak
 
-# githubRepo: the Github repo to sync. Required.
-githubRepo = thingshub
+# repoName: the Github repo to sync. Required.
+repoName = thingshub
 
 # areaName: the area in Things to use for this project. Optional; default is None.
 areaName = Personal Software Projects

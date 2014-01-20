@@ -98,7 +98,7 @@ static NSString * const CDZGithubStateValueClosed = @"closed";
 - (RACSignal *)milestonesInState:(NSString *)state {
     NSParameterAssert(state);
     
-    NSString *path = [NSString stringWithFormat:@"repos/%@/%@/milestones", self.config.repoOwner, self.config.githubRepoName];
+    NSString *path = [NSString stringWithFormat:@"repos/%@/%@/milestones", self.config.repoOwner, self.config.repoName];
     NSURLRequest *milestonesRequest = [self.client requestWithMethod:CDZHTTPMethodGET
                                                                 path:path
                                                           parameters:@{ CDZGithubStateKey: state } ];
@@ -136,7 +136,7 @@ static NSString * const CDZGithubStateValueClosed = @"closed";
 - (RACSignal *)issuesAssignedToMeInState:(NSString *)state {
     NSParameterAssert(state);
     
-    NSString *path = [NSString stringWithFormat:@"repos/%@/%@/issues", self.config.repoOwner, self.config.githubRepoName];
+    NSString *path = [NSString stringWithFormat:@"repos/%@/%@/issues", self.config.repoOwner, self.config.repoName];
     NSURLRequest *issuesRequest = [self.client requestWithMethod:CDZHTTPMethodGET
                                                                 path:path
                                                           parameters:@{ CDZGithubStateKey: state,

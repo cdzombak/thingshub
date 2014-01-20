@@ -29,8 +29,8 @@
 /// Per-project (typically); configured by "repoOwner = "
 @property (nonatomic, copy, readonly) NSString *repoOwner;
 
-/// Per-project; configured by "githubRepo = "
-@property (nonatomic, copy, readonly) NSString *githubRepoName;
+/// Per-project; configured by "repoName = "
+@property (nonatomic, copy, readonly) NSString *repoName;
 
 /// Per-project; configured by "areaName = ". May be missing; default is nil.
 @property (nonatomic, copy, readonly) NSString *areaName;

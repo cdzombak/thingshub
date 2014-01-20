@@ -20,7 +20,7 @@ static NSString * const CDZThingsHubConfigDefaultTagNamespace = @"github";
 @property (nonatomic, copy, readwrite) NSString *tagNamespace;
 @property (nonatomic, copy, readwrite) NSString *githubLogin;
 @property (nonatomic, copy, readwrite) NSString *repoOwner;
-@property (nonatomic, copy, readwrite) NSString *githubRepoName;
+@property (nonatomic, copy, readwrite) NSString *repoName;
 @property (nonatomic, copy, readwrite) NSString *areaName;
 @property (nonatomic, copy, readwrite) NSString *projectPrefix;
 
@@ -159,7 +159,7 @@ static NSString * const CDZThingsHubConfigDefaultTagNamespace = @"github";
                                    code:CDZErrorCodeConfigurationValidationError
                                userInfo:@{ NSLocalizedDescriptionKey: @"Github repo owner must be set." }];
     }
-    else if (!self.githubRepoName) {
+    else if (!self.repoName) {
         return [NSError errorWithDomain:kThingsHubErrorDomain
                                    code:CDZErrorCodeConfigurationValidationError
                                userInfo:@{ NSLocalizedDescriptionKey: @"Github repo name must be set." }];
@@ -171,13 +171,13 @@ static NSString * const CDZThingsHubConfigDefaultTagNamespace = @"github";
 #pragma mark - NSObject Protocol
 
 - (NSString *)description {
-    return [NSString stringWithFormat:@"<%@ %p>: {\n\ttagNamespace: %@\n\tgithubLogin: %@\n\trepoOwner:%@\n\tgithubRepoName: %@\n\tareaName: %@\t\tprojectPrefix: %@\n}",
+    return [NSString stringWithFormat:@"<%@ %p>: {\n\ttagNamespace: %@\n\tgithubLogin: %@\n\trepoOwner:%@\n\trepoName: %@\n\tareaName: %@\t\tprojectPrefix: %@\n}",
             NSStringFromClass([self class]),
             self,
             self.tagNamespace,
             self.githubLogin,
             self.repoOwner,
-            self.githubRepoName,
+            self.repoName,
             self.areaName,
             self.projectPrefix
             ];
@@ -194,7 +194,7 @@ static NSString * const CDZThingsHubConfigDefaultTagNamespace = @"github";
                                     @"tagNamespace": NSStringFromSelector(@selector(tagNamespace)),
                                     @"githubLogin": NSStringFromSelector(@selector(githubLogin)),
                                     @"repoOwner": NSStringFromSelector(@selector(repoOwner)),
-                                    @"githubRepo": NSStringFromSelector(@selector(githubRepoName)),
+                                    @"repoName": NSStringFromSelector(@selector(repoName)),
                                     @"areaName": NSStringFromSelector(@selector(areaName)),
                                     @"projectPrefix": NSStringFromSelector(@selector(projectPrefix)),
                                     };
