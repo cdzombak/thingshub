@@ -66,7 +66,8 @@
         CDZCLIPrint(@"Note: no Things area selected. If you expected tasks and projects to be created in an area, ensure it exists and is spelled correctly in the configuration.");
     }
     
-    // Cache extant milestones:
+    // Cache all extant milestones (projects in Things):
+    
     NSString *milestonesCacheQuery = [NSString stringWithFormat:@"%@ LIKE \"*//thingshub/%@/%@/milestone/*//*\"",
                                       NSStringFromSelector(@selector(notes)),
                                       _configuration.repoOwner,
@@ -79,14 +80,26 @@
         self.milestonesCache = [extantMilestones mutableCopy];
     });
     
-    // Cache extant issues:
+    // Cache extant issues (Todos in Things) from Today, Next, Scheduled, Someday, Projects, Trash (ie. not Inbox or Logbook):
+    
+    NSSet *listsToCache = [NSSet setWithObjects:@"Today", @"Next", @"Scheduled", @"Someday", @"Projects", @"Trash", nil];
+    NSArray *thingsLists = [[[self thingsApplication] lists] get];
+    
     NSString *issuesCacheQuery = [NSString stringWithFormat:@"%@ LIKE \"*//thingshub/%@/%@/issue/*//*\"",
                                   NSStringFromSelector(@selector(notes)),
                                   _configuration.repoOwner,
                                   _configuration.repoName
                                   ];
     NSPredicate *issuesPredicate = [NSPredicate predicateWithFormat:issuesCacheQuery];
-    NSArray *extantIssues = [[[[self thingsApplication] toDos] get] filteredArrayUsingPredicate:issuesPredicate];
+    
+    NSArray *extantIssues = @[];
+    
+    for (ThingsList *list in thingsLists) {
+        if ([listsToCache containsObject:list.name]) {
+            NSArray *thisListIssues = [[[list toDos] get] filteredArrayUsingPredicate:issuesPredicate];
+            extantIssues = [extantIssues arrayByAddingObjectsFromArray:thisListIssues];
+        }
+    }
     
     dispatch_async(self.mutableStateQueue, ^{
         self.issuesCache = [extantIssues mutableCopy];
