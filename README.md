@@ -77,7 +77,6 @@ See `thingshubconfig.example` in this repo for docs on the config system.
 
 * config: look at ~ specifically first, then search current path; don't require current path to be in ~
 * allow mapping github tag -> local tag (ie. in progress)
-* allow adding prefix to project names
 * select delegate (things/OF) via command line
 
 ### 1.1

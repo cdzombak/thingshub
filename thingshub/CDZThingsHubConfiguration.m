@@ -22,6 +22,7 @@ static NSString * const CDZThingsHubConfigDefaultTagNamespace = @"github";
 @property (nonatomic, copy, readwrite) NSString *githubOrgName;
 @property (nonatomic, copy, readwrite) NSString *githubRepoName;
 @property (nonatomic, copy, readwrite) NSString *areaName;
+@property (nonatomic, copy, readwrite) NSString *projectPrefix;
 
 @end
 
@@ -170,14 +171,15 @@ static NSString * const CDZThingsHubConfigDefaultTagNamespace = @"github";
 #pragma mark - NSObject Protocol
 
 - (NSString *)description {
-    return [NSString stringWithFormat:@"<%@ %p>: {\n\ttagNamespace: %@\n\tgithubLogin: %@\n\tgithubOrgName:%@\n\tgithubRepoName: %@\n\tareaName: %@\n}",
+    return [NSString stringWithFormat:@"<%@ %p>: {\n\ttagNamespace: %@\n\tgithubLogin: %@\n\tgithubOrgName:%@\n\tgithubRepoName: %@\n\tareaName: %@\t\tprojectPrefix: %@\n}",
             NSStringFromClass([self class]),
             self,
             self.tagNamespace,
             self.githubLogin,
             self.githubOrgName,
             self.githubRepoName,
-            self.areaName
+            self.areaName,
+            self.projectPrefix
             ];
 }
 
@@ -194,6 +196,7 @@ static NSString * const CDZThingsHubConfigDefaultTagNamespace = @"github";
                                     @"githubOrg": NSStringFromSelector(@selector(githubOrgName)),
                                     @"githubRepo": NSStringFromSelector(@selector(githubRepoName)),
                                     @"areaName": NSStringFromSelector(@selector(areaName)),
+                                    @"projectPrefix": NSStringFromSelector(@selector(projectPrefix)),
                                     };
     });
     return propertyKeysByConfigKey;

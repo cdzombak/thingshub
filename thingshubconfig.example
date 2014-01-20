@@ -24,3 +24,6 @@ githubRepo = thingshub
 
 # areaName: the area in Things to use for this project. Optional; default is None.
 areaName = Personal Software Projects
+
+# projectPrefix: prefix which will be applied to project names. Optional; default is none.
+projectPrefix = THub

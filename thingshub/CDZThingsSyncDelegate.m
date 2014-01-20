@@ -122,7 +122,9 @@
         });
     }
     
-    project.name = [milestone cdz_gh_title];
+    NSString *namePrefix = self.configuration.projectPrefix ? [NSString stringWithFormat:@"%@: ", self.configuration.projectPrefix] : @"";
+    project.name = [NSString stringWithFormat:@"%@%@", namePrefix, [milestone cdz_gh_title]];
+    
     project.notes = [NSString stringWithFormat:@"%@\n\n%@", [milestone cdz_gh_milestoneDescription], [self identifierForMilestone:milestone]];
     project.dueDate = [milestone cdz_gh_milestoneDueDate];
     project.tagNames = [NSString stringWithFormat:@"%@,via:%@", project.tagNames, self.configuration.tagNamespace];

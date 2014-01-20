@@ -35,4 +35,7 @@
 /// Per-project; configured by "areaName = ". May be missing; default is nil.
 @property (nonatomic, copy, readonly) NSString *areaName;
 
+/// Per-project; configured by "projectPrefix = ". May be missing; default is nil.
+@property (nonatomic, copy, readonly) NSString *projectPrefix;
+
 @end
