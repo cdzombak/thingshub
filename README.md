@@ -83,3 +83,41 @@ The following will be placed in the notes field for relevant projects/todos:
 
 * `//thingshub/ORG/REPO/issue/###//`
 * `//thingshub/ORG/REPO/milestone/###//`
+
+### Reference Material
+
+#### Things and Scripting Bridge
+
+* http://downloads.culturedcode.com/things/download/ThingsAppleScriptGuide.pdf
+* https://developer.apple.com/library/mac/documentation/Cocoa/Conceptual/ScriptingBridgeConcepts/UsingScriptingBridge/UsingScriptingBridge.html#//apple_ref/doc/uid/TP40006104-CH4-DontLinkElementID_12
+
+#### RAC
+
+* https://github.com/ReactiveCocoa/ReactiveCocoa/blob/8cb404a9be99f9b3515bc16b6874ce85fee37b0b/ReactiveCocoaFramework/ReactiveCocoa/RACStream.h#L98-L125
+* http://www.techsfo.com/blog/2013/08/managing-nested-asynchronous-callbacks-in-objective-c-using-reactive-cocoa/
+* http://stackoverflow.com/questions/15797081/chaining-dependent-signals-in-reactivecocoa/15827396#15827396
+* https://github.com/ReactiveCocoa/ReactiveCocoa/blob/master/ReactiveCocoaFramework/ReactiveCocoa/RACSignal.h#L162-L177
+* http://stackoverflow.com/questions/19439636/difference-between-catch-and-subscribeerror
+* https://github.com/ReactiveCocoa/GHAPIDemo/blob/befc3f73b9c30fd8679230cdc02d1f5793b705e4/GHAPIDemo/GHDUserViewController.m#L138-L151
+* https://github.com/ReactiveCocoa/ReactiveCocoa/blob/fc32fc06d398a99cd7c4c28e102d1ffb4a2e3cf9/Documentation/DesignGuidelines.md#side-effects-occur-for-each-subscription
+* https://github.com/cdzombak/thingshub/pull/2
+* https://github.com/cdzombak/thingshub/pull/1
+
+*and more…*
+
+#### Github API
+
+* http://developer.github.com/v3/issues/#list-issues-for-a-repository
+
+#### KVC, Predicates
+
+* http://nshipster.com/kvc-collection-operators/
+* https://developer.apple.com/library/mac/documentation/Cocoa/Conceptual/KeyValueCoding/Articles/CollectionOperators.html#//apple_ref/doc/uid/20002176-BAJEAIEE
+* https://developer.apple.com/library/mac/documentation/cocoa/conceptual/predicates/Articles/pUsing.html
+* http://nshipster.com/nspredicate/
+
+#### `NSRunLoop`
+
+* http://hackazach.net/code/2013/08/09/run-run-run-nsrunloop/
+* http://cocoafactory.com/blog/2012/09/06/whats-a-run-loop-anyway/
+* https://www.mikeash.com/pyblog/friday-qa-2010-01-01-nsrunloop-internals.html
