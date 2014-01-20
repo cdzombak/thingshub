@@ -137,7 +137,8 @@ static NSString * const CDZThingsHubConfigDefaultTagNamespace = @"github";
 
 #pragma mark - Merging
 
-/// Merges in the given configuration. Values in the given config take priority.
+/// Merges in the given configuration.
+/// @param priorityConfiguration Configuration to merge into `self`. Values in the this new config take priority over those already set on `self`.
 - (void)mergeInPriorityConfiguration:(CDZThingsHubConfiguration *)priorityConfiguration {
     for (NSString *propertyKey in [[[self class] propertyKeysByConfigKey] allValues]) {
         id value = [priorityConfiguration valueForKey:propertyKey];
