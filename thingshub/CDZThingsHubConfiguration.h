@@ -32,7 +32,7 @@
 /// Per-project; configured by "githubRepo = "
 @property (nonatomic, copy, readonly) NSString *githubRepoName;
 
-/// Per-project; configured by "thingsArea = ". May be missing; default is nil.
-@property (nonatomic, copy, readonly) NSString *thingsAreaName;
+/// Per-project; configured by "areaName = ". May be missing; default is nil.
+@property (nonatomic, copy, readonly) NSString *areaName;
 
 @end
