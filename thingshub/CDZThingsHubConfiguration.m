@@ -43,7 +43,7 @@ static NSString * const CDZThingsHubConfigDefaultTagNamespace = @"github";
             CDZCLIPrint(@"This tool must be run from within your home directory: %@", homePath);
         }
         
-        for (NSUInteger i = homePathComponents.count - 1; i < workingPathComponents.count; ++i) {
+        for (NSUInteger i = homePathComponents.count - 1; i <= workingPathComponents.count; ++i) {
             NSArray *pathComponents = [workingPathComponents subarrayWithRange:NSMakeRange(0, i)];
             NSString *path = [NSString pathWithComponents:pathComponents];
             
