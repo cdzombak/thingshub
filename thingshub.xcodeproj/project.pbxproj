@@ -192,8 +192,8 @@
 				3AD16566F5AC4B42A8EDF1B2 /* Check Pods Manifest.lock */,
 				A21C4ECB18848BB30063467F /* Sources */,
 				A21C4ECC18848BB30063467F /* Frameworks */,
-				A21C4ECD18848BB30063467F /* CopyFiles */,
 				C7485882D396477EBE93EC8C /* Copy Pods Resources */,
+				A21C4ECD18848BB30063467F /* CopyFiles */,
 			);
 			buildRules = (
 			);
