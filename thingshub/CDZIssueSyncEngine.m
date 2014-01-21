@@ -57,13 +57,10 @@ static NSString * const CDZGithubStateValueClosed = @"closed";
 - (RACSignal *)sync {
     [self.delegate engineWillBeginSync:self];
     
-    RACSignal *syncStatusSignal = [[[[RACSignal return:@"Milestones"] then:^RACSignal *{
-        return [self syncMilestones];
-    }] then:^RACSignal *{
-        return [RACSignal return:@"Issues"];
-    }] then:^RACSignal *{
-        return [self syncIssues];
-    }];
+    RACSignal *syncStatusSignal = [[RACSignal return:@"Milestones"] concat:[self syncMilestones]];
+    syncStatusSignal = [syncStatusSignal concat:[RACSignal defer:^RACSignal *{
+        return [[RACSignal return:@"Issues"] concat:[self syncIssues]];
+    }]];
     
     return [[RACSignal defer:^RACSignal *{
         return syncStatusSignal;
@@ -80,6 +77,7 @@ static NSString * const CDZGithubStateValueClosed = @"closed";
     return [RACSignal createSignal:^RACDisposable *(id<RACSubscriber> subscriber) {
         return [[RACSignal merge:@[[self milestonesInState:CDZGithubStateValueOpen], [self milestonesInState:CDZGithubStateValueClosed]]]
         subscribeNext:^(NSDictionary *milestone) {
+            CDZCLIPrint(@"\t%ld", (long)[milestone cdz_gh_number]);
             if (![self.delegate syncMilestone:milestone createIfNeeded:[milestone cdz_gh_isOpen] updateExtant:YES]) {
                 [subscriber sendError:[NSError errorWithDomain:kThingsHubErrorDomain code:CDZErrorCodeSyncFailure userInfo:@{NSLocalizedDescriptionKey: [NSString stringWithFormat:@"Sync delegate couldn't update milestone %@", milestone]}]];
                 // TODO: how can I abort the sync here? --CDZ Jan 18, 2014
@@ -98,7 +96,7 @@ static NSString * const CDZGithubStateValueClosed = @"closed";
 - (RACSignal *)milestonesInState:(NSString *)state {
     NSParameterAssert(state);
     
-    NSString *path = [NSString stringWithFormat:@"repos/%@/%@/milestones", self.config.githubOrgName, self.config.githubRepoName];
+    NSString *path = [NSString stringWithFormat:@"repos/%@/%@/milestones", self.config.repoOwner, self.config.repoName];
     NSURLRequest *milestonesRequest = [self.client requestWithMethod:CDZHTTPMethodGET
                                                                 path:path
                                                           parameters:@{ CDZGithubStateKey: state } ];
@@ -118,6 +116,7 @@ static NSString * const CDZGithubStateValueClosed = @"closed";
     return [RACSignal createSignal:^RACDisposable *(id<RACSubscriber> subscriber) {
         return [[RACSignal merge:@[[self issuesAssignedToMeInState:CDZGithubStateValueOpen], [self issuesAssignedToMeInState:CDZGithubStateValueClosed]]]
                 subscribeNext:^(NSDictionary *issue) {
+                    CDZCLIPrint(@"\t%ld", (long)[issue cdz_gh_number]);
                     if (![self.delegate syncIssue:issue createIfNeeded:[issue cdz_gh_isOpen] updateExtant:YES]) {
                         [subscriber sendError:[NSError errorWithDomain:kThingsHubErrorDomain code:CDZErrorCodeSyncFailure userInfo:@{NSLocalizedDescriptionKey: [NSString stringWithFormat:@"Sync delegate couldn't update issue %@", issue]}]];
                         // TODO: how can I abort the sync here? --CDZ Jan 19, 2014
@@ -136,7 +135,7 @@ static NSString * const CDZGithubStateValueClosed = @"closed";
 - (RACSignal *)issuesAssignedToMeInState:(NSString *)state {
     NSParameterAssert(state);
     
-    NSString *path = [NSString stringWithFormat:@"repos/%@/%@/issues", self.config.githubOrgName, self.config.githubRepoName];
+    NSString *path = [NSString stringWithFormat:@"repos/%@/%@/issues", self.config.repoOwner, self.config.repoName];
     NSURLRequest *issuesRequest = [self.client requestWithMethod:CDZHTTPMethodGET
                                                                 path:path
                                                           parameters:@{ CDZGithubStateKey: state,

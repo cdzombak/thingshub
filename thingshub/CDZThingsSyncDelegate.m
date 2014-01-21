@@ -59,18 +59,19 @@
     [[[[[self thingsApplication] lists] filteredArrayUsingPredicate:inboxPredicate] firstObject] show];
     
     // Get the area for milestones:
-    NSPredicate *areaPredicate = [NSPredicate predicateWithFormat:@"%K == %@", NSStringFromSelector(@selector(name)), self.configuration.thingsAreaName];
+    NSPredicate *areaPredicate = [NSPredicate predicateWithFormat:@"%K == %@", NSStringFromSelector(@selector(name)), self.configuration.areaName];
     self.thingsArea = [[[[self thingsApplication] areas] filteredArrayUsingPredicate:areaPredicate] firstObject];
     
     if (!self.thingsArea) {
         CDZCLIPrint(@"Note: no Things area selected. If you expected tasks and projects to be created in an area, ensure it exists and is spelled correctly in the configuration.");
     }
     
-    // Cache extant milestones:
+    // Cache all extant milestones (projects in Things):
+    
     NSString *milestonesCacheQuery = [NSString stringWithFormat:@"%@ LIKE \"*//thingshub/%@/%@/milestone/*//*\"",
                                       NSStringFromSelector(@selector(notes)),
-                                      _configuration.githubOrgName,
-                                      _configuration.githubRepoName
+                                      _configuration.repoOwner,
+                                      _configuration.repoName
                                       ];
     NSPredicate *milestonesPredicate = [NSPredicate predicateWithFormat:milestonesCacheQuery];
     NSArray *extantMilestones = [[[[self thingsApplication] projects] get] filteredArrayUsingPredicate:milestonesPredicate];
@@ -79,14 +80,26 @@
         self.milestonesCache = [extantMilestones mutableCopy];
     });
     
-    // Cache extant issues:
+    // Cache extant issues (Todos in Things) from Today, Next, Scheduled, Someday, Projects, Trash (ie. not Inbox or Logbook):
+    
+    NSSet *listsToCache = [NSSet setWithObjects:@"Today", @"Next", @"Scheduled", @"Someday", @"Projects", @"Trash", nil];
+    NSArray *thingsLists = [[[self thingsApplication] lists] get];
+    
     NSString *issuesCacheQuery = [NSString stringWithFormat:@"%@ LIKE \"*//thingshub/%@/%@/issue/*//*\"",
                                   NSStringFromSelector(@selector(notes)),
-                                  _configuration.githubOrgName,
-                                  _configuration.githubRepoName
+                                  _configuration.repoOwner,
+                                  _configuration.repoName
                                   ];
     NSPredicate *issuesPredicate = [NSPredicate predicateWithFormat:issuesCacheQuery];
-    NSArray *extantIssues = [[[[self thingsApplication] toDos] get] filteredArrayUsingPredicate:issuesPredicate];
+    
+    NSArray *extantIssues = @[];
+    
+    for (ThingsList *list in thingsLists) {
+        if ([listsToCache containsObject:list.name]) {
+            NSArray *thisListIssues = [[[list toDos] get] filteredArrayUsingPredicate:issuesPredicate];
+            extantIssues = [extantIssues arrayByAddingObjectsFromArray:thisListIssues];
+        }
+    }
     
     dispatch_async(self.mutableStateQueue, ^{
         self.issuesCache = [extantIssues mutableCopy];
@@ -122,10 +135,14 @@
         });
     }
     
-    project.name = [milestone cdz_gh_title];
-    project.notes = [NSString stringWithFormat:@"%@\n\n%@", [milestone cdz_gh_milestoneDescription], [self identifierForMilestone:milestone]];
+    NSString *namePrefix = self.configuration.projectPrefix ? [NSString stringWithFormat:@"%@: ", self.configuration.projectPrefix] : @"";
+    project.name = [NSString stringWithFormat:@"%@%@", namePrefix, [milestone cdz_gh_title]];
+    
+    NSString *milestoneUrlString = [NSString stringWithFormat:@"https://github.com/%@/%@/issues?milestone=%ld&state=open", self.configuration.repoOwner, self.configuration.repoName, (long)[milestone cdz_gh_number]];
+    project.notes = [NSString stringWithFormat:@"%@\n\n%@\n\n%@", milestoneUrlString, [milestone cdz_gh_milestoneDescription], [self identifierForMilestone:milestone]];
+    
     project.dueDate = [milestone cdz_gh_milestoneDueDate];
-    project.tagNames = [NSString stringWithFormat:@"%@,via:%@,%@", project.tagNames, self.configuration.tagNamespace, self.configuration.reviewTagName];
+    project.tagNames = [NSString stringWithFormat:@"%@,via:%@", project.tagNames, self.configuration.tagNamespace];
 
     ThingsStatus newStatus = [milestone cdz_gh_isOpen] ? ThingsStatusOpen : ThingsStatusCompleted;
     if (project.status != newStatus) project.status = newStatus;
@@ -172,8 +189,8 @@
 
 - (NSString *)identifierForMilestone:(NSDictionary *)milestone {
     return [NSString stringWithFormat:@"//thingshub/%@/%@/milestone/%ld//",
-            self.configuration.githubOrgName,
-            self.configuration.githubRepoName,
+            self.configuration.repoOwner,
+            self.configuration.repoName,
             (long)[milestone cdz_gh_number]
             ];
 }
@@ -244,7 +261,6 @@
     }
     
     [tags addObject:[NSString stringWithFormat:@"via:%@", self.configuration.tagNamespace]];
-    [tags addObject:self.configuration.reviewTagName];
     
     todo.tagNames = [tags componentsJoinedByString:@","];
 
@@ -294,8 +310,8 @@
 
 - (NSString *)identifierForIssue:(NSDictionary *)issue {
     return [NSString stringWithFormat:@"//thingshub/%@/%@/issue/%ld//",
-            self.configuration.githubOrgName,
-            self.configuration.githubRepoName,
+            self.configuration.repoOwner,
+            self.configuration.repoName,
             (long)[issue cdz_gh_number]
             ];
 }

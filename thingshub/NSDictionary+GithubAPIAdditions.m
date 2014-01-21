@@ -58,8 +58,11 @@
 }
 
 - (BOOL)cdz_gh_issueIsPullRequest {
-    id pr = self[@"pull_request"];
-    return !pr || ([pr isEqual:[NSNull null]]);
+    NSDictionary *pr = self[@"pull_request"];
+    if (!pr || [pr isEqual:[NSNull null]]) return NO;
+    
+    NSString *diffUrlString = pr[@"diff_url"];
+    return diffUrlString != nil && ![diffUrlString isEqual:[NSNull null]];
 }
 
 @end

@@ -12,9 +12,9 @@
 #import "CDZThingsHubApplication.h"
 
 #import "CDZGithubAuthManager.h"
+#import "CDZIssueSyncDelegate.h"
 #import "CDZIssueSyncEngine.h"
 #import "CDZThingsHubConfiguration.h"
-#import "CDZThingsSyncDelegate.h"
 
 @interface CDZThingsHubApplication ()
 @end
@@ -22,23 +22,29 @@
 @implementation CDZThingsHubApplication
 
 - (void)start {
-    RACSignal *configurationSignal = [[CDZThingsHubConfiguration currentConfiguration] doError:^(NSError *error) {
+    RACSignal *configurationSignal = [[[[CDZThingsHubConfiguration currentConfiguration] doError:^(NSError *error) {
         CDZCLIPrint(@"Configuration error: %@", [error localizedDescription]);
-    }];
+    }] doNext:^(CDZThingsHubConfiguration *config) {
+        CDZCLIPrint(@"Using configuration: %@", [config description]);
+    }] replayLazily];
     
-    RACSignal *authClientSignal = [[configurationSignal flattenMap:^id(CDZThingsHubConfiguration *config) {
+    RACSignal *authClientSignal = [[[configurationSignal flattenMap:^id(CDZThingsHubConfiguration *config) {
         return [CDZGithubAuthManager authenticatedClientForUsername:config.githubLogin];
     }] doError:^(NSError *error) {
         CDZCLIPrint(@"Authentication failed: %@", [error localizedDescription]);
-    }];
+    }] replayLazily];
     
     RACSignal *syncEngineSignal = [[[[RACSignal zip:@[configurationSignal, authClientSignal]] flattenMap:^id(RACTuple *configAndClient) {
         RACTupleUnpack(CDZThingsHubConfiguration *configuration, OCTClient *client) = configAndClient;
-        return [[[[CDZIssueSyncEngine alloc] initWithDelegate:[[CDZThingsSyncDelegate alloc] initWithConfiguration:configuration]
-                                              configuration:configuration
-                                        authenticatedClient:client]
-                sync] logAll];
-        // TODO: Sync works, but this ^ prints "<RACDynamicSignal: 0x100504aa0> name: [+defer:] -multicast: [+defer:] -replay completed" instead of my "Milestones", "Issues" strings. why? --CDZ Jan 19, 2014
+        
+        Class delegateClass = NSClassFromString([NSString stringWithFormat:@"CDZ%@SyncDelegate", configuration.delegateApp]);
+        NSCParameterAssert(delegateClass);
+        id<CDZIssueSyncDelegate> delegate = [[delegateClass alloc] initWithConfiguration:configuration];
+        
+        return [[[CDZIssueSyncEngine alloc] initWithDelegate:delegate
+                                               configuration:configuration
+                                         authenticatedClient:client]
+                sync];
     }] doNext:^(NSString *statusUpdate) {
         CDZCLIPrint(@"Syncing: %@", statusUpdate);
     }] doError:^(NSError *error) {

@@ -18,9 +18,6 @@ profile
 DerivedData
 *.hmap
 
-# CocoaPods
-Pods
-
 # bootstrap script
 Vendor/bundle/
 .bundle/

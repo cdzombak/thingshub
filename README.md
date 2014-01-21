@@ -2,93 +2,127 @@
 
 Synchronize issues assigned to you, one-way, from a Github repo into Things. (Or, soon, to Omnifocus.)
 
-*A more complete README, featuring complete sentences, is forthcoming.*
-
-## Dev
-
-Run `scripts/bootstrap` to set up a local, self-contained environment for CocoaPods. Its only external dependency is Bundler.
-
 ## Usage
-
-### Installation
-
-*TBD* to `/usr/local/bin`, hopefully via Homebrew
 
 ### Configuration
 
-See `thingshubconfig.example` in this repo for docs on the config system.
+See [`thingshubconfig.example` in this repo](https://github.com/cdzombak/thingshub/blob/master/thingshubconfig.example) for docs on the config system.
 
-### Workflow notes
+### Run
+
+*TODO*
+
+### Logout/Reset Github OAuth Token
+
+`security delete-generic-password -s "ThingsHub-Github"`
+
+## Installation
+
+Run `scripts/install`. This will install `thingshub` to `/usr/local/bin` and its man page to `/usr/local/share/man/man1`.
+
+### Manual alternative
+
+Run `xcodebuild -workspace thingshub.xcworkspace -scheme thingshub -configuration Release install`.
+
+### Troubleshooting
+
+Ensure that the target directories exist and you can write to them.
+
+## Workflow
 
 * This never updates Github from Things; GH is the canonical source of truth.
 * This will always create issues in Next, except for issues that have no area *or* project. You can move to Today/Someday as desired.
 * This *will* move issues to areas/projects to reflect milestone changes. This doesn't touch Today/Next/Someday.
 
-#### Why GitHub as the source of truth?
+### Why one way sync? Why Github as the source of truth?
 
-* Issues may be modified by many people, vastly increasing the chance of conflicts
-* Conflict management is easy this way, and we probably won't lose much data
-* Issues are usually closed as side effects of other operations (merges, commits) anyway
-* Descriptions are often used in Things for personal notes
-* You don't want your local tags DB to reflect 1:1 Github - too noisy
-* With one-way sync, the entire operation is idempotent, so simply re-running the sync after a partial failure is fine
+* Issues may be modified by many people online, increasing the chance of conflicts if you modify an issue locally.
+	* Conflict management is easy this way, and we probably won't lose much data.
+* Issues are typically closed as side effects of other operations (merges, commits), so closing issues in your client usually won't make much sense.
+* Descriptions on Todos are often used in your task management software for personal notes.
+* The entire one-way sync operation is idempotent, so partial sync failures are easily recoverable; just re-trigger the sync.
 
-## Implementation Notes
+### Sync (to Things)
 
-### Where to create new issues:
+* Milestones, if any, are represented as projects in your selected Area, or if no Area, as projects in Next. Projects' due dates reflect the milestone due date.
+* Issues without a milestone are placed directly in the selected Area, or if no Area, into Next. (If updating an existing task, we won't move it back into Next, though.)
+* Todos and projects are marked as incomplete/complete based on open/close status in Github. Todos/projects that exist for deleted/unassigned milestones/issues are marked as canceled.
+* We only search for existing issues in Today, Next, Scheduled, Someday, Projects, and Trash — *not Inbox or Logbook*.
+* We don't touch due dates or handle scheduling for tasks.
+* Milestones: project's name, notes, due date, tags, status are updated every sync.
+* Issues: todo's project/area, tags, name, and status are updated every sync. Notes are only touched when the todo is created.
+* Pull requests are treated the same as issues, with "(PR #xxx)" instead of just "(#xxx)" in the name.
 
-* Milestones, if any, are represented as projects in an Area, or if no Area, as projects in Next. Projects have due dates reflecting the milestone due date.
-* Issues without a milestone are placed directly in the respective Area, or if no Area, into Next. (If updating an existing task, we won't move it back into Next, though.)
+#### Tags
 
-### Tag usage:
-
-* When a project or issue task is created or modified in any way, apply the tag "review". Allow configuring this tag.
-* When an issue task is created/updated, remove any extant "github:" tags, and apply "github:" tags that are currently on the issue.
-* When creating/updating an issue task, add a "via:github" tag.
-* Due dates for milestones are changed. We don't touch due dates or handle scheduling for tasks.
-
-### Updating:
-
-* Sync milestones as projects, creating them within the area or within Next; apply name, description, due date, tags as necessary. Mark closed milestones as complete, missing ones as cancelled, open ones as todo.
-* Find all local tasks for this project; in toSync list
-* For each open remote task assigned to me, update/create/mark for review. Set name, state (todo, complete), tags. Move to proper area/project. Remove extant ones from toSync list.
-* For each todo left in toSync, fetch it from the API. If it was unassigned to me, or otherwise is gone, cancel. If it was closed, complete. Mark for review.
-* Descriptions are set to the URL on creation, but never modified.
-
-### PR Handling:
-
-* Same as issues
-* Adds "(PR #xxx)" instead of "(#xxx)" to title
-
-### Configuration:
-
-* global: tag namespace (default "github"), review tag (default "review"), github username
-* per-project: github org/repo, things area
-* on running, get current dir and walk up until I find a .thingshub file. error if I don't find one.
-* merge with config from ~/.thingshubconfig ; local takes priority
-
-### Identifying synced items:
-
-* //thingshub/ORG/REPO/issue/###//
-* //thingshub/ORG/REPO/milestone/###//
-
-## Future features:
-
-### 1.0
-
-* config: look at ~ specifically first, then search current path; don't require current path to be in ~
-* allow mapping github tag -> local tag (ie. in progress)
-* allow adding prefix to project names
-* select delegate (things/OF) via command line
-
-### 1.1
-
-* man page/interactive help
-* allow logging out without manually changning keychain
-* Use contacts/delegation for issues assigned to others.
+* When a todo is created/updated, remove any extant "github:" tags, and apply "github:" tags that are currently on the issue.
+* When creating/updating a todo/project, add a "via:github" tag.
 
 ## Contributors
 
 Thanks to:
 
-* [Andrew Sardone](https://github.com/andrewsardone/) - [@andrewa2](https://twitter.com/andrewa2)
+* [Chris Dzombak](https://github.com/cdzombak/) • tw[@cdzombak](https://twitter.com/cdzombak) • adn[@dzombak](https://alpha.app.net/dzombak) • [chris@chrisdzombak.net](mailto:chris@chrisdzombak.net) • [dzombak.com](http://www.dzombak.com)
+* [Andrew Sardone](https://github.com/andrewsardone/) • tw[@andrewa2](https://twitter.com/andrewa2) • adn[@andrewsardone](https://alpha.app.net/andrewsardone)
+
+## Roadmap
+
+### 1.1
+
+* Allow logging out without manually modifying keychain
+* Use contacts/delegation for issues assigned to others
+
+## Dev Notes
+
+Run `scripts/bootstrap` to set up a local, self-contained environment for CocoaPods. Its only external dependency is Bundler.
+
+----
+
+## Implementation details
+
+### Things
+
+#### Identifying synced items:
+
+The following will be placed in the notes field for relevant projects/todos:
+
+* `//thingshub/ORG/REPO/issue/###//`
+* `//thingshub/ORG/REPO/milestone/###//`
+
+### Reference Material
+
+#### Things and Scripting Bridge
+
+* http://downloads.culturedcode.com/things/download/ThingsAppleScriptGuide.pdf
+* https://developer.apple.com/library/mac/documentation/Cocoa/Conceptual/ScriptingBridgeConcepts/UsingScriptingBridge/UsingScriptingBridge.html#//apple_ref/doc/uid/TP40006104-CH4-DontLinkElementID_12
+
+#### RAC
+
+* https://github.com/ReactiveCocoa/ReactiveCocoa/blob/8cb404a9be99f9b3515bc16b6874ce85fee37b0b/ReactiveCocoaFramework/ReactiveCocoa/RACStream.h#L98-L125
+* http://www.techsfo.com/blog/2013/08/managing-nested-asynchronous-callbacks-in-objective-c-using-reactive-cocoa/
+* http://stackoverflow.com/questions/15797081/chaining-dependent-signals-in-reactivecocoa/15827396#15827396
+* https://github.com/ReactiveCocoa/ReactiveCocoa/blob/master/ReactiveCocoaFramework/ReactiveCocoa/RACSignal.h#L162-L177
+* http://stackoverflow.com/questions/19439636/difference-between-catch-and-subscribeerror
+* https://github.com/ReactiveCocoa/GHAPIDemo/blob/befc3f73b9c30fd8679230cdc02d1f5793b705e4/GHAPIDemo/GHDUserViewController.m#L138-L151
+* https://github.com/ReactiveCocoa/ReactiveCocoa/blob/fc32fc06d398a99cd7c4c28e102d1ffb4a2e3cf9/Documentation/DesignGuidelines.md#side-effects-occur-for-each-subscription
+* https://github.com/cdzombak/thingshub/pull/2
+* https://github.com/cdzombak/thingshub/pull/1
+
+*and more…*
+
+#### Github API
+
+* http://developer.github.com/v3/issues/#list-issues-for-a-repository
+
+#### KVC, Predicates
+
+* http://nshipster.com/kvc-collection-operators/
+* https://developer.apple.com/library/mac/documentation/Cocoa/Conceptual/KeyValueCoding/Articles/CollectionOperators.html#//apple_ref/doc/uid/20002176-BAJEAIEE
+* https://developer.apple.com/library/mac/documentation/cocoa/conceptual/predicates/Articles/pUsing.html
+* http://nshipster.com/nspredicate/
+
+#### `NSRunLoop`
+
+* http://hackazach.net/code/2013/08/09/run-run-run-nsrunloop/
+* http://cocoafactory.com/blog/2012/09/06/whats-a-run-loop-anyway/
+* https://www.mikeash.com/pyblog/friday-qa-2010-01-01-nsrunloop-internals.html

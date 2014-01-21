@@ -14,16 +14,16 @@
 static NSString * const CDZThingsHubConfigFileName = @".thingshubconfig";
 
 static NSString * const CDZThingsHubConfigDefaultTagNamespace = @"github";
-static NSString * const CDZThingsHubConfigDefaultReviewTagName = @"review";
 
 @interface CDZThingsHubConfiguration ()
 
 @property (nonatomic, copy, readwrite) NSString *tagNamespace;
-@property (nonatomic, copy, readwrite) NSString *reviewTagName;
 @property (nonatomic, copy, readwrite) NSString *githubLogin;
-@property (nonatomic, copy, readwrite) NSString *githubOrgName;
-@property (nonatomic, copy, readwrite) NSString *githubRepoName;
-@property (nonatomic, copy, readwrite) NSString *thingsAreaName;
+@property (nonatomic, copy, readwrite) NSString *repoOwner;
+@property (nonatomic, copy, readwrite) NSString *repoName;
+@property (nonatomic, copy, readwrite) NSString *areaName;
+@property (nonatomic, copy, readwrite) NSString *projectPrefix;
+@property (nonatomic, copy, readwrite) NSString *delegateApp;
 
 @end
 
@@ -130,14 +130,15 @@ static NSString * const CDZThingsHubConfigDefaultReviewTagName = @"review";
     self = [super init];
     if (self) {
         _tagNamespace = CDZThingsHubConfigDefaultTagNamespace;
-        _reviewTagName = CDZThingsHubConfigDefaultReviewTagName;
+        _delegateApp = @"Things";
     }
     return self;
 }
 
 #pragma mark - Merging
 
-/// Merges in the given configuration. Values in the given config take priority.
+/// Merges in the given configuration.
+/// @param priorityConfiguration Configuration to merge into `self`. Values in the this new config take priority over those already set on `self`.
 - (void)mergeInPriorityConfiguration:(CDZThingsHubConfiguration *)priorityConfiguration {
     for (NSString *propertyKey in [[[self class] propertyKeysByConfigKey] allValues]) {
         id value = [priorityConfiguration valueForKey:propertyKey];
@@ -156,15 +157,20 @@ static NSString * const CDZThingsHubConfigDefaultReviewTagName = @"review";
                                    code:CDZErrorCodeConfigurationValidationError
                                userInfo:@{ NSLocalizedDescriptionKey: @"Github username must be set." }];
     }
-    else if (!self.githubOrgName) {
+    else if (!self.repoOwner) {
         return [NSError errorWithDomain:kThingsHubErrorDomain
                                    code:CDZErrorCodeConfigurationValidationError
-                               userInfo:@{ NSLocalizedDescriptionKey: @"Github organization must be set." }];
+                               userInfo:@{ NSLocalizedDescriptionKey: @"Github repo owner must be set." }];
     }
-    else if (!self.githubRepoName) {
+    else if (!self.repoName) {
         return [NSError errorWithDomain:kThingsHubErrorDomain
                                    code:CDZErrorCodeConfigurationValidationError
                                userInfo:@{ NSLocalizedDescriptionKey: @"Github repo name must be set." }];
+    }
+    else if (!self.delegateApp) {
+        return [NSError errorWithDomain:kThingsHubErrorDomain
+                                   code:CDZErrorCodeConfigurationValidationError
+                               userInfo:@{ NSLocalizedDescriptionKey: @"Delegate must be set." }];
     }
     
     return nil;
@@ -173,15 +179,16 @@ static NSString * const CDZThingsHubConfigDefaultReviewTagName = @"review";
 #pragma mark - NSObject Protocol
 
 - (NSString *)description {
-    return [NSString stringWithFormat:@"<%@ %p>: {\n\ttagNamespace: %@\n\treviewTagName: %@\n\tgithubLogin: %@\n\tgithubOrgName:%@\n\tgithubRepoName: %@\n\tthingsAreaName: %@\n}",
+    return [NSString stringWithFormat:@"<%@ %p>: {\n\ttagNamespace: %@\n\tgithubLogin: %@\n\trepoOwner:%@\n\trepoName: %@\n\tareaName: %@\n\tprojectPrefix: %@\n\tdelegateApp: %@\n}",
             NSStringFromClass([self class]),
             self,
             self.tagNamespace,
-            self.reviewTagName,
             self.githubLogin,
-            self.githubOrgName,
-            self.githubRepoName,
-            self.thingsAreaName
+            self.repoOwner,
+            self.repoName,
+            self.areaName,
+            self.projectPrefix,
+            self.delegateApp
             ];
 }
 
@@ -194,11 +201,12 @@ static NSString * const CDZThingsHubConfigDefaultReviewTagName = @"review";
     dispatch_once(&onceToken, ^{
         propertyKeysByConfigKey = @{
                                     @"tagNamespace": NSStringFromSelector(@selector(tagNamespace)),
-                                    @"reviewTag": NSStringFromSelector(@selector(reviewTagName)),
                                     @"githubLogin": NSStringFromSelector(@selector(githubLogin)),
-                                    @"githubOrg": NSStringFromSelector(@selector(githubOrgName)),
-                                    @"githubRepo": NSStringFromSelector(@selector(githubRepoName)),
-                                    @"thingsArea": NSStringFromSelector(@selector(thingsAreaName)),
+                                    @"repoOwner": NSStringFromSelector(@selector(repoOwner)),
+                                    @"repoName": NSStringFromSelector(@selector(repoName)),
+                                    @"areaName": NSStringFromSelector(@selector(areaName)),
+                                    @"projectPrefix": NSStringFromSelector(@selector(projectPrefix)),
+                                    @"delegate": NSStringFromSelector(@selector(delegateApp)),
                                     };
     });
     return propertyKeysByConfigKey;

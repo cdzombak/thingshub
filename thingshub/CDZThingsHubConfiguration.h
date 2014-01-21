@@ -23,19 +23,22 @@
 /// Global (typically); configured by "tagNamespace = ". Default is "github".
 @property (nonatomic, copy, readonly) NSString *tagNamespace;
 
-/// Global (typically); configured by "reviewTag = ". Default is "review".
-@property (nonatomic, copy, readonly) NSString *reviewTagName;
-
 /// Global (typically); configured by "githubLogin = "
 @property (nonatomic, copy, readonly) NSString *githubLogin;
 
-/// Per-project (typically); configured by "githubOrg = "
-@property (nonatomic, copy, readonly) NSString *githubOrgName;
+/// Global (typically); configured by "delegate = "
+@property (nonatomic, copy, readonly) NSString *delegateApp;
 
-/// Per-project; configured by "githubRepo = "
-@property (nonatomic, copy, readonly) NSString *githubRepoName;
+/// Per-project (typically); configured by "repoOwner = "
+@property (nonatomic, copy, readonly) NSString *repoOwner;
 
-/// Per-project; configured by "thingsArea = ". May be missing; default is nil.
-@property (nonatomic, copy, readonly) NSString *thingsAreaName;
+/// Per-project; configured by "repoName = "
+@property (nonatomic, copy, readonly) NSString *repoName;
+
+/// Per-project; configured by "areaName = ". May be missing; default is nil.
+@property (nonatomic, copy, readonly) NSString *areaName;
+
+/// Per-project; configured by "projectPrefix = ". May be missing; default is nil.
+@property (nonatomic, copy, readonly) NSString *projectPrefix;
 
 @end
