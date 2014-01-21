@@ -34,7 +34,7 @@
         CDZCLIPrint(@"Authentication failed: %@", [error localizedDescription]);
     }] replayLazily];
     
-    RACSignal *syncEngineSignal = [[[[RACSignal zip:@[configurationSignal, authClientSignal]] flattenMap:^id(RACTuple *configAndClient) {
+    RACSignal *syncEngineSignal = [[[[[RACSignal zip:@[configurationSignal, authClientSignal]] flattenMap:^id(RACTuple *configAndClient) {
         RACTupleUnpack(CDZThingsHubConfiguration *configuration, OCTClient *client) = configAndClient;
         
         Class delegateClass = NSClassFromString([NSString stringWithFormat:@"CDZ%@SyncDelegate", configuration.delegateApp]);
@@ -49,6 +49,8 @@
         CDZCLIPrint(@"Syncing: %@", statusUpdate);
     }] doError:^(NSError *error) {
         CDZCLIPrint(@"Sync failed: %@", [error localizedDescription]);
+    }] doCompleted:^{
+        CDZCLIPrint(@"Sync complete!");
     }];
     
     RACSignal *returnCodeSignal = [RACSignal merge:
