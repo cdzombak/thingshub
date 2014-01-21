@@ -1,5 +1,5 @@
 #!/bin/sh
-# Usage: script/bootstrap
+# Usage: scripts/bootstrap
 # Initializes your local environment for development
 
 SCRIPT_DIR=$(dirname "$0")

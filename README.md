@@ -6,9 +6,13 @@ Synchronize issues assigned to you, one-way, from a Github repo into Things. (Or
 
 ### Installation
 
-* *TBD* to `/usr/local/bin`
-* homebrew? via Xcode build target?
-* see [#16](https://github.com/cdzombak/thingshub/issues/16)
+Run `scripts/install`. This will install `thingshub` to `/usr/local/bin` and its man page to `/usr/local/share/man/man1`.
+
+*Manual alternative:* run `xcodebuild -workspace thingshub.xcworkspace -scheme thingshub -configuration Release install`.
+
+#### Troubleshooting
+
+Ensure that the target directories exist and you can write to them.
 
 ### Configuration
 
