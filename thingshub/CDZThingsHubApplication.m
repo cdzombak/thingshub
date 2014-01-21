@@ -41,10 +41,10 @@
         NSCParameterAssert(delegateClass);
         id<CDZIssueSyncDelegate> delegate = [[delegateClass alloc] initWithConfiguration:configuration];
         
-        return [[[CDZIssueSyncEngine alloc] initWithDelegate:delegate
-                                               configuration:configuration
-                                         authenticatedClient:client]
-                sync];
+        return [[[[CDZIssueSyncEngine alloc] initWithDelegate:delegate
+                                                configuration:configuration
+                                          authenticatedClient:client]
+                sync] replay];
     }] doNext:^(NSString *statusUpdate) {
         CDZCLIPrint(@"Syncing: %@", statusUpdate);
     }] doError:^(NSError *error) {

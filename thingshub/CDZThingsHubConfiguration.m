@@ -71,9 +71,9 @@ static NSString * const CDZThingsHubConfigDefaultTagNamespace = @"github";
         return nil; // no cleanup necessary here.
     }];
 
-    return [[RACSignal defer:^RACSignal *{
+    return [RACSignal defer:^RACSignal *{
         return configSignal;
-    }] replayLazily];
+    }];
 }
 
 /**

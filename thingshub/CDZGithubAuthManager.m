@@ -31,7 +31,7 @@ static const OCTClientAuthorizationScopes CDZThingsHubGithubScopes = (OCTClientA
     OCTUser *user = [OCTUser userWithLogin:githubLogin server:OCTServer.dotComServer];
     NSString *storedToken = [SSKeychain passwordForService:CDZThingsHubKeychainServiceName account:githubLogin];
 
-    return [[[[RACSignal
+    return [[[RACSignal
         defer:^RACSignal *{
             if (storedToken) {
                 return [RACSignal return:[OCTClient authenticatedClientWithUser:user token:storedToken]];
@@ -48,7 +48,6 @@ static const OCTClientAuthorizationScopes CDZThingsHubGithubScopes = (OCTClientA
                 CDZCLILog(@"Failed saving token into keychain: %@", keychainError);
             }
         }]
-   		replayLazily]
         setNameWithFormat:@"+authenticatedClientForUsername: %@", githubLogin];
 }
 
