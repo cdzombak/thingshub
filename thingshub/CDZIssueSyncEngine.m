@@ -57,13 +57,10 @@ static NSString * const CDZGithubStateValueClosed = @"closed";
 - (RACSignal *)sync {
     [self.delegate engineWillBeginSync:self];
     
-    RACSignal *syncStatusSignal = [[[[RACSignal return:@"Milestones"] then:^RACSignal *{
-        return [self syncMilestones];
-    }] then:^RACSignal *{
-        return [RACSignal return:@"Issues"];
-    }] then:^RACSignal *{
-        return [self syncIssues];
-    }];
+    RACSignal *syncStatusSignal = [[RACSignal return:@"Milestones"] concat:[self syncMilestones]];
+    syncStatusSignal = [syncStatusSignal concat:[RACSignal defer:^RACSignal *{
+        return [[RACSignal return:@"Issues"] concat:[self syncIssues]];
+    }]];
     
     return [[RACSignal defer:^RACSignal *{
         return syncStatusSignal;

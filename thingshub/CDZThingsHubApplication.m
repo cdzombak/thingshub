@@ -41,11 +41,10 @@
         NSCParameterAssert(delegateClass);
         id<CDZIssueSyncDelegate> delegate = [[delegateClass alloc] initWithConfiguration:configuration];
         
-        return [[[[CDZIssueSyncEngine alloc] initWithDelegate:delegate
-                                              configuration:configuration
-                                        authenticatedClient:client]
-                sync] logAll];
-        // TODO: Sync works, but this ^ prints "<RACDynamicSignal: 0x100504aa0> name: [+defer:] -multicast: [+defer:] -replay completed" instead of my "Milestones", "Issues" strings. why? --CDZ Jan 19, 2014
+        return [[[CDZIssueSyncEngine alloc] initWithDelegate:delegate
+                                               configuration:configuration
+                                         authenticatedClient:client]
+                sync];
     }] doNext:^(NSString *statusUpdate) {
         CDZCLIPrint(@"Syncing: %@", statusUpdate);
     }] doError:^(NSError *error) {
