@@ -4,27 +4,29 @@ Synchronize issues assigned to you, one-way, from a Github repo into Things. (Or
 
 ## Usage
 
-### Installation
-
-Run `scripts/install`. This will install `thingshub` to `/usr/local/bin` and its man page to `/usr/local/share/man/man1`.
-
-*Manual alternative:* run `xcodebuild -workspace thingshub.xcworkspace -scheme thingshub -configuration Release install`.
-
-#### Troubleshooting
-
-Ensure that the target directories exist and you can write to them.
-
 ### Configuration
 
 See [`thingshubconfig.example` in this repo](https://github.com/cdzombak/thingshub/blob/master/thingshubconfig.example) for docs on the config system.
 
-### Running
+### Run
 
 *TODO*
 
 ### Logout/Reset Github OAuth Token
 
 `security delete-generic-password -s "ThingsHub-Github"`
+
+## Installation
+
+Run `scripts/install`. This will install `thingshub` to `/usr/local/bin` and its man page to `/usr/local/share/man/man1`.
+
+### Manual alternative
+
+Run `xcodebuild -workspace thingshub.xcworkspace -scheme thingshub -configuration Release install`.
+
+### Troubleshooting
+
+Ensure that the target directories exist and you can write to them.
 
 ## Workflow
 
@@ -56,20 +58,6 @@ See [`thingshubconfig.example` in this repo](https://github.com/cdzombak/thingsh
 * When a todo is created/updated, remove any extant "github:" tags, and apply "github:" tags that are currently on the issue.
 * When creating/updating a todo/project, add a "via:github" tag.
 
-## Future features:
-
-### 1.0
-
-* man page [#21](https://github.com/cdzombak/thingshub/issues/21)
-* config: look at `~` specifically first, then search current path; don't require current path to be in `~` • [#14](https://github.com/cdzombak/thingshub/issues/14)
-* allow mapping github tag -> local tag (ie. in progress) • [#15](https://github.com/cdzombak/thingshub/issues/15)
-* see [Initial Release milestone](https://github.com/cdzombak/thingshub/issues?milestone=1&state=open)
-
-### 1.1
-
-* Allow logging out without manually modifying keychain
-* Use contacts/delegation for issues assigned to others
-
 ## Contributors
 
 Thanks to:
@@ -77,9 +65,18 @@ Thanks to:
 * [Chris Dzombak](https://github.com/cdzombak/) • tw[@cdzombak](https://twitter.com/cdzombak) • adn[@dzombak](https://alpha.app.net/dzombak) • [chris@chrisdzombak.net](mailto:chris@chrisdzombak.net) • [dzombak.com](http://www.dzombak.com)
 * [Andrew Sardone](https://github.com/andrewsardone/) • tw[@andrewa2](https://twitter.com/andrewa2) • adn[@andrewsardone](https://alpha.app.net/andrewsardone)
 
-## Dev
+## Roadmap
+
+### 1.1
+
+* Allow logging out without manually modifying keychain
+* Use contacts/delegation for issues assigned to others
+
+## Dev Notes
 
 Run `scripts/bootstrap` to set up a local, self-contained environment for CocoaPods. Its only external dependency is Bundler.
+
+----
 
 ## Implementation details
 
