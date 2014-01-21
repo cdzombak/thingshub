@@ -77,6 +77,7 @@ static NSString * const CDZGithubStateValueClosed = @"closed";
     return [RACSignal createSignal:^RACDisposable *(id<RACSubscriber> subscriber) {
         return [[RACSignal merge:@[[self milestonesInState:CDZGithubStateValueOpen], [self milestonesInState:CDZGithubStateValueClosed]]]
         subscribeNext:^(NSDictionary *milestone) {
+            CDZCLIPrint(@"\t%ld", (long)[milestone cdz_gh_number]);
             if (![self.delegate syncMilestone:milestone createIfNeeded:[milestone cdz_gh_isOpen] updateExtant:YES]) {
                 [subscriber sendError:[NSError errorWithDomain:kThingsHubErrorDomain code:CDZErrorCodeSyncFailure userInfo:@{NSLocalizedDescriptionKey: [NSString stringWithFormat:@"Sync delegate couldn't update milestone %@", milestone]}]];
                 // TODO: how can I abort the sync here? --CDZ Jan 18, 2014
@@ -115,6 +116,7 @@ static NSString * const CDZGithubStateValueClosed = @"closed";
     return [RACSignal createSignal:^RACDisposable *(id<RACSubscriber> subscriber) {
         return [[RACSignal merge:@[[self issuesAssignedToMeInState:CDZGithubStateValueOpen], [self issuesAssignedToMeInState:CDZGithubStateValueClosed]]]
                 subscribeNext:^(NSDictionary *issue) {
+                    CDZCLIPrint(@"\t%ld", (long)[issue cdz_gh_number]);
                     if (![self.delegate syncIssue:issue createIfNeeded:[issue cdz_gh_isOpen] updateExtant:YES]) {
                         [subscriber sendError:[NSError errorWithDomain:kThingsHubErrorDomain code:CDZErrorCodeSyncFailure userInfo:@{NSLocalizedDescriptionKey: [NSString stringWithFormat:@"Sync delegate couldn't update issue %@", issue]}]];
                         // TODO: how can I abort the sync here? --CDZ Jan 19, 2014
