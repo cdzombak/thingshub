@@ -92,7 +92,7 @@ static NSString * const CDZThingsHubConfigDefaultTagNamespace = @"github";
         
         NSArray *lineComponents = [trimmedLine componentsSeparatedByString:@"="];
         if (lineComponents.count != 2) {
-            CDZCLIPrint(@"Warning: invalid configuration line (too many components): \"%@\"", line);
+            CDZCLIPrint(@" - Warning: invalid configuration line (too many components): \"%@\"", line);
             continue;
         }
         
@@ -100,7 +100,7 @@ static NSString * const CDZThingsHubConfigDefaultTagNamespace = @"github";
         NSString *propertyKey = [[self class] propertyKeysByConfigKey][configKey];
         
         if (!propertyKey) {
-            CDZCLIPrint(@"Warning: invalid configuration line (invalid key): \"%@\"", line);
+            CDZCLIPrint(@" - Warning: invalid configuration line (invalid key): \"%@\"", line);
             continue;
         }
         
