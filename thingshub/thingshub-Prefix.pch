@@ -7,6 +7,7 @@
 #ifdef __OBJC__
 
 @import Foundation;
+#import <SystemConfiguration/SystemConfiguration.h>
 #import "CDZCLIPrint.h"
 
 #define CDZAssertMainThread NSAssert([[NSThread currentThread] isMainThread], @"%s must be called on the main thread.", __PRETTY_FUNCTION__);
