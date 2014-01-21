@@ -22,15 +22,17 @@
 @implementation CDZThingsHubApplication
 
 - (void)start {
-    RACSignal *configurationSignal = [[CDZThingsHubConfiguration currentConfiguration] doError:^(NSError *error) {
+    RACSignal *configurationSignal = [[[[CDZThingsHubConfiguration currentConfiguration] doError:^(NSError *error) {
         CDZCLIPrint(@"Configuration error: %@", [error localizedDescription]);
-    }];
+    }] doNext:^(CDZThingsHubConfiguration *config) {
+        CDZCLIPrint(@"Using configuration: %@", [config description]);
+    }] replayLazily];
     
-    RACSignal *authClientSignal = [[configurationSignal flattenMap:^id(CDZThingsHubConfiguration *config) {
+    RACSignal *authClientSignal = [[[configurationSignal flattenMap:^id(CDZThingsHubConfiguration *config) {
         return [CDZGithubAuthManager authenticatedClientForUsername:config.githubLogin];
     }] doError:^(NSError *error) {
         CDZCLIPrint(@"Authentication failed: %@", [error localizedDescription]);
-    }];
+    }] replayLazily];
     
     RACSignal *syncEngineSignal = [[[[RACSignal zip:@[configurationSignal, authClientSignal]] flattenMap:^id(RACTuple *configAndClient) {
         RACTupleUnpack(CDZThingsHubConfiguration *configuration, OCTClient *client) = configAndClient;
