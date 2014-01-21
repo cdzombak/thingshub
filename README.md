@@ -56,15 +56,15 @@ See [`thingshubconfig.example` in this repo](https://github.com/cdzombak/thingsh
 
 ### 1.0
 
+* man page [#21](https://github.com/cdzombak/thingshub/issues/21)
 * config: look at `~` specifically first, then search current path; don't require current path to be in `~` • [#14](https://github.com/cdzombak/thingshub/issues/14)
 * allow mapping github tag -> local tag (ie. in progress) • [#15](https://github.com/cdzombak/thingshub/issues/15)
 * see [Initial Release milestone](https://github.com/cdzombak/thingshub/issues?milestone=1&state=open)
 
 ### 1.1
 
-* man page/interactive help
-* allow logging out without manually changning keychain
-* Use contacts/delegation for issues assigned to others.
+* Allow logging out without manually modifying keychain
+* Use contacts/delegation for issues assigned to others
 
 ## Contributors
 
