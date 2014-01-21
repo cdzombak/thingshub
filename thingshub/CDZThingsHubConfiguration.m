@@ -179,7 +179,7 @@ static NSString * const CDZThingsHubConfigDefaultTagNamespace = @"github";
 #pragma mark - NSObject Protocol
 
 - (NSString *)description {
-    return [NSString stringWithFormat:@"<%@ %p>: {\n\ttagNamespace: %@\n\tgithubLogin: %@\n\trepoOwner:%@\n\trepoName: %@\n\tareaName: %@\n\tprojectPrefix: %@\n\tdelegateApp: %@\n}",
+    return [NSString stringWithFormat:@"<%@ %p>: {\n\ttagNamespace: %@\n\tgithubLogin: %@\n\trepoOwner: %@\n\trepoName: %@\n\tareaName: %@\n\tprojectPrefix: %@\n\tdelegateApp: %@\n}",
             NSStringFromClass([self class]),
             self,
             self.tagNamespace,
