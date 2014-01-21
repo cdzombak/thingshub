@@ -34,10 +34,11 @@
     
     RACSignal *syncEngineSignal = [[[[RACSignal zip:@[configurationSignal, authClientSignal]] flattenMap:^id(RACTuple *configAndClient) {
         RACTupleUnpack(CDZThingsHubConfiguration *configuration, OCTClient *client) = configAndClient;
-        return [[[CDZIssueSyncEngine alloc] initWithDelegate:[[CDZThingsSyncDelegate alloc] initWithConfiguration:configuration]
+        return [[[[CDZIssueSyncEngine alloc] initWithDelegate:[[CDZThingsSyncDelegate alloc] initWithConfiguration:configuration]
                                               configuration:configuration
                                         authenticatedClient:client]
-                sync];
+                sync] logAll];
+        // TODO: Sync works, but this ^ prints "<RACDynamicSignal: 0x100504aa0> name: [+defer:] -multicast: [+defer:] -replay completed" instead of my "Milestones", "Issues" strings. why? --CDZ Jan 19, 2014
     }] doNext:^(NSString *statusUpdate) {
         CDZCLIPrint(@"Syncing: %@", statusUpdate);
     }] doError:^(NSError *error) {

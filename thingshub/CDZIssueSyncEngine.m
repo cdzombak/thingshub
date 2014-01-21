@@ -18,6 +18,10 @@
 
 static NSString * const CDZHTTPMethodGET = @"GET";
 
+static NSString * const CDZGithubStateKey = @"state";
+static NSString * const CDZGithubStateValueOpen = @"open";
+static NSString * const CDZGithubStateValueClosed = @"closed";
+
 @interface CDZIssueSyncEngine ()
 @property (nonatomic, readonly) OCTClient *client;
 @property (nonatomic, readonly) id<CDZIssueSyncDelegate> delegate;
@@ -28,6 +32,13 @@ static NSString * const CDZHTTPMethodGET = @"GET";
 
 /// Returns a signal the completes or errors once milestone sync has finished or failed.
 - (RACSignal *)syncMilestones;
+
+@end
+
+@interface CDZIssueSyncEngine (Issues)
+
+/// Returns a signal the completes or errors once issue sync has finished or failed.
+- (RACSignal *)syncIssues;
 
 @end
 
@@ -46,7 +57,13 @@ static NSString * const CDZHTTPMethodGET = @"GET";
 - (RACSignal *)sync {
     [self.delegate engineWillBeginSync:self];
     
-    RACSignal *syncStatusSignal = [[RACSignal return:@"milestones"] concat:[self syncMilestones]];
+    RACSignal *syncStatusSignal = [[[[RACSignal return:@"Milestones"] then:^RACSignal *{
+        return [self syncMilestones];
+    }] then:^RACSignal *{
+        return [RACSignal return:@"Issues"];
+    }] then:^RACSignal *{
+        return [self syncIssues];
+    }];
     
     return [[RACSignal defer:^RACSignal *{
         return syncStatusSignal;
@@ -55,19 +72,15 @@ static NSString * const CDZHTTPMethodGET = @"GET";
 
 @end
 
-static NSString * const CDZGithubMilestoneState = @"state";
-static NSString * const CDZGithubMilestoneStateOpen = @"open";
-static NSString * const CDZGithubMilestoneStateClosed = @"closed";
-
 @implementation CDZIssueSyncEngine (Milestones)
 
 - (RACSignal *)syncMilestones {
     [self.delegate collectExtantMilestones];
     
     return [RACSignal createSignal:^RACDisposable *(id<RACSubscriber> subscriber) {
-        return [[RACSignal merge:@[[self milestonesInState:CDZGithubMilestoneStateOpen], [self milestonesInState:CDZGithubMilestoneStateClosed]]]
+        return [[RACSignal merge:@[[self milestonesInState:CDZGithubStateValueOpen], [self milestonesInState:CDZGithubStateValueClosed]]]
         subscribeNext:^(NSDictionary *milestone) {
-            if (![self.delegate syncMilestone:milestone createIfNeeded:[milestone cdz_issueIsOpen] updateExtant:YES]) {
+            if (![self.delegate syncMilestone:milestone createIfNeeded:[milestone cdz_gh_isOpen] updateExtant:YES]) {
                 [subscriber sendError:[NSError errorWithDomain:kThingsHubErrorDomain code:CDZErrorCodeSyncFailure userInfo:@{NSLocalizedDescriptionKey: [NSString stringWithFormat:@"Sync delegate couldn't update milestone %@", milestone]}]];
                 // TODO: how can I abort the sync here? --CDZ Jan 18, 2014
                 return;
@@ -88,9 +101,50 @@ static NSString * const CDZGithubMilestoneStateClosed = @"closed";
     NSString *path = [NSString stringWithFormat:@"repos/%@/%@/milestones", self.config.githubOrgName, self.config.githubRepoName];
     NSURLRequest *milestonesRequest = [self.client requestWithMethod:CDZHTTPMethodGET
                                                                 path:path
-                                                          parameters:@{ CDZGithubMilestoneState: state } ];
+                                                          parameters:@{ CDZGithubStateKey: state } ];
     
     return [[self.client enqueueRequest:milestonesRequest resultClass:Nil] map:^id(id value) {
+        return [value parsedResult];
+    }];
+}
+
+@end
+
+@implementation CDZIssueSyncEngine (Issues)
+
+- (RACSignal *)syncIssues {
+    [self.delegate collectExtantIssues];
+    
+    return [RACSignal createSignal:^RACDisposable *(id<RACSubscriber> subscriber) {
+        return [[RACSignal merge:@[[self issuesAssignedToMeInState:CDZGithubStateValueOpen], [self issuesAssignedToMeInState:CDZGithubStateValueClosed]]]
+                subscribeNext:^(NSDictionary *issue) {
+                    if (![self.delegate syncIssue:issue createIfNeeded:[issue cdz_gh_isOpen] updateExtant:YES]) {
+                        [subscriber sendError:[NSError errorWithDomain:kThingsHubErrorDomain code:CDZErrorCodeSyncFailure userInfo:@{NSLocalizedDescriptionKey: [NSString stringWithFormat:@"Sync delegate couldn't update issue %@", issue]}]];
+                        // TODO: how can I abort the sync here? --CDZ Jan 19, 2014
+                        return;
+                    }
+                    [self.delegate removeIssueFromLocalCollection:issue];
+                } error:^(NSError *error) {
+                    [subscriber sendError:error];
+                } completed:^{
+                    [self.delegate cancelIssuesInLocalCollection];
+                    [subscriber sendCompleted];
+                }];
+    }];
+}
+
+- (RACSignal *)issuesAssignedToMeInState:(NSString *)state {
+    NSParameterAssert(state);
+    
+    NSString *path = [NSString stringWithFormat:@"repos/%@/%@/issues", self.config.githubOrgName, self.config.githubRepoName];
+    NSURLRequest *issuesRequest = [self.client requestWithMethod:CDZHTTPMethodGET
+                                                                path:path
+                                                          parameters:@{ CDZGithubStateKey: state,
+                                                                        @"assignee": self.config.githubLogin
+                                                                        }
+                                       ];
+    
+    return [[self.client enqueueRequest:issuesRequest resultClass:Nil] map:^id(id value) {
         return [value parsedResult];
     }];
 }

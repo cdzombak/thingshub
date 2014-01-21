@@ -38,7 +38,7 @@ See `thingshubconfig.example` in this repo for docs on the config system.
 ### Where to create new issues:
 
 * Milestones, if any, are represented as projects in an Area, or if no Area, as projects in Next. Projects have due dates reflecting the milestone due date.
-* Issues without a milestone are placed directly in the respective Area, or if no Area, into the Inbox.
+* Issues without a milestone are placed directly in the respective Area, or if no Area, into Next. (If updating an existing task, we won't move it back into Next, though.)
 
 ### Tag usage:
 
@@ -58,7 +58,6 @@ See `thingshubconfig.example` in this repo for docs on the config system.
 ### PR Handling:
 
 * Same as issues
-* Does not import PRs you created and assigned to yourself (assumes it's a WIP)
 * Adds "(PR #xxx)" instead of "(#xxx)" to title
 
 ### Configuration:

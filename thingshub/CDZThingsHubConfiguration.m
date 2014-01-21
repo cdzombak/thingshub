@@ -111,7 +111,7 @@ static NSString * const CDZThingsHubConfigDefaultReviewTagName = @"review";
     return config;
 }
 
-/// Builds a configuration object from [NSUserDefaults standardUserDefaults]
+/// Builds a configuration object from `+[NSUserDefaults standardUserDefaults]`
 + (instancetype)configurationFromDefaults {
     CDZThingsHubConfiguration *config = [[CDZThingsHubConfiguration alloc] init];
     

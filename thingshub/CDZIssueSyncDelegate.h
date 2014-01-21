@@ -36,7 +36,7 @@
 /**
  Sync the milestone into the local task management application.
  
- @param milestone The miletsone dictionary from Github.
+ @param milestone The milestone dictionary from Github.
  @param createIfNeeded Allow creating the milestone locally if it doesn't exist.
  @param updateExtant Allow updating the milestone locally if it already exists.
  
@@ -45,7 +45,7 @@
 - (BOOL)syncMilestone:(NSDictionary *)milestone createIfNeeded:(BOOL)createIfNeeded updateExtant:(BOOL)updateExtant;
 
 /**
- Collect extant milestones into a local mutable collection.
+ Collect extant milestones for this Github repo into a local mutable collection.
  
  Milestones will be removed from this collection as we sync them, and after we sync all extant milestones, any remaining 
  in this collection will be cancelled. This allows us to cancel milestones that were deleted from Github.
@@ -56,7 +56,7 @@
  Your delegate may assume (and may assert) that this method will be called only once.
  
  @see -removeMilestoneFromLocalCollection:
- @see -cancelMilestonesInLocalCollection:
+ @see -cancelMilestonesInLocalCollection
  */
 - (void)collectExtantMilestones;
 
@@ -69,7 +69,7 @@
  Your delegate may assume (and may assert) that `-collectExtantMilestones` was called before this method.
  
  @see -collectExtantMilestones
- @see -cancelMilestonesInLocalCollection:
+ @see -cancelMilestonesInLocalCollection
  */
 - (void)removeMilestoneFromLocalCollection:(NSDictionary *)milestone;
 
@@ -86,5 +86,64 @@
  @see -removeMilestoneFromLocalCollection:
  */
 - (void)cancelMilestonesInLocalCollection;
+
+
+#pragma mark Issues
+
+/**
+ Sync the issue into the local task management application.
+ 
+ @param issue The issue dictionary from Github.
+ @param createIfNeeded Allow creating the issue locally if it doesn't exist.
+ @param updateExtant Allow updating the issue locally if it already exists.
+ 
+ @return YES if the operation was successful; NO otherwise.
+ */
+- (BOOL)syncIssue:(NSDictionary *)issue createIfNeeded:(BOOL)createIfNeeded updateExtant:(BOOL)updateExtant;
+
+/**
+ Collect extant issues for this Github repo into a local mutable collection.
+ 
+ Issues will be removed from this collection as we sync them, and after we sync all extant issues, any remaining
+ in this collection will be cancelled. This allows us to cancel tasks that were deleted from Github or unassigned
+ to you.
+ 
+ Assuming your delegate implements this collection with a standard mutable Cocoa collection, ensure that all accesses
+ and modifications occur on a private serial dispatch queue.
+ 
+ Your delegate may assume (and may assert) that this method will be called only once.
+ 
+ @see -removeIssueFromLocalCollection:
+ @see -cancelIssuesInLocalCollection
+ */
+- (void)collectExtantIssues;
+
+/**
+ Remove the given issue from the local mutable collection created when `-collectExtantIssues` was called.
+ 
+ Assuming your delegate implements this collection with a standard mutable Cocoa collection, ensure that all accesses
+ and modifications occur on a private serial dispatch queue.
+ 
+ Your delegate may assume (and may assert) that `-collectExtantIssues` was called before this method.
+ 
+ @see -collectExtantIssues
+ @see -cancelIssuesInLocalCollection
+ */
+- (void)removeIssueFromLocalCollection:(NSDictionary *)issue;
+
+/**
+ Cancel the tasks left in the local mutable collection created when `-collectExtantIssues` was called, after
+ calls to `-removeIssueFromCollection`.
+ 
+ Assuming your delegate implements this collection with a standard mutable Cocoa collection, ensure that all accesses
+ and modifications occur on a private serial dispatch queue.
+ 
+ Your delegate may assume (and may assert) that `-collectExtantIssues` was called before this method.
+ 
+ @see -collectExtantIssues
+ @see -removeIssueFromLocalCollection:
+ */
+- (void)cancelIssuesInLocalCollection;
+
 
 @end
