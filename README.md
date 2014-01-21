@@ -18,6 +18,10 @@ See [`thingshubconfig.example` in this repo](https://github.com/cdzombak/thingsh
 
 *TODO*
 
+### Logout/Reset Github OAuth Token
+
+`security delete-generic-password -s "ThingsHub-Github"`
+
 ## Workflow
 
 * This never updates Github from Things; GH is the canonical source of truth.
