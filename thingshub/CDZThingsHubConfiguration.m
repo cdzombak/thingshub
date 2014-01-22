@@ -43,24 +43,21 @@ static NSString * const CDZThingsHubConfigTagMapConfigKeyPrefix = @"map.";
         NSArray *homePathComponents = [homePath pathComponents];
         NSArray *workingPathComponents = [[[NSFileManager defaultManager] currentDirectoryPath] pathComponents];
         
-        // I plan to make this less homedir-centric once the rest of the app works. --CDZ Jan 17, 2014
-        if (workingPathComponents.count < [homePath pathComponents].count
-            || !([[workingPathComponents subarrayWithRange:NSMakeRange(0, homePathComponents.count)] isEqualToArray:homePathComponents])) {
-            CDZCLIPrint(@"This tool must be run from within your home directory: %@", homePath);
+        BOOL workingFromWithinHome = workingPathComponents.count >= homePathComponents.count
+            && [[workingPathComponents subarrayWithRange:NSMakeRange(0, homePathComponents.count)] isEqualToArray:homePathComponents];
+
+        if (!workingFromWithinHome) {
+            NSString *configFilePath = [homePath stringByAppendingPathComponent:CDZThingsHubConfigFileName];
+            [currentConfig mergePriorityConfigurationFromPathIfPossible:configFilePath];
         }
         
-        for (NSUInteger i = homePathComponents.count - 1; i <= workingPathComponents.count; ++i) {
+        NSUInteger beginningComponent = workingFromWithinHome ? homePathComponents.count : 1;
+        for (NSUInteger i = beginningComponent; i <= workingPathComponents.count; ++i) {
             NSArray *pathComponents = [workingPathComponents subarrayWithRange:NSMakeRange(0, i)];
             NSString *path = [NSString pathWithComponents:pathComponents];
             
             NSString *configFilePath = [path stringByAppendingPathComponent:CDZThingsHubConfigFileName];
-            NSString *configContents = [NSString stringWithContentsOfFile:configFilePath encoding:NSUTF8StringEncoding error:NULL];
-            
-            if (configContents) {
-                CDZCLIPrint(@"Merging config file %@", configFilePath);
-                CDZThingsHubConfiguration *config = [[self class] configurationFromFileContents:configContents];
-                [currentConfig mergeInPriorityConfiguration:config];
-            }
+            [currentConfig mergePriorityConfigurationFromPathIfPossible:configFilePath];
         }
         
         // Finally, allow command-line args to override current config:
@@ -125,6 +122,16 @@ static NSString * const CDZThingsHubConfigTagMapConfigKeyPrefix = @"map.";
 }
 
 #pragma mark - Merging
+
+- (void)mergePriorityConfigurationFromPathIfPossible:(NSString *)path {
+    NSString *contents = [NSString stringWithContentsOfFile:path encoding:NSUTF8StringEncoding error:NULL];
+    
+    if (contents) {
+        CDZCLIPrint(@"Merging config file %@", path);
+        CDZThingsHubConfiguration *config = [[self class] configurationFromFileContents:contents];
+        [self mergeInPriorityConfiguration:config];
+    }
+}
 
 /// Merges in the given configuration.
 /// @param priorityConfiguration Configuration to merge into `self`. Values in the this new config take priority over those already set on `self`.
