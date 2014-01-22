@@ -274,8 +274,9 @@
         todo.notes = [NSString stringWithFormat:@"%@\n\n%@", [issue cdz_gh_htmlUrlString], [self identifierForIssue:issue]];
     }
 
+    NSString *projectPrefix = [issue cdz_gh_issueMilestone] || !self.configuration.projectPrefix ? @"" : [NSString stringWithFormat:@"%@ ", self.configuration.projectPrefix];
     NSString *pullReqPrefix = [issue cdz_gh_issueIsPullRequest] ? @"PR " : @"";
-    todo.name = [NSString stringWithFormat:@"(%@#%ld) %@", pullReqPrefix, (long)[issue cdz_gh_number], [issue cdz_gh_title]];
+    todo.name = [NSString stringWithFormat:@"(%@%@#%ld) %@", projectPrefix, pullReqPrefix, (long)[issue cdz_gh_number], [issue cdz_gh_title]];
     
     ThingsStatus newStatus = [issue cdz_gh_isOpen] ? ThingsStatusOpen : ThingsStatusCompleted;
     if (todo.status != newStatus) todo.status = newStatus;
