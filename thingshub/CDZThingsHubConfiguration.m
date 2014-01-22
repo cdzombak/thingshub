@@ -196,7 +196,7 @@ static NSString * const CDZThingsHubConfigTagMapConfigKeyPrefix = @"map.";
 #pragma mark - NSObject Protocol
 
 - (NSString *)description {
-    return [NSString stringWithFormat:@"<%@ %p>: {\n\ttagNamespace: %@\n\tgithubLogin: %@\n\trepoOwner: %@\n\trepoName: %@\n\tareaName: %@\n\tprojectPrefix: %@\n\tdelegateApp: %@\n\tmap: %@\n}",
+    return [NSString stringWithFormat:@"<%@ %p>: {\n\ttagNamespace: %@\n\tgithubLogin: %@\n\trepoOwner: %@\n\trepoName: %@\n\tareaName: %@\n\tprojectPrefix: %@\n\tdelegateApp: %@\n\ttag map:\n%@\n}",
             NSStringFromClass([self class]),
             self,
             self.tagNamespace,
@@ -206,7 +206,7 @@ static NSString * const CDZThingsHubConfigTagMapConfigKeyPrefix = @"map.";
             self.areaName,
             self.projectPrefix,
             self.delegateApp,
-            self.githubTagToLocalTagMap
+            [self.githubTagToLocalTagMap descriptionWithLocale:[NSLocale currentLocale] indent:2]
             ];
 }
 
