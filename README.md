@@ -39,9 +39,15 @@ Alternatively, run `thingshub` from a project's directory, optionally specifying
 
 `security delete-generic-password -s "ThingsHub-Github"`
 
+### Version Check
+
+`thingshub -version`
+
 ## Installation
 
-Run `scripts/install`. This will install `thingshub` to `/usr/local/bin` and its man page to `/usr/local/share/man/man1`.
+**Current version:** v1.0.
+
+Get the most recent [release](https://github.com/cdzombak/thingshub/releases) and run `scripts/install`. This will install `thingshub` to `/usr/local/bin` and its man page to `/usr/local/share/man/man1`.
 
 ### Manual alternative
 

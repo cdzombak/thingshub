@@ -22,6 +22,8 @@
 @implementation CDZThingsHubApplication
 
 - (void)start {
+    [self displayVersionAndQuitIfRequested];
+    
     RACSignal *configurationSignal = [[[[CDZThingsHubConfiguration currentConfiguration] doError:^(NSError *error) {
         CDZCLIPrint(@"Configuration error: %@", [error localizedDescription]);
     }] doNext:^(CDZThingsHubConfiguration *config) {
@@ -72,6 +74,14 @@
      ]];
 
     [self rac_liftSelector:@selector(exitWithCode:) withSignalsFromArray:@[ returnCodeSignal ]];
+}
+
+- (void)displayVersionAndQuitIfRequested {
+    NSArray *arguments = [[NSProcessInfo processInfo] arguments];
+    if ([arguments containsObject:@"-version"]) {
+        CDZCLIPrint(@"thingshub v1.0");
+    }
+    [self exitWithCode:CDZThingsHubApplicationReturnCodeNormal];
 }
 
 @end
