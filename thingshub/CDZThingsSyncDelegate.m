@@ -252,12 +252,18 @@
 
     NSString *githubPrefix = [NSString stringWithFormat:@"%@:", self.configuration.tagNamespace];
     NSIndexSet *githubTagIndexes = [tags indexesOfObjectsPassingTest:^BOOL(NSString *tagName, NSUInteger idx, BOOL *stop) {
-        return [tagName hasPrefix:githubPrefix];
+        return [tagName hasPrefix:githubPrefix] || [[self.configuration.githubTagToLocalTagMap allValues] containsObject:tagName];
     }];
     [tags removeObjectsAtIndexes:githubTagIndexes];
     
     for (NSDictionary *label in [issue cdz_gh_issueLabels]) {
-        [tags addObject:[NSString stringWithFormat:@"%@:%@", self.configuration.tagNamespace, [label cdz_gh_labelName]]];
+        NSString *labelName = [label cdz_gh_labelName];
+        
+        if (self.configuration.githubTagToLocalTagMap[labelName]) {
+            [tags addObject:self.configuration.githubTagToLocalTagMap[labelName]];
+        } else {
+            [tags addObject:[NSString stringWithFormat:@"%@:%@", self.configuration.tagNamespace, labelName]];
+        }
     }
     
     [tags addObject:[NSString stringWithFormat:@"via:%@", self.configuration.tagNamespace]];
