@@ -36,6 +36,9 @@ static NSString * const CDZThingsHubConfigTagMapConfigKeyPrefix = @"map.";
     RACSignal *configSignal = [RACSignal createSignal:^RACDisposable *(id<RACSubscriber> subscriber) {
         CDZThingsHubConfiguration *currentConfig = [[CDZThingsHubConfiguration alloc] init];
         
+        currentConfig.tagNamespace = CDZThingsHubConfigDefaultTagNamespace;
+        currentConfig.delegateApp = @"Things";
+        
         NSString *homePath = NSHomeDirectory();
         NSArray *homePathComponents = [homePath pathComponents];
         NSArray *workingPathComponents = [[[NSFileManager defaultManager] currentDirectoryPath] pathComponents];
@@ -119,16 +122,6 @@ static NSString * const CDZThingsHubConfigTagMapConfigKeyPrefix = @"map.";
     }];
     
     return config;
-}
-
-/// Designated initializer
-- (instancetype)init {
-    self = [super init];
-    if (self) {
-        _tagNamespace = CDZThingsHubConfigDefaultTagNamespace;
-        _delegateApp = @"Things";
-    }
-    return self;
 }
 
 #pragma mark - Merging
