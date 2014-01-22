@@ -41,4 +41,7 @@
 /// Per-project; configured by "projectPrefix = ". May be missing; default is nil.
 @property (nonatomic, copy, readonly) NSString *projectPrefix;
 
+/// Map a Github tag to a local tag name. Configured by "map.tag name = local tag name".
+@property (nonatomic, copy, readonly) NSDictionary *githubTagToLocalTagMap;
+
 @end

@@ -14,6 +14,7 @@
 static NSString * const CDZThingsHubConfigFileName = @".thingshubconfig";
 
 static NSString * const CDZThingsHubConfigDefaultTagNamespace = @"github";
+static NSString * const CDZThingsHubConfigTagMapConfigKeyPrefix = @"map.";
 
 @interface CDZThingsHubConfiguration ()
 
@@ -28,6 +29,8 @@ static NSString * const CDZThingsHubConfigDefaultTagNamespace = @"github";
 @end
 
 @implementation CDZThingsHubConfiguration
+
+@synthesize githubTagToLocalTagMap = _githubTagToLocalTagMap;
 
 + (RACSignal *)currentConfiguration {
     RACSignal *configSignal = [RACSignal createSignal:^RACDisposable *(id<RACSubscriber> subscriber) {
@@ -87,7 +90,6 @@ static NSString * const CDZThingsHubConfigDefaultTagNamespace = @"github";
     for (NSString *line in [fileContents componentsSeparatedByCharactersInSet:[NSCharacterSet newlineCharacterSet]]) {
         NSString *trimmedLine = [line stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceCharacterSet]];
         if ([trimmedLine isEqualToString:@""]) continue;
-        
         if ([trimmedLine characterAtIndex:0] == '#') continue;
         
         NSArray *lineComponents = [trimmedLine componentsSeparatedByString:@"="];
@@ -96,16 +98,10 @@ static NSString * const CDZThingsHubConfigDefaultTagNamespace = @"github";
             continue;
         }
         
-        NSString *configKey = [lineComponents[0] stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceCharacterSet]];
-        NSString *propertyKey = [[self class] propertyKeysByConfigKey][configKey];
-        
-        if (!propertyKey) {
-            CDZCLIPrint(@" - Warning: invalid configuration line (invalid key): \"%@\"", line);
-            continue;
-        }
-        
+        NSString *key = [lineComponents[0] stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceCharacterSet]];
         NSString *value = [lineComponents[1] stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceCharacterSet]];
-        [config setValue:value forKey:propertyKey];
+        
+        [config setConfigValue:value forConfigKey:key];
     }
     
     return config;
@@ -115,10 +111,10 @@ static NSString * const CDZThingsHubConfigDefaultTagNamespace = @"github";
 + (instancetype)configurationFromDefaults {
     CDZThingsHubConfiguration *config = [[CDZThingsHubConfiguration alloc] init];
     
-    [[self propertyKeysByConfigKey] enumerateKeysAndObjectsUsingBlock:^(NSString *configKey, NSString *propertyKey, BOOL *stop) {
-        NSString *configValue = [[NSUserDefaults standardUserDefaults] stringForKey:configKey];
-        if (configValue) {
-            [config setValue:configValue forKeyPath:propertyKey];
+    NSDictionary *defaultsDict = [[NSUserDefaults standardUserDefaults] dictionaryRepresentation];
+    [defaultsDict enumerateKeysAndObjectsUsingBlock:^(NSString *key, id value, BOOL *stop) {
+        if ([self propertyKeysByConfigKey][key] != nil || [key hasPrefix:CDZThingsHubConfigTagMapConfigKeyPrefix]) {
+            [config setConfigValue:value forConfigKey:key];
         }
     }];
     
@@ -146,6 +142,27 @@ static NSString * const CDZThingsHubConfigDefaultTagNamespace = @"github";
             [self setValue:value forKey:propertyKey];
         }
     }
+    
+    [priorityConfiguration.githubTagToLocalTagMap enumerateKeysAndObjectsUsingBlock:^(id key, id val, BOOL *stop) {
+        ((NSMutableDictionary *)self.githubTagToLocalTagMap)[key] = val;
+    }];
+}
+
+- (void)setConfigValue:(NSString *)value forConfigKey:(NSString *)configKey {
+    NSString *propertyKey;
+    
+    if ([configKey hasPrefix:CDZThingsHubConfigTagMapConfigKeyPrefix]) {
+        propertyKey = [NSString stringWithFormat:@"%@.%@", NSStringFromSelector(@selector(githubTagToLocalTagMap)), [configKey substringFromIndex:CDZThingsHubConfigTagMapConfigKeyPrefix.length]];
+    } else {
+        propertyKey = [[self class] propertyKeysByConfigKey][configKey];
+    }
+    
+    if (!propertyKey) {
+        CDZCLIPrint(@" - Warning: invalid configuration key: \"%@\"", configKey);
+        return;
+    }
+    
+    [self setValue:value forKeyPath:propertyKey];
 }
 
 #pragma mark - Validation
@@ -179,7 +196,7 @@ static NSString * const CDZThingsHubConfigDefaultTagNamespace = @"github";
 #pragma mark - NSObject Protocol
 
 - (NSString *)description {
-    return [NSString stringWithFormat:@"<%@ %p>: {\n\ttagNamespace: %@\n\tgithubLogin: %@\n\trepoOwner: %@\n\trepoName: %@\n\tareaName: %@\n\tprojectPrefix: %@\n\tdelegateApp: %@\n}",
+    return [NSString stringWithFormat:@"<%@ %p>: {\n\ttagNamespace: %@\n\tgithubLogin: %@\n\trepoOwner: %@\n\trepoName: %@\n\tareaName: %@\n\tprojectPrefix: %@\n\tdelegateApp: %@\n\tmap: %@\n}",
             NSStringFromClass([self class]),
             self,
             self.tagNamespace,
@@ -188,7 +205,8 @@ static NSString * const CDZThingsHubConfigDefaultTagNamespace = @"github";
             self.repoName,
             self.areaName,
             self.projectPrefix,
-            self.delegateApp
+            self.delegateApp,
+            self.githubTagToLocalTagMap
             ];
 }
 
@@ -210,6 +228,15 @@ static NSString * const CDZThingsHubConfigDefaultTagNamespace = @"github";
                                     };
     });
     return propertyKeysByConfigKey;
+}
+
+#pragma mark - Property Overrides
+
+- (NSDictionary *)githubTagToLocalTagMap {
+    if (!_githubTagToLocalTagMap) {
+        _githubTagToLocalTagMap = [NSMutableDictionary dictionary];
+    }
+    return _githubTagToLocalTagMap;
 }
 
 @end

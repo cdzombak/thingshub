@@ -30,3 +30,6 @@ projectPrefix = THub
 
 # delegate: the sync delegate used to communicate with the local task maager app. Optional; default is Things.
 delegate = Things
+
+# map.: map a Github label to a local tag name.
+map.assignee is working on it = in progress
