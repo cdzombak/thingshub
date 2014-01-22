@@ -8,7 +8,7 @@ Synchronize issues assigned to you, one-way, from a Github repo into Things. (Or
 
 ThingsHub checks for a config file at `~/.thingshubconfig`, then traverses from the home directory down to the current dir (or from the root to the current dir, if the current directory isn't in `~`), merging in `.thingshubconfig` files as it finds them.
 
-This means you can put global configuration and defaults (eg. `githubLogin`, `tagNamespace`) in `~/.thingshubconfig`, leaving project-specific config (eg. `repoOwner`, `repoName`, `areaName`, `projectPrefix`) in `your-project-dir/.thingshubconfig`, sort of like using git's configuration system.
+This means you can put global configuration and defaults (eg. `githubLogin`, `tagNamespace`) in `~/.thingshubconfig`, leaving project-specific settings (eg. `repoOwner`, `repoName`, `areaName`, `projectPrefix`) in `your-project-dir/.thingshubconfig`, sort of like using git's configuration system.
 
 Configuration parameters may additionally be specified on the command line, like `-githubLogic cdzombak`. Parameters specified on the command line override those found in any configuration files.
 

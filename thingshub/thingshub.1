@@ -3,77 +3,98 @@
 .\"man mdoc.samples for a complete listing of options
 .\"man mdoc for the short list of editing options
 .\"/usr/share/misc/mdoc.template
-.Dd 1/13/14               \" DATE 
-.Dt thingshub 1      \" Program name and manual section number 
+.Dd 1/21/14
+.Dt thingshub 1
 .Os Darwin
-.Sh NAME                 \" Section Header - required - don't modify 
-.Nm thingshub,
-.\" The following lines are read in generating the apropos(man -k) database. Use only key
-.\" words here as the database is built based on the words here and in the .ND line. 
-.Nm Other_name_for_same_program(),
-.Nm Yet another name for the same program.
+.Sh NAME
+.Nm thingshub
 .\" Use .Nm macro to designate other names for the documented program.
-.Nd This line parsed for whatis database.
-.Sh SYNOPSIS             \" Section Header - required - don't modify
+.Nd Synchronize Github issues one-way into your task manager.
+.Sh SYNOPSIS
 .Nm
-.Op Fl abcd              \" [-abcd]
-.Op Fl a Ar path         \" [-a path] 
-.Op Ar file              \" [file]
-.Op Ar                   \" [file ...]
-.Ar arg0                 \" Underlined argument - use .Ar anywhere to underline
-arg2 ...                 \" Arguments
-.Sh DESCRIPTION          \" Section Header - required - don't modify
-Use the .Nm macro to refer to your program throughout the man page like such:
+.Op Fl githubLogin Ar username
+.Op Fl tagNamespace Ar namespace
+.Op Fl delegate Ar delegate
+.Op Fl map.labelName Ar tagName
+.Op Fl repoOwner Ar username
+.Op Fl repoName Ar repo
+.Op Fl areaName Ar area
+.Op Fl projectPrefix Ar prefix
+.Sh DESCRIPTION
+The simplest usage is just to run 
 .Nm
-Underlining is accomplished with the .Ar macro like this:
-.Ar underlined text .
-.Pp                      \" Inserts a space
-A list of items with descriptions:
-.Bl -tag -width -indent  \" Begins a tagged list 
-.It item a               \" Each item preceded by .It macro
-Description of item a
-.It item b
-Description of item b
+and specify all configuration options on the command line.
+.Pp
+Alternatively, run 
+.Nm
+from a project's directory, optionally specifying configuration options via the CLI. 
+.Nm
+will configure itself from your configuration files as described below.
+.Pp \" Inserts a space
+.Bl -tag -width -indent
+.It Fl githubLogin
+Your Github username. Required.
+.It Fl tagNamespace
+Namespace to use as a prefix for tags imported from Github. Optional; default is 'github'.
+.It Fl delegate
+Sync delegate used to communicate with the local task maager app. Optional; default is 'Things'. Currently only Things is supported.
+.It Fl map.labelName
+Map a Github label to a local tag name. Optional. 
+.Ar -"map.label name"
+if you need spaces.
+.It Fl repoOwner
+The owner of the Github repo to sync. Required.
+.It Fl repoName
+The Github repo to sync. Required.
+.It Fl areaName
+The area in Things to use for this project. Optional; default is none.
+.It Fl projectPrefix
+Prefix which will be applied to project names. Optional; default is none.
 .El                      \" Ends the list
 .Pp
-A list of flags and their descriptions:
-.Bl -tag -width -indent  \" Differs from above in tag removed 
-.It Fl a                 \"-a flag as a list item
-Description of -a flag
-.It Fl b
-Description of -b flag
-.El                      \" Ends the list
+The flags above may all be specified in a .thingshubconfig file, without a leading dash, like
+.Ar parameter = value.
+.Sh CONFIGURATION FILES
+.Nm
+checks for a config file at ~/.thingshubconfig, then traverses from the home directory down to the current dir (or from the root to the current dir, if the current directory isn't in ~), merging in '.thingshubconfig' files as it finds them.
 .Pp
-.\" .Sh ENVIRONMENT      \" May not be needed
-.\" .Bl -tag -width "ENV_VAR_1" -indent \" ENV_VAR_1 is width of the string ENV_VAR_1
-.\" .It Ev ENV_VAR_1
-.\" Description of ENV_VAR_1
-.\" .It Ev ENV_VAR_2
-.\" Description of ENV_VAR_2
-.\" .El                      
+This means you can put global configuration and defaults (eg. 'githubLogin', 'tagNamespace') in ~/.thingshubconfig, leaving project-specific settings (eg. 'repoOwner', 'repoName') in project/.thingshubconfig, sort of like using git's configuration system.
+.Pp
+Configuration parameters may additionally be specified on the command line:
+.Ar -githubLogic cdzombak .
+Parameters specified on the command line override those found in any configuration files.
+.Pp
+See thingshubconfig.example in this distribution for details on the configuration format.
+.Pp
+You may also want to add .thingshubconfig to your ~/.gitignore.
+.Pp
+.Ar https://github.com/cdzombak/thingshub/blob/master/thingshubconfig.example
+.Sh LOGOUT
+.Nm
+does not have a UI to log out of Github. You may remove its Github OAuth credential from the Keychain via 'security delete-generic-password -s "ThingsHub-Github"'.
 .Sh FILES                \" File used or created by the topic of the man page
-.Bl -tag -width "/Users/joeuser/Library/really_long_file_name" -compact
-.It Pa /usr/share/file_name
-FILE_1 description
-.It Pa /Users/joeuser/Library/really_long_file_name
-FILE_2 description
-.El                      \" Ends the list
-.\" .Sh DIAGNOSTICS       \" May not be needed
-.\" .Bl -diag
-.\" .It Diagnostic Tag
-.\" Diagnostic informtion here.
-.\" .It Diagnostic Tag
-.\" Diagnostic informtion here.
-.\" .El
-.Sh SEE ALSO 
-.\" List links in ascending order by section, alphabetically within a section.
-.\" Please do not reference files that do not exist without filing a bug report
-.Xr a 1 , 
-.Xr b 1 ,
-.Xr c 1 ,
-.Xr a 2 ,
-.Xr b 2 ,
-.Xr a 3 ,
-.Xr b 3 
-.\" .Sh BUGS              \" Document known, unremedied bugs 
-.\" .Sh HISTORY           \" Document history if command behaves in a unique manner
+.Bl -tag -width "/usr/local/share/man/man1/thingshub.1" -compact
+.It Pa /usr/local/bin/thingshub
+The
+.Nm
+binary
+.It Pa /usr/local/share/man/man1/thingshub.1
+This man page
+.It Pa ~/.thingshubconfig
+Default configuration file
+.It Pa [../].thingshubconfig
+Configuration files in the current and all parent directories
+.El
+.Sh SEE ALSO
+The project's README contains a workflow description, a rough roadmap, and installation notes.
+.Pp
+.Ar https://github.com/cdzombak/thingshub/blob/master/README.md
+.Sh BUGS              \" Document known, unremedied bugs 
+.Ar https://github.com/cdzombak/thingshub/issues
+.Sh CONTRIBUTORS
+.Bl -tag -width "Andrew Sardone" -compact
+.It Chris Dzombak
+.Ar https://github.com/cdzombak
+.It Andrew Sardone
+.Ar https://github.com/andrewsardone
+.El
