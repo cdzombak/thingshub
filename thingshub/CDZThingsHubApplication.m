@@ -80,8 +80,8 @@
     NSArray *arguments = [[NSProcessInfo processInfo] arguments];
     if ([arguments containsObject:@"-version"]) {
         CDZCLIPrint(@"thingshub v1.0");
+        [self exitWithCode:CDZThingsHubApplicationReturnCodeNormal];
     }
-    [self exitWithCode:CDZThingsHubApplicationReturnCodeNormal];
 }
 
 @end
