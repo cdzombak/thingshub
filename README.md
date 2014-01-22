@@ -6,11 +6,34 @@ Synchronize issues assigned to you, one-way, from a Github repo into Things. (Or
 
 ### Configuration
 
-See [`thingshubconfig.example` in this repo](https://github.com/cdzombak/thingshub/blob/master/thingshubconfig.example) for docs on the config system.
+ThingsHub checks for a config file at `~/.thingshubconfig`, then traverses from the home directory down to the current dir (or from the root to the current dir, if the current directory isn't in `~`), merging in `.thingshubconfig` files as it finds them.
+
+This means you can put global configuration and defaults (eg. `githubLogin`, `tagNamespace`) in `~/.thingshubconfig`, leaving project-specific config (eg. `repoOwner`, `repoName`, `areaName`, `projectPrefix`) in `your-project-dir/.thingshubconfig`, sort of like using git's configuration system.
+
+Configuration parameters may additionally be specified on the command line, like `-githubLogic cdzombak`. Parameters specified on the command line override those found in any configuration files.
+
+See [`thingshubconfig.example` in this distribution](https://github.com/cdzombak/thingshub/blob/master/thingshubconfig.example) for details on the configuration format.
+
+You may also want to add `.thingshubconfig` to your `~/.gitignore`.
+
+#### Parameters
+
+These may be used in a configuration file (`param = value`) or on the CLI (`-param value`).
+
+* `githubLogin`: your Github username. Required.
+* `tagNamespace`: namespace to use as a prefix for tags imported from Github. Optional; default is "github".
+* `delegate`: the sync delegate used to communicate with the local task maager app. Optional; default is Things. Currently only Things is supported.
+* `map.label name` (`-"map.label name"` on the CLI, if you need spaces): map a Github label to a local tag name. Optional.
+* `repoOwner`: the owner of the Github repo to sync. Required.
+* `repoName`: the Github repo to sync. Required.
+* `areaName`: the area in Things to use for this project. Optional; default is none.
+* `projectPrefix`: prefix which will be applied to project names. Optional; default is none.
 
 ### Run
 
-*TODO*
+The simplest usage is just to run `thingshub` and specify all configuration options on the command line.
+
+Alternatively, run `thingshub` from a project's directory, optionally specifying configuration options via the CLI. ThingsHub will configure itself from your configuration files as described in [the Configuration section](https://github.com/cdzombak/thingshub#configuration).
 
 ### Logout/Reset Github OAuth Token
 
@@ -30,7 +53,7 @@ Ensure that the target directories exist and you can write to them.
 
 ## Workflow
 
-* This never updates Github from Things; GH is the canonical source of truth.
+* This never updates Github from Things; GH is the source of truth.
 * This will always create issues in Next, except for issues that have no area *or* project. You can move to Today/Someday as desired.
 * This *will* move issues to areas/projects to reflect milestone changes. This doesn't touch Today/Next/Someday.
 

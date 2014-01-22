@@ -20,28 +20,36 @@
  */
 + (RACSignal *)currentConfiguration;
 
-/// Global (typically); configured by "tagNamespace = ". Default is "github".
-@property (nonatomic, copy, readonly) NSString *tagNamespace;
-
-/// Global (typically); configured by "githubLogin = "
+/// User's Github username.
+/// Configured by `githubLogin = `. Required.
 @property (nonatomic, copy, readonly) NSString *githubLogin;
 
-/// Global (typically); configured by "delegate = "
+/// Namespace to use as a prefix for tags imported from Github.
+/// Configured by `tagNamespace = `. Optional; default is `github`.
+@property (nonatomic, copy, readonly) NSString *tagNamespace;
+
+/// The sync delegate used to communicate with the local task maager app. Currently only Things is supported.
+/// Configured by `delegate = `. Optional; default is `Things`.
 @property (nonatomic, copy, readonly) NSString *delegateApp;
 
-/// Per-project (typically); configured by "repoOwner = "
+/// Map a Github label to a local tag name.
+/// Configured by `map.tag name = local tag name` (`-"map.label name"` on the CLI, if you need spaces). Optional.
+@property (nonatomic, copy, readonly) NSDictionary *githubTagToLocalTagMap;
+
+/// The owner of the Github repo to sync.
+/// Configured by `repoOwner = `. Required.
 @property (nonatomic, copy, readonly) NSString *repoOwner;
 
-/// Per-project; configured by "repoName = "
+/// The Github repo to sync.
+/// Configured by `repoName = `. Required.
 @property (nonatomic, copy, readonly) NSString *repoName;
 
-/// Per-project; configured by "areaName = ". May be missing; default is nil.
+/// The area in Things to use for this project.
+/// Configured by `areaName = `. Optional; default is nil.
 @property (nonatomic, copy, readonly) NSString *areaName;
 
-/// Per-project; configured by "projectPrefix = ". May be missing; default is nil.
+/// Prefix which will be applied to project names.
+/// Configured by `projectPrefix = `. Optional; default is nil.
 @property (nonatomic, copy, readonly) NSString *projectPrefix;
-
-/// Map a Github tag to a local tag name. Configured by "map.tag name = local tag name".
-@property (nonatomic, copy, readonly) NSDictionary *githubTagToLocalTagMap;
 
 @end
