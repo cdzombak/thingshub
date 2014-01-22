@@ -26,3 +26,5 @@ bin/
 # etc
 tmp/
 Documentation/
+
+!.thingshubconfig
