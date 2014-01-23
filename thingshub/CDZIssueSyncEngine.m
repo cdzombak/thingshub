@@ -7,14 +7,15 @@
 //
 
 #import <OctoKit/OctoKit.h>
+#import "NSDictionary+GithubAPIAdditions.h"
 
 #import "CDZIssueSyncEngine.h"
+#import "CDZIssueSyncDelegate.h"
 
 #import "CDZThingsHubConfiguration.h"
 #import "CDZThingsHubErrorDomain.h"
-#import "CDZIssueSyncDelegate.h"
+#import "CDZThingsHubSyncDateTracker.h"
 #import "CDZThingsHubErrorDomain.h"
-#import "NSDictionary+GithubAPIAdditions.h"
 
 static NSString * const CDZHTTPMethodGET = @"GET";
 
@@ -38,7 +39,7 @@ static NSString * const CDZGithubStateValueClosed = @"closed";
 @interface CDZIssueSyncEngine (Issues)
 
 /// Returns a signal the completes or errors once issue sync has finished or failed.
-- (RACSignal *)syncIssues;
+- (RACSignal *)syncIssuesSince:(NSDate *)date;
 
 @end
 
@@ -55,11 +56,16 @@ static NSString * const CDZGithubStateValueClosed = @"closed";
 }
 
 - (RACSignal *)sync {
+    NSDate *lastSyncDate = [CDZThingsHubSyncDateTracker lastSyncDateForConfiguration:self.config];
+    NSDate *syncStartDate = [NSDate date];
+    
     [self.delegate engineWillBeginSync:self];
     
     RACSignal *syncStatusSignal = [[RACSignal return:@"Milestones"] concat:[self syncMilestones]];
     syncStatusSignal = [syncStatusSignal concat:[RACSignal defer:^RACSignal *{
-        return [[RACSignal return:@"Issues"] concat:[self syncIssues]];
+        return [[[RACSignal return:@"Issues"] concat:[self syncIssuesSince:lastSyncDate]] doCompleted:^{
+            [CDZThingsHubSyncDateTracker setLastSyncDate:syncStartDate forConfiguration:self.config];
+        }];
     }]];
     
     return [[RACSignal defer:^RACSignal *{
@@ -109,11 +115,11 @@ static NSString * const CDZGithubStateValueClosed = @"closed";
 
 @implementation CDZIssueSyncEngine (Issues)
 
-- (RACSignal *)syncIssues {
+- (RACSignal *)syncIssuesSince:(NSDate *)lastSyncDate {
     [self.delegate collectExtantIssues];
     
     return [RACSignal createSignal:^RACDisposable *(id<RACSubscriber> subscriber) {
-        return [[RACSignal merge:@[[self issuesAssignedToMeInState:CDZGithubStateValueOpen], [self issuesAssignedToMeInState:CDZGithubStateValueClosed]]]
+        return [[RACSignal merge:@[[self issuesAssignedToMeInState:CDZGithubStateValueOpen since:lastSyncDate], [self issuesAssignedToMeInState:CDZGithubStateValueClosed since:lastSyncDate]]]
                 subscribeNext:^(NSDictionary *issue) {
                     if (![self.delegate syncIssue:issue createIfNeeded:[issue cdz_gh_isOpen] updateExtant:YES]) {
                         [subscriber sendError:[NSError errorWithDomain:kThingsHubErrorDomain code:CDZErrorCodeSyncFailure userInfo:@{NSLocalizedDescriptionKey: [NSString stringWithFormat:@"Sync delegate couldn't update issue %@", issue]}]];
@@ -130,15 +136,24 @@ static NSString * const CDZGithubStateValueClosed = @"closed";
     }];
 }
 
-- (RACSignal *)issuesAssignedToMeInState:(NSString *)state {
+- (RACSignal *)issuesAssignedToMeInState:(NSString *)state since:(NSDate *)lastSyncDate {
     NSParameterAssert(state);
+    
+    NSMutableDictionary *params = [@{ CDZGithubStateKey: state,
+                                      @"assignee": self.config.githubLogin
+                                      } mutableCopy];
+    
+    if (lastSyncDate) {
+        NSValueTransformer *dateTransformer = [NSValueTransformer valueTransformerForName:OCTDateValueTransformerName];
+        NSString *sinceDateString = [dateTransformer reverseTransformedValue:lastSyncDate];
+        CDZCLIPrint(@"\tLast sync: %@", sinceDateString);
+        params[@"since"] = sinceDateString;
+    }
     
     NSString *path = [NSString stringWithFormat:@"repos/%@/%@/issues", self.config.repoOwner, self.config.repoName];
     NSURLRequest *issuesRequest = [self.client requestWithMethod:CDZHTTPMethodGET
                                                                 path:path
-                                                          parameters:@{ CDZGithubStateKey: state,
-                                                                        @"assignee": self.config.githubLogin
-                                                                        }
+                                                          parameters:params
                                        ];
     
     return [[self.client enqueueRequest:issuesRequest resultClass:Nil] map:^id(id value) {

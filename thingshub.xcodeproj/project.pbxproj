@@ -29,6 +29,7 @@
 		A21C4EE818848FED0063467F /* CDZCLIPrint.m in Sources */ = {isa = PBXBuildFile; fileRef = A21C4EE718848FED0063467F /* CDZCLIPrint.m */; };
 		A236CCE2188624DD0073F287 /* CDZThingsSyncDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = A236CCE1188624DD0073F287 /* CDZThingsSyncDelegate.m */; };
 		A27E08F7188B720F0092F5CA /* NSDictionary+GithubAPIAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = A27E08F6188B720F0092F5CA /* NSDictionary+GithubAPIAdditions.m */; };
+		A280AC831890CD4400A1B6EF /* CDZThingsHubSyncDateTracker.m in Sources */ = {isa = PBXBuildFile; fileRef = A280AC821890CD4400A1B6EF /* CDZThingsHubSyncDateTracker.m */; };
 		A2E94DD51884B23800079CD3 /* CDZCLIApplication.m in Sources */ = {isa = PBXBuildFile; fileRef = A2E94DD41884B23800079CD3 /* CDZCLIApplication.m */; };
 		A2E94DD81884D02900079CD3 /* NSFileHandle+CDZCLIStringReading.m in Sources */ = {isa = PBXBuildFile; fileRef = A2E94DD71884D02900079CD3 /* NSFileHandle+CDZCLIStringReading.m */; };
 		A2E94DDB1884D75700079CD3 /* CDZGithubAuthManager.m in Sources */ = {isa = PBXBuildFile; fileRef = A2E94DDA1884D75700079CD3 /* CDZGithubAuthManager.m */; };
@@ -68,6 +69,8 @@
 		A236CCE1188624DD0073F287 /* CDZThingsSyncDelegate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; lineEnding = 0; path = CDZThingsSyncDelegate.m; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objc; };
 		A27E08F5188B720F0092F5CA /* NSDictionary+GithubAPIAdditions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; path = "NSDictionary+GithubAPIAdditions.h"; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
 		A27E08F6188B720F0092F5CA /* NSDictionary+GithubAPIAdditions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; lineEnding = 0; path = "NSDictionary+GithubAPIAdditions.m"; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objc; };
+		A280AC811890CD4400A1B6EF /* CDZThingsHubSyncDateTracker.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CDZThingsHubSyncDateTracker.h; sourceTree = "<group>"; };
+		A280AC821890CD4400A1B6EF /* CDZThingsHubSyncDateTracker.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CDZThingsHubSyncDateTracker.m; sourceTree = "<group>"; };
 		A2E94DD31884B23800079CD3 /* CDZCLIApplication.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CDZCLIApplication.h; sourceTree = "<group>"; };
 		A2E94DD41884B23800079CD3 /* CDZCLIApplication.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CDZCLIApplication.m; sourceTree = "<group>"; };
 		A2E94DD61884D02900079CD3 /* NSFileHandle+CDZCLIStringReading.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSFileHandle+CDZCLIStringReading.h"; sourceTree = "<group>"; };
@@ -143,6 +146,8 @@
 				A2E94DE91884F41800079CD3 /* CDZThingsHubConfiguration.m */,
 				A2E94DEB1885051E00079CD3 /* CDZThingsHubErrorDomain.h */,
 				A2E94DEC1885051E00079CD3 /* CDZThingsHubErrorDomain.m */,
+				A280AC811890CD4400A1B6EF /* CDZThingsHubSyncDateTracker.h */,
+				A280AC821890CD4400A1B6EF /* CDZThingsHubSyncDateTracker.m */,
 				A27E08F5188B720F0092F5CA /* NSDictionary+GithubAPIAdditions.h */,
 				A27E08F6188B720F0092F5CA /* NSDictionary+GithubAPIAdditions.m */,
 				A236CCDD188619870073F287 /* Things.h */,
@@ -288,6 +293,7 @@
 				A2E94DE41884EE8A00079CD3 /* CDZIssueSyncEngine.m in Sources */,
 				A2E94DD81884D02900079CD3 /* NSFileHandle+CDZCLIStringReading.m in Sources */,
 				A21C4ED618848BB30063467F /* main.m in Sources */,
+				A280AC831890CD4400A1B6EF /* CDZThingsHubSyncDateTracker.m in Sources */,
 				A27E08F7188B720F0092F5CA /* NSDictionary+GithubAPIAdditions.m in Sources */,
 				A2E94DEA1884F41800079CD3 /* CDZThingsHubConfiguration.m in Sources */,
 				A2E94DDB1884D75700079CD3 /* CDZGithubAuthManager.m in Sources */,
