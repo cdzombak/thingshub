@@ -59,7 +59,10 @@ static NSString * const CDZGithubStateValueClosed = @"closed";
     NSDate *lastSyncDate = [CDZThingsHubSyncDateTracker lastSyncDateForConfiguration:self.config];
     NSDate *syncStartDate = [NSDate date];
     
-    [self.delegate engineWillBeginSync:self];
+    BOOL isDelegateReady = [self.delegate engineWillBeginSync:self];
+    if (!isDelegateReady) {
+        return [RACSignal error:[NSError errorWithDomain:kThingsHubErrorDomain code:CDZThingsHubApplicationReturnCodeSyncFailed userInfo:@{ NSLocalizedDescriptionKey: @"The sync delegate aborted the sync during initialization." }]];
+    }
     
     RACSignal *syncStatusSignal = [[RACSignal return:@"Milestones"] concat:[self syncMilestones]];
     syncStatusSignal = [syncStatusSignal concat:[RACSignal defer:^RACSignal *{

@@ -52,7 +52,7 @@
 
 #pragma mark - Sync Callbacks
 
-- (void)engineWillBeginSync:(CDZIssueSyncEngine *)syncEngine {
+- (BOOL)engineWillBeginSync:(CDZIssueSyncEngine *)syncEngine {
     // Select Inbox in the UI.
     // If one of the objects we're interested in happens to be selected, Things won't update it. This is a workaround.
     NSPredicate *inboxPredicate = [NSPredicate predicateWithFormat:@"%K == %@", NSStringFromSelector(@selector(name)), @"Inbox"];
@@ -104,6 +104,8 @@
     dispatch_async(self.mutableStateQueue, ^{
         self.issuesCache = [extantIssues mutableCopy];
     });
+    
+    return YES;
 }
 
 #pragma mark - Scripting Bridge Support

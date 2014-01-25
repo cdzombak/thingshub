@@ -26,8 +26,12 @@
 
 #pragma mark Sync Callbacks
 
-/// Called before the sync engine begins the sync.
-- (void)engineWillBeginSync:(CDZIssueSyncEngine *)syncEngine;
+/**
+ Called before the sync engine begins the sync.
+
+ @return `YES` if the delegate is ready to begin sync; `NO` to abort.
+ */
+- (BOOL)engineWillBeginSync:(CDZIssueSyncEngine *)syncEngine;
 
 #pragma mark Milestones
 
