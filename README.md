@@ -12,7 +12,7 @@ This means you can put global configuration and defaults (eg. `githubLogin`, `ta
 
 Configuration parameters may additionally be specified on the command line, like `-githubLogic cdzombak`. Parameters specified on the command line override those found in any configuration files.
 
-See [`thingshubconfig.example` in this distribution](https://github.com/cdzombak/thingshub/blob/master/thingshubconfig.example) for details on the configuration format.
+See [thingshubconfig.example in this distribution](https://github.com/cdzombak/thingshub/blob/master/thingshubconfig.example) for details on the configuration format.
 
 You may also want to add `.thingshubconfig` to your `~/.gitignore`.
 
@@ -94,18 +94,9 @@ Thanks to:
 * [Chris Dzombak](https://github.com/cdzombak/) • tw[@cdzombak](https://twitter.com/cdzombak) • adn[@dzombak](https://alpha.app.net/dzombak) • [chris@chrisdzombak.net](mailto:chris@chrisdzombak.net) • [dzombak.com](http://www.dzombak.com)
 * [Andrew Sardone](https://github.com/andrewsardone/) • tw[@andrewa2](https://twitter.com/andrewa2) • adn[@andrewsardone](https://alpha.app.net/andrewsardone)
 
-## Roadmap
-
-### 1.1
-
-* Allow logging out without manually modifying keychain
-* Use contacts/delegation for issues assigned to others
-
 ## Dev Notes
 
 Run `scripts/bootstrap` to set up a local, self-contained environment for CocoaPods. Its only external dependency is Bundler.
-
-----
 
 ## Implementation details
 
@@ -118,14 +109,14 @@ The following will be placed in the notes field for relevant projects/todos:
 * `//thingshub/ORG/REPO/issue/###//`
 * `//thingshub/ORG/REPO/milestone/###//`
 
-### Reference Material
+## Reference Material
 
-#### Things and Scripting Bridge
+### Things and Scripting Bridge
 
 * http://downloads.culturedcode.com/things/download/ThingsAppleScriptGuide.pdf
-* https://developer.apple.com/library/mac/documentation/Cocoa/Conceptual/ScriptingBridgeConcepts/UsingScriptingBridge/UsingScriptingBridge.html#//apple_ref/doc/uid/TP40006104-CH4-DontLinkElementID_12
+* https://developer.apple.com/library/mac/documentation/Cocoa/Conceptual/ScriptingBridgeConcepts/UsingScriptingBridge/UsingScriptingBridge.html
 
-#### RAC
+### RAC
 
 * https://github.com/ReactiveCocoa/ReactiveCocoa/blob/8cb404a9be99f9b3515bc16b6874ce85fee37b0b/ReactiveCocoaFramework/ReactiveCocoa/RACStream.h#L98-L125
 * http://www.techsfo.com/blog/2013/08/managing-nested-asynchronous-callbacks-in-objective-c-using-reactive-cocoa/
@@ -136,21 +127,20 @@ The following will be placed in the notes field for relevant projects/todos:
 * https://github.com/ReactiveCocoa/ReactiveCocoa/blob/fc32fc06d398a99cd7c4c28e102d1ffb4a2e3cf9/Documentation/DesignGuidelines.md#side-effects-occur-for-each-subscription
 * https://github.com/cdzombak/thingshub/pull/2
 * https://github.com/cdzombak/thingshub/pull/1
+* *and more…*
 
-*and more…*
-
-#### Github API
+### Github API
 
 * http://developer.github.com/v3/issues/#list-issues-for-a-repository
 
-#### KVC, Predicates
+### KVC, Predicates
 
 * http://nshipster.com/kvc-collection-operators/
 * https://developer.apple.com/library/mac/documentation/Cocoa/Conceptual/KeyValueCoding/Articles/CollectionOperators.html#//apple_ref/doc/uid/20002176-BAJEAIEE
 * https://developer.apple.com/library/mac/documentation/cocoa/conceptual/predicates/Articles/pUsing.html
 * http://nshipster.com/nspredicate/
 
-#### `NSRunLoop`
+### `NSRunLoop`
 
 * http://hackazach.net/code/2013/08/09/run-run-run-nsrunloop/
 * http://cocoafactory.com/blog/2012/09/06/whats-a-run-loop-anyway/

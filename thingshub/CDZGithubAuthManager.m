@@ -8,6 +8,7 @@
 
 #import <OctoKit/OctoKit.h>
 #import <SSKeychain/SSKeychain.h>
+#import "NSFileHandle+CDZCLIStringReading.h"
 
 #import "CDZGithubAuthManager.h"
 

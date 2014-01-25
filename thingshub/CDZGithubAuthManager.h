@@ -6,9 +6,10 @@
 //  Copyright (c) 2014 Chris Dzombak. All rights reserved.
 //
 
-#import <ReactiveCocoa/ReactiveCocoa.h>
-#import "NSFileHandle+CDZCLIStringReading.h"
+@class RACSignal;
 
+/// Handles the Github login flow in the CLI, with support for two-factor auth and persisting the resulting
+/// auth token in the Keychain for future reuse.
 @interface CDZGithubAuthManager : NSObject
 
 /**
@@ -16,6 +17,8 @@
  signal, prompting the user for input via the CLI as needed.
 
  Persists the OAuth token in the Keychain and uses it when possible.
+ 
+ @param githubLogin The user's Github username.
  */
 + (RACSignal *)authenticatedClientForUsername:(NSString *)githubLogin;
 

@@ -14,12 +14,14 @@
 
 @interface CDZThingsSyncDelegate ()
 
+/// The configuration in use for this sync.
 @property (nonatomic, readonly) CDZThingsHubConfiguration *configuration;
-
-@property (nonatomic, readonly) dispatch_queue_t mutableStateQueue;
 
 /// The selected Things area for milestones & issues during this sync.
 @property (nonatomic, strong) ThingsArea *thingsArea;
+
+/// The queue on which all accesses — reads *and* writes — to mutable state in this class must occur.
+@property (nonatomic, readonly) dispatch_queue_t mutableStateQueue;
 
 /// A cache of extant projects for this repo's milestones in Things. Used to avoid repeated trips across Scripting Bridge.
 @property (nonatomic, strong) NSMutableArray *milestonesCache;
@@ -36,11 +38,13 @@
 
 #pragma mark - Object Lifecycle
 
+// Don't allow usage with the non-designated initializer.
 - (instancetype)init {
     [self doesNotRecognizeSelector:_cmd];
     return nil;
 }
 
+// Designated initializer
 - (instancetype)initWithConfiguration:(CDZThingsHubConfiguration *)configuration {
     self = [super init];
     if (self) {
@@ -53,12 +57,12 @@
 #pragma mark - Sync Callbacks
 
 - (BOOL)engineWillBeginSync:(CDZIssueSyncEngine *)syncEngine {
-    // Select Inbox in the UI.
+    // Select Inbox in the Things.app UI.
     // If one of the objects we're interested in happens to be selected, Things won't update it. This is a workaround.
     NSPredicate *inboxPredicate = [NSPredicate predicateWithFormat:@"%K == %@", NSStringFromSelector(@selector(name)), @"Inbox"];
     [[[[[self thingsApplication] lists] filteredArrayUsingPredicate:inboxPredicate] firstObject] show];
     
-    // Get the area for milestones:
+    // Get the Things area we'll put milestones & issues into:
     NSPredicate *areaPredicate = [NSPredicate predicateWithFormat:@"%K == %@", NSStringFromSelector(@selector(name)), self.configuration.areaName];
     self.thingsArea = [[[[self thingsApplication] areas] filteredArrayUsingPredicate:areaPredicate] firstObject];
     
@@ -66,37 +70,23 @@
         CDZCLIPrint(@"Note: no Things area selected. If you expected tasks and projects to be created in an area, ensure it exists and is spelled correctly in the configuration.");
     }
     
-    // Cache all extant milestones (projects in Things):
-    
-    NSString *milestonesCacheQuery = [NSString stringWithFormat:@"%@ LIKE \"*//thingshub/%@/%@/milestone/*//*\"",
-                                      NSStringFromSelector(@selector(notes)),
-                                      _configuration.repoOwner,
-                                      _configuration.repoName
-                                      ];
-    NSPredicate *milestonesPredicate = [NSPredicate predicateWithFormat:milestonesCacheQuery];
-    NSArray *extantMilestones = [[[[self thingsApplication] projects] get] filteredArrayUsingPredicate:milestonesPredicate];
+    // Cache all extant milestones (projects in Things) related to this repo:
+    NSArray *extantMilestones = [[[[self thingsApplication] projects] get] filteredArrayUsingPredicate:[self predicateForAllMilestones]];
     
     dispatch_async(self.mutableStateQueue, ^{
         self.milestonesCache = [extantMilestones mutableCopy];
     });
     
-    // Cache extant issues (Todos in Things) from Today, Next, Scheduled, Someday, Projects, Trash (ie. not Inbox or Logbook):
+    // Cache extant issues (Todos in Things) related to this repo:
+    // For performance across Scripting Bridge, we only get todos from Today, Next, Scheduled, Someday, Projects, Trash (ie. not Inbox or Logbook).
     
     NSSet *listsToCache = [NSSet setWithObjects:@"Today", @"Next", @"Scheduled", @"Someday", @"Projects", @"Trash", nil];
     NSArray *thingsLists = [[[self thingsApplication] lists] get];
-    
-    NSString *issuesCacheQuery = [NSString stringWithFormat:@"%@ LIKE \"*//thingshub/%@/%@/issue/*//*\"",
-                                  NSStringFromSelector(@selector(notes)),
-                                  _configuration.repoOwner,
-                                  _configuration.repoName
-                                  ];
-    NSPredicate *issuesPredicate = [NSPredicate predicateWithFormat:issuesCacheQuery];
-    
     NSArray *extantIssues = @[];
     
     for (ThingsList *list in thingsLists) {
         if ([listsToCache containsObject:list.name]) {
-            NSArray *thisListIssues = [[[list toDos] get] filteredArrayUsingPredicate:issuesPredicate];
+            NSArray *thisListIssues = [[[list toDos] get] filteredArrayUsingPredicate:[self predicateForAllIssues]];
             extantIssues = [extantIssues arrayByAddingObjectsFromArray:thisListIssues];
         }
     }
@@ -146,9 +136,11 @@
     project.dueDate = [milestone cdz_gh_milestoneDueDate];
     project.tagNames = [NSString stringWithFormat:@"%@,via:%@", project.tagNames, self.configuration.tagNamespace];
 
+    // Touching the `status` property seems to reorder projects in Things, so we don't do that unnecessarily:
     ThingsStatus newStatus = [milestone cdz_gh_isOpen] ? ThingsStatusOpen : ThingsStatusCompleted;
     if (project.status != newStatus) project.status = newStatus;
     
+    // Touching the `area` property seems to reorder projects in Things, so we don't do that unnecessarily:
     if (project.area && !self.thingsArea) {
         project.area = nil;
     } else if ((!project.area && self.thingsArea) || ![project.area.id isEqual:self.thingsArea.id]) {
@@ -162,6 +154,7 @@
     dispatch_async(self.mutableStateQueue, ^{
         NSAssert(self.localCollection == nil, @"%s must be called only once", __PRETTY_FUNCTION__);
         
+        // By now, we've already cached the extant milestones, so we just make a copy of that for the sync engine to use:
         self.localCollection = [self.milestonesCache mutableCopy];
     });
 }
@@ -189,6 +182,20 @@
 
 #pragma mark Identifier Helpers
 
+// These are part of the delegate's responsibility: domain knowledge on marking todos and projects we synced into
+// Things.app so we can find them again and update them.
+
+// We do this by placing a specially formatted string in the Notes field, and then we use `-[NSArray filteredArrayUsingPredicate]`
+// and friends to find them again.
+
+// Note that we always call `-[SBElementArray get]` before applying a complex LIKE or MATCHES predicate to collections fetched via Scripting
+// Bridge. The performance hit is undesirable, but using these predicates on unevaluated `SBElementArray`s causes a crash in the best case,
+// and silent failure in the worst case.
+
+/**
+ @param milestone A milestone from Github.
+ @return The identifier for the given milestone to be placed in the relevant project's Notes field in Things.app.
+ */
 - (NSString *)identifierForMilestone:(NSDictionary *)milestone {
     return [NSString stringWithFormat:@"//thingshub/%@/%@/milestone/%ld//",
             self.configuration.repoOwner,
@@ -197,12 +204,28 @@
             ];
 }
 
+/**
+ @param milestone A milestone from Github.
+ @return A predicate to find the project representing the given milestone in Things.app.
+ */
 - (NSPredicate *)predicateForMilestone:(NSDictionary *)milestone {
     NSString *format = [NSString stringWithFormat:@"%@ LIKE \"*%@*\"",
                         NSStringFromSelector(@selector(notes)),
                         [self identifierForMilestone:milestone]
                         ];
     return [NSPredicate predicateWithFormat:format];
+}
+
+/**
+ @return A predicate to find all projects related to `self.configuration`'s Github repo in Things.app.
+ */
+- (NSPredicate *)predicateForAllMilestones {
+    NSString *milestonesQuery = [NSString stringWithFormat:@"%@ LIKE \"*//thingshub/%@/%@/milestone/*//*\"",
+                                 NSStringFromSelector(@selector(notes)),
+                                 self.configuration.repoOwner,
+                                 self.configuration.repoName
+                                 ];
+    return [NSPredicate predicateWithFormat:milestonesQuery];
 }
 
 #pragma mark - Issue Sync
@@ -223,14 +246,16 @@
         return YES;
     }
     else if (!todo && createIfNeeded) {
-        todo = [[[[self thingsApplication] classForScriptingClass:@"to do"] alloc] init];
+        todo = [[[[self thingsApplication] classForScriptingClass:@"to do"] alloc] init]; // yes, this object's scripting class has a space in its name.
         [[[self thingsApplication] toDos] addObject:todo];
-        didCreateTask = YES;
         dispatch_async(self.mutableStateQueue, ^{
             [self.issuesCache addObject:todo];
         });
+        
+        didCreateTask = YES;
     }
-
+    
+    // Touching a todo's project or area seems to reorder it in the Things.app UI, so we don't do that unnecessarily:
     NSDictionary *issueMilestone = [issue cdz_gh_issueMilestone];
     if (issueMilestone) {
         ThingsProject *project = [[self.milestonesCache filteredArrayUsingPredicate:[self predicateForMilestone:issueMilestone]] firstObject];
@@ -280,6 +305,7 @@
     NSString *pullReqPrefix = [issue cdz_gh_issueIsPullRequest] ? @"PR " : @"";
     todo.name = [NSString stringWithFormat:@"(%@%@#%ld) %@", projectPrefix, pullReqPrefix, (long)[issue cdz_gh_number], [issue cdz_gh_title]];
     
+    // Touching a todo's `status` property seems to reorder it in the Things.app UI, so we don't do that unnecessarily:
     ThingsStatus newStatus = [issue cdz_gh_isOpen] ? ThingsStatusOpen : ThingsStatusCompleted;
     if (todo.status != newStatus) todo.status = newStatus;
     
@@ -290,6 +316,7 @@
     dispatch_async(self.mutableStateQueue, ^{
         NSAssert(self.localCollection == nil || self.localCollection.count == 0, @"%s must be called only once, and after milestone sync is complete.", __PRETTY_FUNCTION__);
         
+        // By now, we've already cached the extant issues, so we just make a copy of that for the sync engine to use:
         self.localCollection = [self.issuesCache mutableCopy];
     });
 }
@@ -308,6 +335,7 @@
         NSAssert(self.localCollection, @"-collectExtantIssues must be called before %s", __PRETTY_FUNCTION__);
         
         for (ThingsToDo *todo in self.localCollection) {
+            // Per the docs, we never move a todo from Closed -> Cancelled:
             if (todo.status == ThingsStatusOpen) {
                 todo.status = ThingsStatusCanceled;
             }
@@ -319,6 +347,20 @@
 
 #pragma mark Identifier Helpers
 
+// These are part of the delegate's responsibility: domain knowledge on marking todos and projects we synced into
+// Things.app so we can find them again and update them.
+
+// We do this by placing a specially formatted string in the Notes field, and then we use `-[NSArray filteredArrayUsingPredicate]`
+// and friends to find them again.
+
+// Note that we always call `-[SBElementArray get]` before applying a complex LIKE or MATCHES predicate to collections fetched via Scripting
+// Bridge. The performance hit is undesirable, but using these predicates on unevaluated `SBElementArray`s causes a crash in the best case,
+// and silent failure in the worst case.
+
+/**
+ @param issue An issue from Github.
+ @return The identifier for the given issue to be placed in the relevant todo's Notes field in Things.app.
+ */
 - (NSString *)identifierForIssue:(NSDictionary *)issue {
     return [NSString stringWithFormat:@"//thingshub/%@/%@/issue/%ld//",
             self.configuration.repoOwner,
@@ -327,12 +369,28 @@
             ];
 }
 
+/**
+ @param issue An issue from Github.
+ @return A predicate to find the todo representing the given issue in Things.app.
+ */
 - (NSPredicate *)predicateForIssue:(NSDictionary *)issue {
     NSString *format = [NSString stringWithFormat:@"%@ LIKE \"*%@*\"",
                         NSStringFromSelector(@selector(notes)),
                         [self identifierForIssue:issue]
                         ];
     return [NSPredicate predicateWithFormat:format];
+}
+
+/**
+ @return A predicate to find all issues related to `self.configuration`'s Github repo in Things.app.
+ */
+- (NSPredicate *)predicateForAllIssues {
+    NSString *issuesQuery = [NSString stringWithFormat:@"%@ LIKE \"*//thingshub/%@/%@/issue/*//*\"",
+                             NSStringFromSelector(@selector(notes)),
+                             self.configuration.repoOwner,
+                             self.configuration.repoName
+                             ];
+    return [NSPredicate predicateWithFormat:issuesQuery];
 }
 
 @end

@@ -20,6 +20,8 @@
 static NSString * const CDZHTTPMethodGET = @"GET";
 
 static NSString * const CDZGithubStateKey = @"state";
+static NSString * const CDZGithubAssigneeKey = @"assignee";
+static NSString * const CDZGithubSinceKey = @"since";
 static NSString * const CDZGithubStateValueOpen = @"open";
 static NSString * const CDZGithubStateValueClosed = @"closed";
 
@@ -39,6 +41,7 @@ static NSString * const CDZGithubStateValueClosed = @"closed";
 @interface CDZIssueSyncEngine (Issues)
 
 /// Returns a signal the completes or errors once issue sync has finished or failed.
+/// @param date Fetch issues that were modified after this date. May be `nil`.
 - (RACSignal *)syncIssuesSince:(NSDate *)date;
 
 @end
@@ -46,6 +49,8 @@ static NSString * const CDZGithubStateValueClosed = @"closed";
 @implementation CDZIssueSyncEngine
 
 - (instancetype)initWithDelegate:(id<CDZIssueSyncDelegate>)delegate configuration:(CDZThingsHubConfiguration *)config authenticatedClient:(OCTClient *)client {
+    NSParameterAssert([config.githubLogin isEqualToString:client.user.login]);
+    
     self = [super init];
     if (self) {
         _client = client;
@@ -144,14 +149,14 @@ static NSString * const CDZGithubStateValueClosed = @"closed";
     NSParameterAssert(state);
     
     NSMutableDictionary *params = [@{ CDZGithubStateKey: state,
-                                      @"assignee": self.config.githubLogin
+                                      CDZGithubAssigneeKey: self.config.githubLogin
                                       } mutableCopy];
     
     if (lastSyncDate) {
         NSValueTransformer *dateTransformer = [NSValueTransformer valueTransformerForName:OCTDateValueTransformerName];
         NSString *sinceDateString = [dateTransformer reverseTransformedValue:lastSyncDate];
         CDZCLIPrint(@"\tLast sync: %@", sinceDateString);
-        params[@"since"] = sinceDateString;
+        params[CDZGithubSinceKey] = sinceDateString;
     }
     
     NSString *path = [NSString stringWithFormat:@"repos/%@/%@/issues", self.config.repoOwner, self.config.repoName];

@@ -8,6 +8,8 @@
 
 @class RACSignal;
 
+/// Represents the application's configuration.
+/// Builds itself from the various parts of the ThingsHub config system, and provides simple access to configuration properties.
 @interface CDZThingsHubConfiguration : NSObject
 
 /**

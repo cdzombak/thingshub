@@ -83,6 +83,8 @@ static NSString * const CDZThingsHubConfigTagMapConfigKeyPrefix = @"map.";
  Parses the given file contents into a configuration object. The resulting object is not guaranteed to be valid.
  
  File format is "key = value" pairs. Whitespace before and after each key/value is ignored. Lines beginning (at index 0) with '#' are ignored as comments. Empty lines are ignored.
+ 
+ @param fileContents The file contents to parse.
  */
 + (instancetype)configurationFromFileContents:(NSString *)fileContents {
     CDZThingsHubConfiguration *config = [[CDZThingsHubConfiguration alloc] init];

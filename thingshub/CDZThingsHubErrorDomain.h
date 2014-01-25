@@ -10,9 +10,17 @@
 
 extern NSString * const kThingsHubErrorDomain;
 
+/// Error codes that may be used in the application's error domain.
 typedef NS_ENUM(NSInteger, CDZErrorCode) {
-    CDZErrorCodeTestError = 0,
+    /// An error code of `0` is used in testing.
+    CDZErrorCodeTestError = CDZThingsHubApplicationReturnCodeNormal,
+    
+    /// Indicates an authentication error.
     CDZErrorCodeAuthError = CDZThingsHubApplicationReturnCodeAuthError,
+    
+    /// Indicates an invalid configuration error.
     CDZErrorCodeConfigurationValidationError = CDZThingsHubApplicationReturnCodeConfigError,
+    
+    /// Indicates that the sync failed.
     CDZErrorCodeSyncFailure = CDZThingsHubApplicationReturnCodeSyncFailed,
 };
