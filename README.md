@@ -45,7 +45,7 @@ Alternatively, run `thingshub` from a project's directory, optionally specifying
 
 ## Installation
 
-**Current version:** v1.0.1.
+**Current version:** v1.0.2.
 
 Get the most recent [release](https://github.com/cdzombak/thingshub/releases) and run `scripts/install`. This will install `thingshub` to `/usr/local/bin` and its man page to `/usr/local/share/man/man1`.
 
