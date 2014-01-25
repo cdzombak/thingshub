@@ -20,6 +20,7 @@
 .Op Fl repoName Ar repo
 .Op Fl areaName Ar area
 .Op Fl projectPrefix Ar prefix
+.Op Fl version
 .Sh DESCRIPTION
 The simplest usage is just to run 
 .Nm
@@ -50,6 +51,8 @@ The Github repo to sync. Required.
 The area in Things to use for this project. Optional; default is none.
 .It Fl projectPrefix
 Prefix which will be applied to project names. Optional; default is none.
+.It Fl version
+Print version information and exit.
 .El                      \" Ends the list
 .Pp
 The flags above may all be specified in a .thingshubconfig file, without a leading dash, like
