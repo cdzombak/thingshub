@@ -301,12 +301,14 @@
     });
 }
 
-- (void)cancelIssuesInLocalCollection {
+- (void)cancelOpenIssuesInLocalCollection {
     dispatch_sync(self.mutableStateQueue, ^{
         NSAssert(self.localCollection, @"-collectExtantIssues must be called before %s", __PRETTY_FUNCTION__);
         
         for (ThingsToDo *todo in self.localCollection) {
-            todo.status = ThingsStatusCanceled;
+            if (todo.status == ThingsStatusOpen) {
+                todo.status = ThingsStatusCanceled;
+            }
         }
         
         [self.localCollection removeAllObjects];

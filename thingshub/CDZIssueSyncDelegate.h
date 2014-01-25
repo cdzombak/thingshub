@@ -102,7 +102,7 @@
 /**
  Collect extant issues for this Github repo into a local mutable collection.
  
- Issues will be removed from this collection as we sync them, and after we sync all extant issues, any remaining
+ Issues will be removed from this collection as we sync them, and after we sync all extant issues, any open issues remaining
  in this collection will be cancelled. This allows us to cancel tasks that were deleted from Github or unassigned
  to you.
  
@@ -112,7 +112,7 @@
  Your delegate may assume (and may assert) that this method will be called only once.
  
  @see -removeIssueFromLocalCollection:
- @see -cancelIssuesInLocalCollection
+ @see -cancelOpenIssuesInLocalCollection
  */
 - (void)collectExtantIssues;
 
@@ -125,12 +125,12 @@
  Your delegate may assume (and may assert) that `-collectExtantIssues` was called before this method.
  
  @see -collectExtantIssues
- @see -cancelIssuesInLocalCollection
+ @see -cancelOpenIssuesInLocalCollection
  */
 - (void)removeIssueFromLocalCollection:(NSDictionary *)issue;
 
 /**
- Cancel the tasks left in the local mutable collection created when `-collectExtantIssues` was called, after
+ Cancel the incomplete tasks left in the local mutable collection created when `-collectExtantIssues` was called, after
  calls to `-removeIssueFromCollection`.
  
  Assuming your delegate implements this collection with a standard mutable Cocoa collection, ensure that all accesses
@@ -138,10 +138,12 @@
  
  Your delegate may assume (and may assert) that `-collectExtantIssues` was called before this method.
  
+ @warning Only cancel **open** issues left in the collection. Ignore any closed ones.
+ 
  @see -collectExtantIssues
  @see -removeIssueFromLocalCollection:
  */
-- (void)cancelIssuesInLocalCollection;
+- (void)cancelOpenIssuesInLocalCollection;
 
 
 @end

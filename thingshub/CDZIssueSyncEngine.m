@@ -119,7 +119,8 @@ static NSString * const CDZGithubStateValueClosed = @"closed";
     [self.delegate collectExtantIssues];
     
     return [RACSignal createSignal:^RACDisposable *(id<RACSubscriber> subscriber) {
-        return [[RACSignal merge:@[[self issuesAssignedToMeInState:CDZGithubStateValueOpen since:lastSyncDate], [self issuesAssignedToMeInState:CDZGithubStateValueClosed since:lastSyncDate]]]
+        // we sync *all* open issues, and *only* recently modified closed ones.
+        return [[RACSignal merge:@[[self issuesAssignedToMeInState:CDZGithubStateValueOpen since:nil], [self issuesAssignedToMeInState:CDZGithubStateValueClosed since:lastSyncDate]]]
                 subscribeNext:^(NSDictionary *issue) {
                     if (![self.delegate syncIssue:issue createIfNeeded:[issue cdz_gh_isOpen] updateExtant:YES]) {
                         [subscriber sendError:[NSError errorWithDomain:kThingsHubErrorDomain code:CDZErrorCodeSyncFailure userInfo:@{NSLocalizedDescriptionKey: [NSString stringWithFormat:@"Sync delegate couldn't update issue %@", issue]}]];
@@ -130,7 +131,7 @@ static NSString * const CDZGithubStateValueClosed = @"closed";
                 } error:^(NSError *error) {
                     [subscriber sendError:error];
                 } completed:^{
-                    [self.delegate cancelIssuesInLocalCollection];
+                    [self.delegate cancelOpenIssuesInLocalCollection];
                     [subscriber sendCompleted];
                 }];
     }];
