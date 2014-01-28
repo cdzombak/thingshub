@@ -20,6 +20,12 @@
 /// The selected Things area for milestones & issues during this sync.
 @property (nonatomic, strong) ThingsArea *thingsArea;
 
+/// The Next list in Things
+@property (nonatomic, strong) ThingsList *nextList;
+
+/// The Today list in Things
+@property (nonatomic, strong) ThingsList *todayList;
+
 /// The queue on which all accesses — reads *and* writes — to mutable state in this class must occur.
 @property (nonatomic, readonly) dispatch_queue_t mutableStateQueue;
 
@@ -89,6 +95,13 @@
             NSArray *thisListIssues = [[[list toDos] get] filteredArrayUsingPredicate:[self predicateForAllIssues]];
             extantIssues = [extantIssues arrayByAddingObjectsFromArray:thisListIssues];
         }
+        
+        if ([list.name isEqualToString:@"Today"]) {
+            self.todayList = list;
+        }
+        else if ([list.name isEqualToString:@"Next"]) {
+            self.nextList = list;
+        }
     }
     
     dispatch_async(self.mutableStateQueue, ^{
@@ -121,7 +134,7 @@
     }
     else if (!project && createIfNeeded) {
         project = [[[[self thingsApplication] classForScriptingClass:@"project"] alloc] init];
-        [[[self thingsApplication] projects] addObject:project];
+        [self.nextList.toDos addObject:project];
         dispatch_async(self.mutableStateQueue, ^{
             [self.milestonesCache addObject:project];
         });
@@ -247,7 +260,7 @@
     }
     else if (!todo && createIfNeeded) {
         todo = [[[[self thingsApplication] classForScriptingClass:@"to do"] alloc] init]; // yes, this object's scripting class has a space in its name.
-        [[[self thingsApplication] toDos] addObject:todo];
+        [self.nextList.toDos addObject:todo];
         dispatch_async(self.mutableStateQueue, ^{
             [self.issuesCache addObject:todo];
         });
