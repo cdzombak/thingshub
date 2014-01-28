@@ -111,6 +111,10 @@
     return YES;
 }
 
+- (void)engineDidCompleteSync:(CDZIssueSyncEngine *)syncEngine {
+    [self.todayList show];
+}
+
 #pragma mark - Scripting Bridge Support
 
 - (ThingsApplication *)thingsApplication {

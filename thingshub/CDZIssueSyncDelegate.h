@@ -39,7 +39,16 @@
  */
 - (BOOL)engineWillBeginSync:(CDZIssueSyncEngine *)syncEngine;
 
+@optional
+
+/**
+ Called with the sync engine has completed the sync.
+ */
+- (void)engineDidCompleteSync:(CDZIssueSyncEngine *)syncEngine;
+
 #pragma mark Milestones
+
+@required
 
 /**
  Sync the milestone into the local task management application.

@@ -73,6 +73,10 @@ static NSString * const CDZGithubStateValueClosed = @"closed";
     syncStatusSignal = [syncStatusSignal concat:[RACSignal defer:^RACSignal *{
         return [[[RACSignal return:@"Issues"] concat:[self syncIssuesSince:lastSyncDate]] doCompleted:^{
             [CDZThingsHubSyncDateTracker setLastSyncDate:syncStartDate forConfiguration:self.config];
+            
+            if ([self.delegate respondsToSelector:@selector(engineDidCompleteSync:)]) {
+                [self.delegate engineDidCompleteSync:self];
+            }
         }];
     }]];
     
