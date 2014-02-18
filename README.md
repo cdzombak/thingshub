@@ -10,7 +10,7 @@ ThingsHub checks for a config file at `~/.thingshubconfig`, then traverses from 
 
 This means you can put global configuration and defaults (eg. `githubLogin`, `tagNamespace`) in `~/.thingshubconfig`, leaving project-specific settings (eg. `repoOwner`, `repoName`, `areaName`, `projectPrefix`) in `your-project-dir/.thingshubconfig`, sort of like using git's configuration system.
 
-Configuration parameters may additionally be specified on the command line, like `-githubLogic cdzombak`. Parameters specified on the command line override those found in any configuration files.
+Configuration parameters may additionally be specified on the command line, like `-githubLogin cdzombak`. Parameters specified on the command line override those found in any configuration files.
 
 See [thingshubconfig.example in this distribution](https://github.com/cdzombak/thingshub/blob/master/thingshubconfig.example) for details on the configuration format.
 
@@ -46,6 +46,8 @@ Alternatively, run `thingshub` from a project's directory, optionally specifying
 ## Installation
 
 **Current version:** v1.0.2.
+
+Installation currently requires Xcode, for the `xcodebuild` utility.
 
 Get the most recent [release](https://github.com/cdzombak/thingshub/releases) and run `scripts/install`. This will install `thingshub` to `/usr/local/bin` and its man page to `/usr/local/share/man/man1`.
 
