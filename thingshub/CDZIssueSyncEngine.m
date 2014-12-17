@@ -71,12 +71,14 @@ static NSString * const CDZGithubStateValueClosed = @"closed";
     
     RACSignal *syncStatusSignal = [[RACSignal return:@"Milestones"] concat:[self syncMilestones]];
     syncStatusSignal = [syncStatusSignal concat:[RACSignal defer:^RACSignal *{
-        return [[[RACSignal return:@"Issues"] concat:[self syncIssuesSince:lastSyncDate]] doCompleted:^{
+        return [[[[RACSignal return:@"Issues"] concat:[self syncIssuesSince:lastSyncDate]] doCompleted:^{
             [CDZThingsHubSyncDateTracker setLastSyncDate:syncStartDate forConfiguration:self.config];
             
             if ([self.delegate respondsToSelector:@selector(engineDidCompleteSync:)]) {
                 [self.delegate engineDidCompleteSync:self];
             }
+        }] doError:^(NSError *error) {
+            NSLog(@"Sync error: %@", error);
         }];
     }]];
     
@@ -97,7 +99,6 @@ static NSString * const CDZGithubStateValueClosed = @"closed";
         subscribeNext:^(NSDictionary *milestone) {
             if (![self.delegate syncMilestone:milestone createIfNeeded:[milestone cdz_gh_isOpen] updateExtant:YES]) {
                 [subscriber sendError:[NSError errorWithDomain:kThingsHubErrorDomain code:CDZErrorCodeSyncFailure userInfo:@{NSLocalizedDescriptionKey: [NSString stringWithFormat:@"Sync delegate couldn't update milestone %@", milestone]}]];
-                // TODO: how can I abort the sync here? --CDZ Jan 18, 2014
                 return;
             }
             [self.delegate removeMilestoneFromLocalCollection:milestone];
@@ -136,7 +137,6 @@ static NSString * const CDZGithubStateValueClosed = @"closed";
                 subscribeNext:^(NSDictionary *issue) {
                     if (![self.delegate syncIssue:issue createIfNeeded:[issue cdz_gh_isOpen] updateExtant:YES]) {
                         [subscriber sendError:[NSError errorWithDomain:kThingsHubErrorDomain code:CDZErrorCodeSyncFailure userInfo:@{NSLocalizedDescriptionKey: [NSString stringWithFormat:@"Sync delegate couldn't update issue %@", issue]}]];
-                        // TODO: how can I abort the sync here? --CDZ Jan 19, 2014
                         return;
                     }
                     [self.delegate removeIssueFromLocalCollection:issue];
