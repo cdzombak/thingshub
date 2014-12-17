@@ -78,7 +78,7 @@ static NSString * const CDZGithubStateValueClosed = @"closed";
                 [self.delegate engineDidCompleteSync:self];
             }
         }] doError:^(NSError *error) {
-            NSLog(@"Sync error: %@", error);
+            CDZCLIPrint(@"Sync error: %@", error);
         }];
     }]];
     
