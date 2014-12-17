@@ -54,6 +54,7 @@
 
 /* Begin PBXFileReference section */
 		7E12E346320042AAB5512B08 /* libPods.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libPods.a; sourceTree = BUILT_PRODUCTS_DIR; };
+		93A368B31A4156D1000A5DD7 /* OmniFocus.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OmniFocus.h; sourceTree = "<group>"; };
 		A21C4ECF18848BB30063467F /* thingshub */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = thingshub; sourceTree = BUILT_PRODUCTS_DIR; };
 		A21C4ED218848BB30063467F /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
 		A21C4ED518848BB30063467F /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
@@ -150,6 +151,7 @@
 				A280AC821890CD4400A1B6EF /* CDZThingsHubSyncDateTracker.m */,
 				A27E08F5188B720F0092F5CA /* NSDictionary+GithubAPIAdditions.h */,
 				A27E08F6188B720F0092F5CA /* NSDictionary+GithubAPIAdditions.m */,
+				93A368B31A4156D1000A5DD7 /* OmniFocus.h */,
 				A236CCDD188619870073F287 /* Things.h */,
 				A21C4ED918848BB30063467F /* thingshub.1 */,
 				A21C4ED718848BB30063467F /* Supporting Files */,
