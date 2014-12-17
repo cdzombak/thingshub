@@ -37,6 +37,10 @@ Alternatively, run `thingshub` from a project's directory, optionally specifying
 
 ### Logout/Reset Github OAuth Token
 
+`thingshub -logout <GitHub Username>`
+
+#### v1.0.2 and lower
+
 `security delete-generic-password -s "ThingsHub-Github"`
 
 ### Version Check

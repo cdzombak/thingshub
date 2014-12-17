@@ -22,4 +22,10 @@
  */
 + (RACSignal *)authenticatedClientForUsername:(NSString *)githubLogin;
 
+/**
+ Deletes the auth token stored in the user's keychain, if any.
+ @return An error describing an error that occurred, or `nil` if there was no error.
+ */
++ (NSError *)deleteStoredAuthTokenForUser:(NSString *)user;
+
 @end

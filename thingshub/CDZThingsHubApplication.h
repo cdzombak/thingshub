@@ -22,6 +22,9 @@ NS_ENUM(int, CDZThingsHubApplicationReturnCode) {
     
     /// Indicates a sync failure occurred.
     CDZThingsHubApplicationReturnCodeSyncFailed,
+
+    /// Indicates a generic keychain error occurred.
+    CDZThingsHubApplicationReturnCodeKeychainError,
 };
 
 /// The core ThingsHub application.

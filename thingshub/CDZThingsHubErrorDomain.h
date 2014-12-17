@@ -23,4 +23,7 @@ typedef NS_ENUM(NSInteger, CDZErrorCode) {
     
     /// Indicates that the sync failed.
     CDZErrorCodeSyncFailure = CDZThingsHubApplicationReturnCodeSyncFailed,
+
+    /// Indicates a generic keychain error.
+    CDZErrorCodeKeychainError = CDZThingsHubApplicationReturnCodeKeychainError,
 };

@@ -11,6 +11,7 @@
 #import "NSFileHandle+CDZCLIStringReading.h"
 
 #import "CDZGithubAuthManager.h"
+#import "CDZThingsHubErrorDomain.h"
 
 static NSString * const CDZThingsHubGithubClientID = @"4522e1cb93f836bc988e";
 static NSString * const CDZThingsHubGithubClientSecret = @"3424d858c8e070093eede0b6c71c17632685d9d0";
@@ -79,6 +80,19 @@ static const OCTClientAuthorizationScopes CDZThingsHubGithubScopes = (OCTClientA
     NSString *twoFactorCode = [stdinput cdz_availableString];
 
     return [OCTClient signInAsUser:user password:password oneTimePassword:twoFactorCode scopes:CDZThingsHubGithubScopes];
+}
+
++ (NSError *)deleteStoredAuthTokenForUser:(NSString *)user {
+    NSError *error;
+    BOOL didDelete = [SSKeychain deletePasswordForService:CDZThingsHubKeychainServiceName account:user error:&error];
+
+    if (didDelete) {
+        error = nil;
+    } else {
+        error = error ?: [NSError errorWithDomain:kThingsHubErrorDomain code:CDZErrorCodeKeychainError userInfo:@{ NSLocalizedDescriptionKey: @"A keychain erorr occurred. There is no additional information available." }];
+    }
+
+    return error;
 }
 
 @end

@@ -22,6 +22,7 @@
 @implementation CDZThingsHubApplication
 
 - (void)start {
+    [self logoutAndQuitIfRequested];
     [self displayVersionAndQuitIfRequested];
     
     RACSignal *configurationSignal = [[[[CDZThingsHubConfiguration currentConfiguration] doError:^(NSError *error) {
@@ -74,6 +75,27 @@
      ]];
 
     [self rac_liftSelector:@selector(exitWithCode:) withSignalsFromArray:@[ returnCodeSignal ]];
+}
+
+- (void)logoutAndQuitIfRequested {
+    NSArray *arguments = NSProcessInfo.processInfo.arguments;
+    if ([arguments containsObject:@"-logout"]) {
+        if ([arguments.lastObject isEqual:@"-logout"]) {
+            CDZCLIPrint(@"-logout argument must be followed by the GitHub username to logout.");
+            [self exitWithCode:CDZThingsHubApplicationReturnCodeConfigError];
+        }
+
+        NSUInteger usernameIdx = [arguments indexOfObject:@"-logout"] + 1;
+        NSString *username = arguments[usernameIdx];
+
+        NSError *error = [CDZGithubAuthManager deleteStoredAuthTokenForUser:username];
+        if (error) {
+            CDZCLIPrint(@"Error: %@", error);
+            [self exitWithCode:CDZThingsHubApplicationReturnCodeKeychainError];
+        }
+
+        [self exitWithCode:CDZThingsHubApplicationReturnCodeNormal];
+    }
 }
 
 - (void)displayVersionAndQuitIfRequested {
