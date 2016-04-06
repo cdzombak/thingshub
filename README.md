@@ -1,5 +1,7 @@
 # ThingsHub
 
+[![No Maintenance Intended](http://unmaintained.tech/badge.svg)](http://unmaintained.tech/)
+
 Synchronize issues assigned to you, one-way, from a Github repo into Things. (Or, soon, to Omnifocus.)
 
 ## Usage
