@@ -54,6 +54,7 @@
 
 /* Begin PBXFileReference section */
 		7E12E346320042AAB5512B08 /* libPods.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libPods.a; sourceTree = BUILT_PRODUCTS_DIR; };
+		9391773523EA0A3B00B54F2F /* Makefile */ = {isa = PBXFileReference; lastKnownFileType = text; path = Makefile; sourceTree = SOURCE_ROOT; };
 		93A368B31A4156D1000A5DD7 /* OmniFocus.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OmniFocus.h; sourceTree = "<group>"; };
 		93A368B41A41BB5E000A5DD7 /* README.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = SOURCE_ROOT; };
 		A21C4ECF18848BB30063467F /* thingshub */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = thingshub; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -155,6 +156,7 @@
 				93A368B31A4156D1000A5DD7 /* OmniFocus.h */,
 				A236CCDD188619870073F287 /* Things.h */,
 				A21C4ED918848BB30063467F /* thingshub.1 */,
+				9391773523EA0A3B00B54F2F /* Makefile */,
 				93A368B41A41BB5E000A5DD7 /* README.md */,
 				A21C4ED718848BB30063467F /* Supporting Files */,
 			);
@@ -227,6 +229,7 @@
 			developmentRegion = English;
 			hasScannedForEncodings = 0;
 			knownRegions = (
+				English,
 				en,
 			);
 			mainGroup = A21C4EC618848BB30063467F;
@@ -268,7 +271,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "export PATH=\"$PATH\":/usr/local/bin\n\nif [[ -x $(which appledoc) ]]; then\n    /usr/bin/env appledoc \\\n        --logformat xcode \\\n        --exit-threshold 2 \\\n        --project-name \"ThingsHub\" \\\n        --project-company \"Chris Dzombak\" \\\n        --company-id com.cdzombak \\\n        --index-desc README.md \\\n        --output Documentation \\\n    thingshub\nfi";
+			shellScript = "export PATH=\"$PATH\":/usr/local/bin\n\nif [[ -x $(which appledoc) ]]; then\n    /usr/bin/env appledoc \\\n        --logformat xcode \\\n        --exit-threshold 2 \\\n        --project-name \"ThingsHub\" \\\n        --project-company \"Chris Dzombak\" \\\n        --company-id com.dzombak \\\n        --index-desc README.md \\\n        --output Documentation \\\n    thingshub\nfi\n";
 			showEnvVarsInLog = 0;
 		};
 		C7485882D396477EBE93EC8C /* Copy Pods Resources */ = {
@@ -336,7 +339,6 @@
 				CLANG_WARN_SUSPICIOUS_IMPLICIT_CONVERSION = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				COPY_PHASE_STRIP = NO;
-				DSTROOT = "/tmp/$(PROJECT_NAME).dst";
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
@@ -357,7 +359,7 @@
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				INSTALL_PATH = /usr/local/bin/;
-				MACOSX_DEPLOYMENT_TARGET = 10.9;
+				MACOSX_DEPLOYMENT_TARGET = 10.14;
 				ONLY_ACTIVE_ARCH = YES;
 				OTHER_CFLAGS = "-Wno-gnu";
 				PRODUCT_NAME = thingshub;
@@ -390,8 +392,9 @@
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
 				CLANG_WARN_SUSPICIOUS_IMPLICIT_CONVERSION = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
-				COPY_PHASE_STRIP = NO;
-				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				COPY_PHASE_STRIP = YES;
+				DEPLOYMENT_LOCATION = YES;
+				DEPLOYMENT_POSTPROCESSING = YES;
 				DSTROOT = /;
 				ENABLE_NS_ASSERTIONS = NO;
 				GCC_C_LANGUAGE_STANDARD = gnu99;
@@ -408,7 +411,7 @@
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				INSTALL_PATH = /usr/local/bin/;
-				MACOSX_DEPLOYMENT_TARGET = 10.9;
+				MACOSX_DEPLOYMENT_TARGET = 10.14;
 				OTHER_CFLAGS = "-Wno-gnu";
 				PRODUCT_NAME = thingshub;
 				RUN_CLANG_STATIC_ANALYZER = YES;

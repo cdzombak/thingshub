@@ -1,8 +1,0 @@
-#!/bin/sh
-# Usage: scripts/install
-# Installs thingshub to /usr/local/bin and its man page to /usr/local/share/man/man1
-
-SCRIPT_DIR=$(dirname "$0")
-cd "$SCRIPT_DIR/.."
-
-xcodebuild -workspace thingshub.xcworkspace -scheme thingshub -configuration Release install
