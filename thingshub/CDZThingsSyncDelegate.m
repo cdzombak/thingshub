@@ -20,7 +20,8 @@
 /// The selected Things area for milestones & issues during this sync.
 @property (nonatomic, strong) ThingsArea *thingsArea;
 
-/// The Next list in Things
+/// The Anytime list in Things
+/// TODO(cdzombak): rename
 @property (nonatomic, strong) ThingsList *nextList;
 
 /// The Today list in Things
@@ -84,9 +85,10 @@
     });
     
     // Cache extant issues (Todos in Things) related to this repo:
-    // For performance across Scripting Bridge, we only get todos from Today, Next, Scheduled, Someday, Projects, Trash (ie. not Inbox or Logbook).
+    // For performance across Scripting Bridge, we only get todos from Today, Anytime, Upcoming, Someday, Projects, Trash (ie. not Inbox or Logbook).
+    // Inbox because we never create items there; Logbook because those are completed, so we'll just create new todos if needed.
     
-    NSSet *listsToCache = [NSSet setWithObjects:@"Today", @"Next", @"Scheduled", @"Someday", @"Projects", @"Trash", nil];
+    NSSet *listsToCache = [NSSet setWithObjects:@"Today", @"Anytime", @"Upcoming", @"Someday", @"Projects", @"Trash", nil];
     NSArray *thingsLists = [[[self thingsApplication] lists] get];
     NSArray *extantIssues = @[];
     
@@ -99,7 +101,7 @@
         if ([list.name isEqualToString:@"Today"]) {
             self.todayList = list;
         }
-        else if ([list.name isEqualToString:@"Next"]) {
+        else if ([list.name isEqualToString:@"Anytime"]) {
             self.nextList = list;
         }
     }
@@ -118,7 +120,7 @@
 #pragma mark - Scripting Bridge Support
 
 - (ThingsApplication *)thingsApplication {
-    return [SBApplication applicationWithBundleIdentifier:@"com.culturedcode.things"];
+    return [SBApplication applicationWithBundleIdentifier:@"com.culturedcode.ThingsMac"];
 }
 
 #pragma mark - Milestone Sync
