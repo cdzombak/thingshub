@@ -200,7 +200,7 @@ static NSString * const CDZThingsHubConfigTagMapConfigKeyPrefix = @"map.";
 - (NSString *)description {
     return [NSString stringWithFormat:@"<%@ %p>: {\n\ttagNamespace: %@\n\tgithubLogin: %@\n\trepoOwner: %@\n\trepoName: %@\n\tareaName: %@\n\tprojectPrefix: %@\n\tdelegateApp: %@\n\ttag map:\n%@\n}",
             NSStringFromClass([self class]),
-            self,
+            (void *)self,
             self.tagNamespace,
             self.githubLogin,
             self.repoOwner,
