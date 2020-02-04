@@ -17,6 +17,9 @@
 #import "CDZThingsHubConfiguration.h"
 
 @interface CDZThingsHubApplication ()
+
+@property(nonatomic, readonly) BOOL isVerboseFlagPresent;
+
 @end
 
 @implementation CDZThingsHubApplication
@@ -28,7 +31,9 @@
     RACSignal *configurationSignal = [[[[CDZThingsHubConfiguration currentConfiguration] doError:^(NSError *error) {
         CDZCLIPrint(@"Configuration error: %@", [error localizedDescription]);
     }] doNext:^(CDZThingsHubConfiguration *config) {
-        CDZCLIPrint(@"Using configuration: %@", [config description]);
+        if (self.isVerboseFlagPresent) {
+            CDZCLIPrint(@"Using configuration: %@", [config description]);
+        }
     }] replayLazily];
     
     RACSignal *authClientSignal = [[[configurationSignal flattenMap:^id(CDZThingsHubConfiguration *config) {
@@ -104,6 +109,14 @@
         CDZCLIPrint(@"thingshub v1.0.2");
         [self exitWithCode:CDZThingsHubApplicationReturnCodeNormal];
     }
+}
+
+- (BOOL)isVerboseFlagPresent {
+    NSArray *arguments = [[NSProcessInfo processInfo] arguments];
+    if ([arguments containsObject:@"-verbose"]) {
+        return YES;
+    }
+    return NO;
 }
 
 @end

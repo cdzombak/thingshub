@@ -16,6 +16,8 @@ See [thingshubconfig.example in this distribution](https://github.com/cdzombak/t
 
 You may also want to add `.thingshubconfig` to your `~/.gitignore`.
 
+Run with the `-verbose` flag to see the final, resolved configuration.
+
 #### Parameters
 
 These may be used in a configuration file (`param = value`) or on the CLI (`-param value`).
