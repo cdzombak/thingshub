@@ -20,15 +20,17 @@
 .Op Fl repoName Ar repo
 .Op Fl areaName Ar area
 .Op Fl projectPrefix Ar prefix
+.Op Fl logout
+.Op Fl verbose
 .Op Fl version
 .Sh DESCRIPTION
 The simplest usage is just to run 
 .Nm
 and specify all configuration options on the command line.
 .Pp
-Alternatively, run 
+Alternatively, run
 .Nm
-from a project's directory, optionally specifying configuration options via the CLI. 
+from a project's directory, optionally specifying configuration options via the CLI.
 .Nm
 will configure itself from your configuration files as described below.
 .Pp \" Inserts a space
@@ -51,14 +53,19 @@ The Github repo to sync. Required.
 The area in Things to use for this project. Optional; default is none.
 .It Fl projectPrefix
 Prefix which will be applied to project names. Optional; default is none.
-.It Fl logout
-Delete the stored auth token for a given GitHub username and exit.
-.It Fl version
-Print version information and exit.
 .El                      \" Ends the list
 .Pp
 The flags above may all be specified in a .thingshubconfig file, without a leading dash, like
 .Ar parameter = value.
+.Pp \" Inserts a space
+.Bl -tag -width -indent
+.It Fl logout
+Delete the stored auth token for a given GitHub username and exit.
+.It Fl verbose
+Print the resolved configuration and other debugging information.
+.It Fl version
+Print version information and exit.
+.El                      \" Ends the list
 .Sh CONFIGURATION FILES
 .Nm
 checks for a config file at ~/.thingshubconfig, then traverses from the home directory down to the current dir (or from the root to the current dir, if the current directory isn't in ~), merging in '.thingshubconfig' files as it finds them.
@@ -74,9 +81,6 @@ See thingshubconfig.example in this distribution for details on the configuratio
 You may also want to add .thingshubconfig to your ~/.gitignore.
 .Pp
 .Ar https://github.com/cdzombak/thingshub/blob/master/thingshubconfig.example
-.Sh LOGOUT
-.Nm
-does not have a UI to log out of Github. You may remove its Github OAuth credential from the Keychain via 'security delete-generic-password -s "ThingsHub-Github"'.
 .Sh FILES                \" File used or created by the topic of the man page
 .Bl -tag -width "/usr/local/share/man/man1/thingshub.1" -compact
 .It Pa /usr/local/bin/thingshub
