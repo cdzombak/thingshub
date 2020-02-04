@@ -106,7 +106,7 @@
 - (void)displayVersionAndQuitIfRequested {
     NSArray *arguments = [[NSProcessInfo processInfo] arguments];
     if ([arguments containsObject:@"-version"]) {
-        CDZCLIPrint(@"thingshub v1.0.2");
+        CDZCLIPrint(@"thingshub v1.1.0");
         [self exitWithCode:CDZThingsHubApplicationReturnCodeNormal];
     }
 }

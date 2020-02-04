@@ -41,19 +41,15 @@ Alternatively, run `thingshub` from a project's directory, optionally specifying
 
 `thingshub -logout <GitHub Username>`
 
-#### v1.0.2 and lower
-
-`security delete-generic-password -s "ThingsHub-Github"`
-
 ### Version Check
 
 `thingshub -version`
 
 ## Installation
 
-**Current version:** v1.0.2.
+**Current version:** v1.1.0.
 
-Installation currently requires Xcode, for the `xcodebuild` utility.
+Installation requires Xcode.
 
 Get the most recent [release](https://github.com/cdzombak/thingshub/releases) and run `make`. This will install `thingshub` to `/usr/local/bin` and its man page to `/usr/local/share/man/man1`.
 
