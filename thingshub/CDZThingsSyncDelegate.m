@@ -131,7 +131,9 @@
     dispatch_sync(self.mutableStateQueue, ^{
         project = [[self.milestonesCache filteredArrayUsingPredicate:[self predicateForMilestone:milestone]] firstObject];
     });
-    
+
+    BOOL didCreateProject = NO;
+
     if (project && !updateExtant) {
         return YES;
     }
@@ -139,19 +141,22 @@
         return YES;
     }
     else if (!project && createIfNeeded) {
+        didCreateProject = YES;
         project = [[[[self thingsApplication] classForScriptingClass:@"project"] alloc] init];
         [self.nextList.toDos addObject:project];
         dispatch_async(self.mutableStateQueue, ^{
             [self.milestonesCache addObject:project];
         });
     }
-    
-    NSString *namePrefix = self.configuration.projectPrefix ? [NSString stringWithFormat:@"%@: ", self.configuration.projectPrefix] : @"";
-    project.name = [NSString stringWithFormat:@"%@%@", namePrefix, [milestone cdz_gh_title]];
-    
-    NSString *milestoneUrlString = [NSString stringWithFormat:@"https://github.com/%@/%@/issues?milestone=%ld&state=open", self.configuration.repoOwner, self.configuration.repoName, (long)[milestone cdz_gh_number]];
-    project.notes = [NSString stringWithFormat:@"%@\n\n%@\n\n%@", milestoneUrlString, [milestone cdz_gh_milestoneDescription], [self identifierForMilestone:milestone]];
-    
+
+    if (didCreateProject) {
+        NSString *namePrefix = self.configuration.projectPrefix ? [NSString stringWithFormat:@"%@: ", self.configuration.projectPrefix] : @"";
+        project.name = [NSString stringWithFormat:@"%@%@", namePrefix, [milestone cdz_gh_title]];
+
+        NSString *milestoneUrlString = [NSString stringWithFormat:@"https://github.com/%@/%@/issues?milestone=%ld&state=open", self.configuration.repoOwner, self.configuration.repoName, (long)[milestone cdz_gh_number]];
+        project.notes = [NSString stringWithFormat:@"%@\n\n%@\n\n%@", [milestone cdz_gh_milestoneDescription], milestoneUrlString, [self identifierForMilestone:milestone]];
+    }
+
     project.dueDate = [milestone cdz_gh_milestoneDueDate];
     project.tagNames = [NSString stringWithFormat:@"%@,via:%@", project.tagNames, self.configuration.tagNamespace];
 
