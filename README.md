@@ -1,8 +1,6 @@
 # ThingsHub
 
-[![No Maintenance Intended](http://unmaintained.tech/badge.svg)](http://unmaintained.tech/)
-
-Synchronize issues assigned to you, one-way, from a Github repo into Things. (Or, soon, to Omnifocus.)
+Synchronize issues assigned to you, one-way, from a Github repo into Things.
 
 ## Usage
 
@@ -24,7 +22,7 @@ These may be used in a configuration file (`param = value`) or on the CLI (`-par
 
 * `githubLogin`: your Github username. Required.
 * `tagNamespace`: namespace to use as a prefix for tags imported from Github. Optional; default is "github".
-* `delegate`: the sync delegate used to communicate with the local task maager app. Optional; default is Things. Currently only Things is supported.
+* `delegate`: the sync delegate used to communicate with the local task manager app. Optional; default is Things. Currently only Things is supported.
 * `map.label name` (`-"map.label name"` on the CLI, if you need spaces): map a Github label to a local tag name. Optional.
 * `repoOwner`: the owner of the Github repo to sync. Required.
 * `repoName`: the Github repo to sync. Required.
