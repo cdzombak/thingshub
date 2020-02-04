@@ -74,7 +74,7 @@
     self.thingsArea = [[[[self thingsApplication] areas] filteredArrayUsingPredicate:areaPredicate] firstObject];
     
     if (!self.thingsArea) {
-        CDZCLIPrint(@"Note: no Things area selected. If you expected tasks and projects to be created in an area, ensure it exists and is spelled correctly in the configuration.");
+        CDZCLIPrint(@"ℹ️ No Things area is selected. If you expected tasks and projects to be created in an area, ensure the area exists and is spelled correctly in your configuration.");
     }
     
     // Cache all extant milestones (projects in Things) related to this repo:
