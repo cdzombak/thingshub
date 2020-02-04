@@ -114,7 +114,11 @@
 }
 
 - (void)engineDidCompleteSync:(CDZIssueSyncEngine *)syncEngine {
-    [self.todayList show];
+    if (self.thingsArea) {
+        [self.thingsArea show];
+    } else {
+        [self.todayList show];
+    }
 }
 
 #pragma mark - Scripting Bridge Support
