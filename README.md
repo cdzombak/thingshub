@@ -47,7 +47,7 @@ Alternatively, run `thingshub` from a project's directory, optionally specifying
 
 ## Installation
 
-**Current version:** v1.1.0.
+**Current version:** v1.1.1.
 
 Installation requires Xcode.
 
