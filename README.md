@@ -91,8 +91,8 @@ Ensure that the target directories exist and you can write to them.
 
 Thanks to:
 
-* [Chris Dzombak](https://github.com/cdzombak/) • tw[@cdzombak](https://twitter.com/cdzombak) • adn[@dzombak](https://alpha.app.net/dzombak) • [chris@chrisdzombak.net](mailto:chris@chrisdzombak.net) • [dzombak.com](http://www.dzombak.com)
-* [Andrew Sardone](https://github.com/andrewsardone/) • tw[@andrewa2](https://twitter.com/andrewa2) • adn[@andrewsardone](https://alpha.app.net/andrewsardone)
+* [Chris Dzombak](https://github.com/cdzombak/) • [@cdzombak](https://twitter.com/cdzombak) • [dzombak.com](http://www.dzombak.com)
+* [Andrew Sardone](https://github.com/andrewsardone/) • [@andrewa2](https://twitter.com/andrewa2)
 
 ## License
 
