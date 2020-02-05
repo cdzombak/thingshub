@@ -29,7 +29,7 @@ These may be used in a configuration file (`param = value`) or on the CLI (`-par
 * `repoOwner`: the owner of the Github repo to sync. Required.
 * `repoName`: the Github repo to sync. Required.
 * `areaName`: the area in Things to use for this project. Optional; default is none.
-* `projectPrefix`: prefix which will be applied to project names. Optional; default is none.
+* `projectPrefix`: prefix which will be applied to project names & tasks’ titles (before the issue number). Optional; default is none.
 
 ### Run
 
@@ -59,26 +59,27 @@ Ensure that the target directories exist and you can write to them.
 
 ## Workflow
 
-* This never updates Github from Things; GH is the source of truth.
-* This will always create issues in Next, except for issues that have no area *or* project. You can move to Today/Someday as desired.
-* This *will* move issues to areas/projects to reflect milestone changes. This doesn't touch Today/Next/Someday.
+* This never updates GitHub from Things; GitHub is the source of truth.
+* This will always create issues in Anytime. You can move them to Today/Upcoming/Someday as desired.
+* This *will* move issues to areas/projects to reflect milestone changes. This doesn't change the todo between Today/Anytime/Upcoming/Someday.
 
-### Why one way sync? Why Github as the source of truth?
+### Why one way sync? Why GitHub as the source of truth?
 
 * Issues may be modified by many people online, increasing the chance of conflicts if you modify an issue locally.
 	* Conflict management is easy this way, and we probably won't lose much data.
-* Issues are typically closed as side effects of other operations (merges, commits), so closing issues in your client usually won't make much sense.
+* Issues are often closed as side effects of other operations (merges, commits), so closing issues in your client usually won't make much sense.
 * Descriptions on Todos are often used in your task management software for personal notes.
 * The entire one-way sync operation is idempotent, so partial sync failures are easily recoverable; just re-trigger the sync.
 
 ### Sync (to Things)
 
-* Milestones, if any, are represented as projects in your selected Area, or if no Area, as projects in Next. Projects' due dates reflect the milestone due date.
-* Issues without a milestone are placed directly in the selected Area, or if no Area, into Next. (If updating an existing task, we won't move it back into Next, though.)
+* Milestones, if any, are represented as projects in your selected Area, or if no Area, as projects in Anytime/Someday. Projects' due dates reflect the milestone due date.
+* Milestones: each project's due date, tags, and status are updated every sync. Name and notes are only touched when creating a new Project.
+* A project is not created for an open milestone if you have no issues assigned to you in that milestone.
+* Issues without a milestone are placed directly in the selected Area, or if no Area, into Anytime. (If updating an existing task, we won't move it back into Anytime, though.)
 * Todos and projects are marked as incomplete/complete based on open/close status in Github. Todos/projects that exist for deleted/unassigned milestones/issues are marked as canceled.
-* We only search for existing issues in Today, Next, Scheduled, Someday, Projects, and Trash — *not Inbox or Logbook*.
+* We only search for existing issues in Today, Anytime, Upcoming, Someday, Projects, and Trash — *not Inbox or Logbook*.
 * We don't touch due dates or handle scheduling for tasks.
-* Milestones: project's name, notes, due date, tags, status are updated every sync.
 * Issues: todo's project/area, tags, name, and status are updated every sync. Notes are only touched when the todo is created.
 * Pull requests are treated the same as issues, with "(PR #xxx)" instead of just "(#xxx)" in the name.
 
@@ -100,7 +101,8 @@ Thanks to:
 
 ## Dev Notes
 
-Run `scripts/bootstrap` to set up a local, self-contained environment for CocoaPods. Its only external dependency is Bundler.
+- Run `make bootstrap` to set up a local, self-contained environment for CocoaPods. Its only external dependency is Bundler.
+- `make pods` runs `bundle exec pod install` for you.
 
 ## Implementation details
 
