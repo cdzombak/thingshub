@@ -71,6 +71,10 @@
             argument = "-projectPrefix thtest"
             isEnabled = "NO">
          </CommandLineArgument>
+         <CommandLineArgument
+            argument = "-map.in-progress &quot;In Progress &#x25b6;&#xfe0f;&quot;"
+            isEnabled = "YES">
+         </CommandLineArgument>
       </CommandLineArguments>
    </LaunchAction>
    <ProfileAction
