@@ -6,6 +6,8 @@
 //  Copyright (c) 2014 Chris Dzombak. All rights reserved.
 //
 
+static NSString * const CDZGHMilestoneHasOpenIssuesAssignedToMeKey = @"CDZGHMilestoneHasOpenIssuesAssignedToMeKey";
+
 /// Convenience methods for accessing values in Github API dictionaries.
 @interface NSDictionary (GithubAPIAdditions)
 
@@ -14,6 +16,9 @@
 
 /// Return YES if the "state" key == "open".
 - (BOOL)cdz_gh_isOpen;
+
+/// Return YES if the milestone has open issues assigned to me.
+- (BOOL)cdz_gh_milestoneHasOpenIssuesAssignedToMe;
 
 /// Return the object's "title", or `@""` if it isn't set.
 - (NSString *)cdz_gh_title;

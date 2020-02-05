@@ -21,6 +21,11 @@
     return [state isEqualToString:@"open"];
 }
 
+- (BOOL)cdz_gh_milestoneHasOpenIssuesAssignedToMe {
+    NSNumber *number = self[CDZGHMilestoneHasOpenIssuesAssignedToMeKey];
+    return [number boolValue];
+}
+
 - (NSString *)cdz_gh_title {
     return self[@"title"] ?: @"";
 }

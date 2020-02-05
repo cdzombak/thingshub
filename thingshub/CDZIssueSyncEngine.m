@@ -22,23 +22,18 @@ static NSString * const CDZHTTPMethodGET = @"GET";
 static NSString * const CDZGithubStateKey = @"state";
 static NSString * const CDZGithubAssigneeKey = @"assignee";
 static NSString * const CDZGithubSinceKey = @"since";
+static NSString * const CDZGithubStateValueAll = @"all";
 static NSString * const CDZGithubStateValueOpen = @"open";
 static NSString * const CDZGithubStateValueClosed = @"closed";
 
 @interface CDZIssueSyncEngine ()
+
 @property (nonatomic, readonly) OCTClient *client;
 @property (nonatomic, readonly) id<CDZIssueSyncDelegate> delegate;
 @property (nonatomic, readonly) CDZThingsHubConfiguration *config;
-@end
-
-@interface CDZIssueSyncEngine (Milestones)
 
 /// Returns a signal the completes or errors once milestone sync has finished or failed.
 - (RACSignal *)syncMilestones;
-
-@end
-
-@interface CDZIssueSyncEngine (Issues)
 
 /// Returns a signal the completes or errors once issue sync has finished or failed.
 /// @param date Fetch issues that were modified after this date. May be `nil`.
@@ -87,17 +82,29 @@ static NSString * const CDZGithubStateValueClosed = @"closed";
     }] replay];
 }
 
-@end
-
-@implementation CDZIssueSyncEngine (Milestones)
-
 - (RACSignal *)syncMilestones {
     [self.delegate collectExtantMilestones];
+
+    RACSignal *milestones = [
+     [RACSignal merge:@[[self milestonesInState:CDZGithubStateValueOpen], [self milestonesInState:CDZGithubStateValueClosed]]]
+     flattenMap:^RACSignal *(NSDictionary *milestone) {
+        return [
+                RACSignal combineLatest:@[
+                    [RACSignal return:milestone],
+                    [[self issuesAssignedToMeInState:CDZGithubStateValueOpen since:nil inMilestone:[NSNumber numberWithInteger:[milestone cdz_gh_number]]] take:1]
+                ]
+                reduce:^NSDictionary *(NSDictionary *m, NSDictionary *anIssue) {
+                    NSMutableDictionary *mutMilestone = [m mutableCopy];
+                    mutMilestone[CDZGHMilestoneHasOpenIssuesAssignedToMeKey] = [NSNumber numberWithBool:(anIssue != nil)];
+                    return mutMilestone;
+                }
+                ];
+    }];
     
     return [RACSignal createSignal:^RACDisposable *(id<RACSubscriber> subscriber) {
-        return [[RACSignal merge:@[[self milestonesInState:CDZGithubStateValueOpen], [self milestonesInState:CDZGithubStateValueClosed]]]
-        subscribeNext:^(NSDictionary *milestone) {
-            if (![self.delegate syncMilestone:milestone createIfNeeded:[milestone cdz_gh_isOpen] updateExtant:YES]) {
+        return [milestones subscribeNext:^(NSDictionary *milestone) {
+            BOOL createIfNeeded = [milestone cdz_gh_isOpen] && [milestone cdz_gh_milestoneHasOpenIssuesAssignedToMe];
+            if (![self.delegate syncMilestone:milestone createIfNeeded:createIfNeeded updateExtant:YES]) {
                 [subscriber sendError:[NSError errorWithDomain:kThingsHubErrorDomain code:CDZErrorCodeSyncFailure userInfo:@{NSLocalizedDescriptionKey: [NSString stringWithFormat:@"Sync delegate couldn't update milestone %@", milestone]}]];
                 return;
             }
@@ -124,16 +131,12 @@ static NSString * const CDZGithubStateValueClosed = @"closed";
     }];
 }
 
-@end
-
-@implementation CDZIssueSyncEngine (Issues)
-
 - (RACSignal *)syncIssuesSince:(NSDate *)lastSyncDate {
     [self.delegate collectExtantIssues];
     
     return [RACSignal createSignal:^RACDisposable *(id<RACSubscriber> subscriber) {
         // we sync *all* open issues, and *only* recently modified closed ones.
-        return [[RACSignal merge:@[[self issuesAssignedToMeInState:CDZGithubStateValueOpen since:nil], [self issuesAssignedToMeInState:CDZGithubStateValueClosed since:lastSyncDate]]]
+        return [[RACSignal merge:@[[self issuesAssignedToMeInState:CDZGithubStateValueOpen since:nil inMilestone:nil], [self issuesAssignedToMeInState:CDZGithubStateValueClosed since:lastSyncDate inMilestone:nil]]]
                 subscribeNext:^(NSDictionary *issue) {
                     if (![self.delegate syncIssue:issue createIfNeeded:[issue cdz_gh_isOpen] updateExtant:YES]) {
                         [subscriber sendError:[NSError errorWithDomain:kThingsHubErrorDomain code:CDZErrorCodeSyncFailure userInfo:@{NSLocalizedDescriptionKey: [NSString stringWithFormat:@"Sync delegate couldn't update issue %@", issue]}]];
@@ -149,7 +152,7 @@ static NSString * const CDZGithubStateValueClosed = @"closed";
     }];
 }
 
-- (RACSignal *)issuesAssignedToMeInState:(NSString *)state since:(NSDate *)lastSyncDate {
+- (RACSignal *)issuesAssignedToMeInState:(NSString *)state since:(NSDate *)lastSyncDate inMilestone:(NSNumber *)milestoneID {
     NSParameterAssert(state);
     
     NSMutableDictionary *params = [@{ CDZGithubStateKey: state,
@@ -161,6 +164,10 @@ static NSString * const CDZGithubStateValueClosed = @"closed";
         NSString *sinceDateString = [dateTransformer reverseTransformedValue:lastSyncDate];
         CDZCLIPrint(@"\tLast sync: %@", sinceDateString);
         params[CDZGithubSinceKey] = sinceDateString;
+    }
+
+    if (milestoneID) {
+        params[@"milestone"] = milestoneID;
     }
     
     NSString *path = [NSString stringWithFormat:@"repos/%@/%@/issues", self.config.repoOwner, self.config.repoName];
