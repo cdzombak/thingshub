@@ -28,11 +28,11 @@ if [ ! -f "$THINGSHUBD_CONFIG" ]; then
 fi
 
 verbose_flag=""
+
 if [ "$THINGSHUBD_DEBUG" = true ]; then
   verbose_flag="-verbose"
+  show_msg "Sync is running."
 fi
-
-show_msg "Sync is running."
 
 while read -r dir; do
   dir="${dir//\$HOME/$HOME}"
