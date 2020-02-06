@@ -29,13 +29,19 @@
 		<dict>
 			<key>Hour</key>
 			<integer>16</integer>
+			<key>Minute</key>
+			<integer>0</integer>
 		</dict>
 		<dict>
 			<key>Hour</key>
 			<integer>20</integer>
+			<key>Minute</key>
+			<integer>0</integer>
 		</dict>
 		<dict>
 			<key>Hour</key>
+			<integer>0</integer>
+			<key>Minute</key>
 			<integer>0</integer>
 		</dict>
 	</array>
