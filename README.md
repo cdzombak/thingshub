@@ -51,7 +51,7 @@ Alternatively, run `thingshub` from a project's directory, optionally specifying
 
 Installation requires Xcode.
 
-Get the most recent [release](https://github.com/cdzombak/thingshub/releases) and run `make`. This will install `thingshub` to `/usr/local/bin` and its man page to `/usr/local/share/man/man1`.
+Get the most recent [release](https://github.com/cdzombak/thingshub/releases) and run `make install`. This will install `thingshub` to `/usr/local/bin` and its man page to `/usr/local/share/man/man1`.
 
 ### Troubleshooting
 
