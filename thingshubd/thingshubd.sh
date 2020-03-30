@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 THINGSHUBD_CONFIG=${THINGSHUBD_CONFIG:-$HOME/.local/thingshubd.list}
 THINGSHUBD_DEBUG=${THINGSHUBD_DEBUG:-false}
+THINGSHUBD_SHOW_NOTIFICATIONS=${THINGSHUBD_SHOW_NOTIFICATIONS:-true}
 PATH="/usr/local/bin:$PATH"
 set -eu
 
@@ -8,10 +9,17 @@ use_terminal_notifier=true
 command -v terminal-notifier >/dev/null 2>&1 || use_terminal_notifier=false
 if [ "$THINGSHUBD_DEBUG" = true ]; then
   if [ "$use_terminal_notifier" = true ]; then
-    >&2 echo "[debug] using terminal-notifier from $(command -v terminal-notifier)"
+    >&2 echo "[debug] found terminal-notifier at $(command -v terminal-notifier)"
   else
     >&2 echo "[debug] terminal-notifier not found"
   fi
+fi
+
+if [ "$THINGSHUBD_SHOW_NOTIFICATIONS" = false ]; then
+  if [ "$THINGSHUBD_DEBUG" = true ]; then
+    >&2 echo "[debug] notifications will be hidden due to THINGSHUBD_SHOW_NOTIFICATIONS"
+  fi
+  use_terminal_notifier=false
 fi
 
 show_msg() {
