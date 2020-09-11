@@ -1,3 +1,11 @@
+# Unmaintained
+
+[![No Maintenance Intended](http://unmaintained.tech/badge.svg)](http://unmaintained.tech/)
+
+**Unmaintained:** Due to several factors (apparent Things.app instability when using Scripting Bridge, bugs like [#34](https://github.com/cdzombak/thingshub/issues/34) resulting in odd duplicates and project splits, and [the GitHub Authorizations API going away](https://github.com/cdzombak/thingshub/issues/38) which will require rewriting large parts of the software), I’m no longer devoting any time to this project.
+
+---
+
 # ThingsHub
 
 Synchronize issues assigned to you, one-way, from a Github repo into Things.
